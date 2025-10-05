@@ -13,11 +13,6 @@ Virofund is a Next.js MVP for co-founder matchmaking, designed with a modern ato
 - **shadcn/ui** (Radix primitives)
 - **Zustand** (state management)
 - **Firebase** (user storage)
-- **React Hook Form** (forms)
-- **Framer Motion** (animations)
-- **Lucide Icons**
-- **CMDK** (command palette)
-- **Date-fns** (date utilities)
 
 ---
 
