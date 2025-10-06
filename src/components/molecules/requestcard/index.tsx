@@ -2,7 +2,8 @@ import Image from 'next/image'
 import React from 'react'
 import KeyValue from '../../atoms/keyvalue-pair'
 import { Button } from '../../atoms'
-import { MoreVertical, Timer } from 'lucide-react'
+import { Timer } from 'lucide-react'
+import { MoreVerticalDots } from '../../atoms/more-vertical'
 
 type RequestCardProps = {
     image?: string
@@ -36,7 +37,7 @@ const RequestCard = ({ props, className = '' }: { props: RequestCardProps, class
         <div className={`p-3 bg-background font-medium ${className}`} style={{ fontFamily: "var(--font-plus-jakarta-sans)" }}>
             <div className='space-y-2'>
                 <div className='flex justify-between'>
-                    <div className='flex gap-3 items-center'>
+                    <div className='flex gap-2 items-center'>
                         <div className='rounded-full w-6 h-6'>
                             {props.image ?
                                 (<Image src={`${props.image}`} alt={`${props.alt}`} fill className='object-cover' />)
@@ -49,8 +50,8 @@ const RequestCard = ({ props, className = '' }: { props: RequestCardProps, class
                             <p className=' text-[10px] text-muted-foreground'>{props.email}</p>
                         </div>
                     </div>
-                    <div className='border border-muted-foreground rounded-sm p-1'>
-                        <MoreVertical size={10}/>
+                    <div>
+                        <MoreVerticalDots className='inline-flex w-auto h-auto shrink-0 border border-muted-foreground rounded-sm p-1' iconSize={10} />
                     </div>
                 </div>
                 <div className='flex items-center gap-1  text-[10px] text-muted-foreground'>
@@ -64,6 +65,7 @@ const RequestCard = ({ props, className = '' }: { props: RequestCardProps, class
             <p className='py-2  text-[10px]'>{props.details}</p>
             <div className='flex gap-4'>
                 {titles.map((value, idx) => {
+                    const isJob = value.title === "Job Title";
                     return (
                         <div key={idx}>
                             <KeyValue props={{
@@ -71,15 +73,15 @@ const RequestCard = ({ props, className = '' }: { props: RequestCardProps, class
                                 value: value.content,
                                 backgroundColour: props.keyValue.backgroundColour,
                                 dotColour: props.keyValue.dotColour,
-                                job: props.keyValue.role
+                                job: isJob ? props.keyValue.role : ""
                             }} />
                         </div>
                     )
                 })}
             </div>
-            <div className='flex gap-2 justify-between'>
-                <Button className='flex-1 bg-transparent border border-[#10B981]' />
-                <Button className='flex-1 bg-transparent border border-[#B91C1C]' />
+            <div className='flex gap-2 justify-between '>
+                <Button className='flex-1 bg-transparent border border-[#10B981] text-foreground text-[10px]'>Approve</Button>
+                <Button className='flex-1 bg-transparent border border-[#B91C1C] text-foreground text-[10px]'>Reject</Button>
             </div>
         </div>
     )
