@@ -2,7 +2,7 @@ import Image from 'next/image'
 import React from 'react'
 import KeyValue from '../../atoms/keyvalue-pair'
 import { Button } from '../../atoms'
-import { Timer } from 'lucide-react'
+import { MoreVertical, Timer } from 'lucide-react'
 
 type RequestCardProps = {
     image?: string
@@ -21,7 +21,7 @@ type RequestCardProps = {
 }
 
 
-const RequestCard = ({ props, className='' }: { props: RequestCardProps, className?: string }) => {
+const RequestCard = ({ props, className = '' }: { props: RequestCardProps, className?: string }) => {
     const titles = [
         {
             title: "Department",
@@ -33,25 +33,30 @@ const RequestCard = ({ props, className='' }: { props: RequestCardProps, classNa
         }]
 
     return (
-        <div className={`p-3 bg-background font-medium ${className}`} style={{fontFamily: "var(--font-plus-jakarta-sans)"}}>
+        <div className={`p-3 bg-background font-medium ${className}`} style={{ fontFamily: "var(--font-plus-jakarta-sans)" }}>
             <div className='space-y-2'>
-                <div className='flex gap-3 items-center'>
-                    <div className='rounded-full w-5 h-5'>
-                        {props.image ?
-                            (<Image src={`${props.image}`} alt={`${props.alt}`} fill className='object-cover' />)
-                            :
-                            (<div className='w-6 h-6 rounded-full bg-muted-foreground'></div>)
-                        }
+                <div className='flex justify-between'>
+                    <div className='flex gap-3 items-center'>
+                        <div className='rounded-full w-6 h-6'>
+                            {props.image ?
+                                (<Image src={`${props.image}`} alt={`${props.alt}`} fill className='object-cover' />)
+                                :
+                                (<div className='w-6 h-6 rounded-full bg-muted-foreground'></div>)
+                            }
+                        </div>
+                        <div className='flex flex-col gap-'>
+                            <p className=' text-[12px]'>{props.name}</p>
+                            <p className=' text-[10px] text-muted-foreground'>{props.email}</p>
+                        </div>
                     </div>
-                    <div className='flex flex-col gap-'>
-                        <p className=' text-[12px]'>{props.name}</p>
-                        <p className=' text-[10px] text-muted-foreground'>{props.email}</p>
+                    <div className='border border-muted-foreground rounded-sm p-1'>
+                        <MoreVertical size={10}/>
                     </div>
                 </div>
                 <div className='flex items-center gap-1  text-[10px] text-muted-foreground'>
                     <p>{props.available}</p>
-                    { props.timeAvailable && (
-                        <Timer size={10} className=''/>
+                    {props.timeAvailable && (
+                        <Timer size={10} className='' />
                     )}
                     <p>{props.timeAvailable}</p>
                 </div>
