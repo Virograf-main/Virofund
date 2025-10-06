@@ -20,6 +20,8 @@ type RequestCardProps = {
         backgroundColour: string
         dotColour: string
     }
+    handleApprove?: () => void
+    handleReject?: () => void
 }
 
 
@@ -78,8 +80,12 @@ const RequestCard = ({ props, className = '' }: { props: RequestCardProps, class
                 })}
             </div>
             <div className='flex gap-2 justify-between '>
-                <Button className='flex-1 bg-transparent border border-[#10B981] text-foreground text-[10px]'>Approve</Button>
-                <Button className='flex-1 bg-transparent border border-[#B91C1C] text-foreground text-[10px]'>Reject</Button>
+                <Button 
+                className='flex-1 bg-transparent border border-primary text-foreground text-[10px]'
+                onClick={props.handleApprove}>Approve</Button>
+                <Button 
+                className='flex-1 bg-transparent border border-destructive hover:bg-destructive text-foreground text-[10px]'
+                onClick={props.handleReject}>Reject</Button>
             </div>
         </div>
     )
