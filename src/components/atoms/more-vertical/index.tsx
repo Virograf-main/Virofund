@@ -19,7 +19,7 @@ export const MoreVerticalDots: React.FC<MoreVerticalDotsProps> = ({
       type="button"
       aria-label="More actions"
       className={cn(
-        "border rounded-sm p-1 inline-flex items-center justify-center",
+        "border rounded-sm p-1 inline-flex items-center justify-center hover:cursor-pointer",
         className
       )}
       {...props}

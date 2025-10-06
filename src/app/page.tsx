@@ -37,7 +37,7 @@ export default function Home() {
           dotColour: 'green'
         }
       }} /> 
-      <RequestCard className="flex-1" props={{
+      {/* <RequestCard className="flex-1" props={{
         name: 'John Bush',
         email: 'john@gmail.com',
         available: 'Remote - Fulltime',
@@ -49,7 +49,7 @@ export default function Home() {
           backgroundColour: 'primary',
           dotColour: 'green'
         }
-      }} />
+      }} /> */}
       </div>
     </div>
   );

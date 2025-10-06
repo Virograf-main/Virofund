@@ -4,6 +4,7 @@ import KeyValue from '../../atoms/keyvalue-pair'
 import { Button } from '../../atoms'
 import { Timer } from 'lucide-react'
 import { MoreVerticalDots } from '../../atoms/more-vertical'
+import SmallPfp from '@/components/atoms/small-pfp'
 
 type RequestCardProps = {
     image?: string
@@ -38,13 +39,10 @@ const RequestCard = ({ props, className = '' }: { props: RequestCardProps, class
             <div className='space-y-2'>
                 <div className='flex justify-between'>
                     <div className='flex gap-2 items-center'>
-                        <div className='rounded-full w-6 h-6'>
-                            {props.image ?
-                                (<Image src={`${props.image}`} alt={`${props.alt}`} fill className='object-cover' />)
-                                :
-                                (<div className='w-6 h-6 rounded-full bg-muted-foreground'></div>)
-                            }
-                        </div>
+                        <SmallPfp props={{
+                            image: props.image,
+                            alt: props.alt
+                        }}/>
                         <div className='flex flex-col gap-'>
                             <p className=' text-[12px]'>{props.name}</p>
                             <p className=' text-[10px] text-muted-foreground'>{props.email}</p>
