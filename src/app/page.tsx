@@ -10,6 +10,7 @@ import { DatePicker } from "@/components/atoms";
 import { useState } from "react";
 import { Section } from "@/components/molecules";
 import { Signin } from "@/components/pages";
+import RequestCard from "@/components/molecules/requestcard";
 
 const items = ["light", "dark", "system"];
 const newItems = [
@@ -22,6 +23,19 @@ export default function Home() {
   return (
     <div className="">
       <Signin />
+      {/* <RequestCard props={{
+        name: 'John Bush',
+        email: 'john@gmail.com',
+        available: 'Remote - Fulltime',
+        timeAvailable: '120h 45m',
+        details: 'An open-minded individual ready to work',
+        keyValue: {
+          department: 'Development',
+          role: 'Game Developer',
+          backgroundColour: 'primary',
+          dotColour: 'green'
+        }
+      }} /> */}
     </div>
   );
 }
