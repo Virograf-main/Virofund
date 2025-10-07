@@ -6,9 +6,9 @@ type SmallPfpType = {
     alt?: string
 }
 
-const SmallPfp = ({props}: {props: SmallPfpType}) => {
+const SmallPfp = ({props, height=6, width=6}: {props: SmallPfpType, height: number, width: number}) => {
     return (
-        <div className='rounded-full w-6 h-6'>
+        <div className={`rounded-full w-${width} h-${height}`}>
             {props.image ?
                 (<Image src={`${props.image}`} alt={`${props.alt}`} fill className='object-cover' />)
                 :
