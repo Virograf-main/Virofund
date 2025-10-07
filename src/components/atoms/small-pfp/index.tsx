@@ -6,13 +6,13 @@ type SmallPfpType = {
     alt?: string
 }
 
-const SmallPfp = ({props, height=6, width=6}: {props: SmallPfpType, height?: number, width?: number}) => {
+const SmallPfp = ({props, size=24}: {props?: SmallPfpType, size?: number, }) => {
     return (
-        <div className={`rounded-full w-${width} h-${height}`}>
-            {props.image ?
+        <div className={`rounded-full relative`} style={{ width: size, height: size }}>
+            {props?.image ?
                 (<Image src={`${props.image}`} alt={`${props.alt}`} fill className='object-cover' />)
                 :
-                (<div className='w-6 h-6 rounded-full bg-muted-foreground'></div>)
+                (<div className={`rounded-full bg-muted-foreground`} style={{ width: size, height: size }}></div>)
             }
         </div>
     )

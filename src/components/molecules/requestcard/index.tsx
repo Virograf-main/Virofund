@@ -69,6 +69,7 @@ const RequestCard = ({ props, className = '' }: { props: RequestCardProps, class
                     return (
                         <div key={idx}>
                             <KeyValue 
+                                className='space-y-1'
                                 label={{
                                     value: value.title, 
                                     className: 'text-muted-foreground text-[8px]'
@@ -82,7 +83,6 @@ const RequestCard = ({ props, className = '' }: { props: RequestCardProps, class
                                 </div>) 
                                 :
                                 (<div className=' text-[10px]'>{props.keyValue.role}</div>)}
-                                <div></div>
                             </KeyValue>
                         </div>
                     )
