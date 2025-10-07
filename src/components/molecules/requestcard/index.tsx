@@ -68,13 +68,22 @@ const RequestCard = ({ props, className = '' }: { props: RequestCardProps, class
                     const isJob = value.title === "Job Title";
                     return (
                         <div key={idx}>
-                            <KeyValue props={{
-                                label: value.title,
-                                value: value.content,
-                                backgroundColour: props.keyValue.backgroundColour,
-                                dotColour: props.keyValue.dotColour,
-                                job: isJob ? props.keyValue.role : ""
-                            }} />
+                            <KeyValue 
+                                label={{
+                                    value: value.title, 
+                                    className: 'text-muted-foreground text-[8px]'
+                                }} 
+                                >
+                                { !isJob 
+                                ?
+                                (<div className={`flex gap-0.5 items-center rounded-full px-1 text-[10px]`} style={{ backgroundColor: props.keyValue.backgroundColour}}>
+                                    <div className={`w-1 h-1 rounded-full`} style={{ backgroundColor: props.keyValue.dotColour}}></div>
+                                    <p className=''>{props.keyValue.department}</p>
+                                </div>) 
+                                :
+                                (<div className=' text-[10px]'>{props.keyValue.role}</div>)}
+                                <div></div>
+                            </KeyValue>
                         </div>
                     )
                 })}
