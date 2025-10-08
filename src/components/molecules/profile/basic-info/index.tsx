@@ -19,7 +19,7 @@ const BasicInfo = ({props}: {props: BasicInfoProps}) => {
         <SmallPfp props={{
             image: props.image,
             alt: props.alt
-        }} size={200} />
+        }} className='w-8 h-8 sm:w-12 sm:h-12' />
         <div>
             <p className='font-bold text-[30px]'>{props.name}</p>
             <p className='font-extrabold text-[16px]'>{props.role}</p>

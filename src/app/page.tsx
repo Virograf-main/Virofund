@@ -24,7 +24,8 @@ const newItems = [
 export default function Home() {
   return (
     <div className="">
-      <Signin />
+      {/* <Signin /> */}
+      <Profile/>
     </div>
   );
 }
