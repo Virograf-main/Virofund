@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/atoms";
+import { Tag } from "@/components/atoms";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BookmarkPlusIcon } from "lucide-react";
 
@@ -84,13 +84,12 @@ export default function SuggestionCard({
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4 mt-4">
             {tags.map((tag) => (
-              <Badge
+              <Tag
                 key={tag}
+                label={tag}
                 variant="outline"
                 className="rounded-full px-3 py-1 text-xs border-gray-400 text-gray-700"
-              >
-                {tag}
-              </Badge>
+              />
             ))}
           </div>
         )}
