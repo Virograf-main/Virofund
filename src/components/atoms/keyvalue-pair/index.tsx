@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 
 type LabelProps = {
-    value: string
+    value?: string
     className?: string
 }
 

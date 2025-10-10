@@ -4,81 +4,104 @@ import BasicInfo from '@/components/molecules/profile/basic-info'
 import Subcard from '@/components/molecules/profile/subcard'
 import React from 'react'
 
-type ProfileProps = {}
+type ProfileProps = {
+    fullname: string
+    role: string
+    location?: {
+      state?: string
+      country?: string
+    }
+    socials?: string
+    image?: string
+}
 
-const details = [
+type Details = {
+  keyRoles: string[]
+  workStyles?: string[]
+  skills?: string[]
+}
+
+type Experience = {
+  title: string
+  date: string
+}
+
+type Needs = {
+  coFounder?: string[]
+  CurrentSkills?: string[]
+  Industry?: string[]
+}
+
+type Projects = {
+  name: string
+  description: string
+  status: string
+  link?: string
+}
+
+
+
+const Profile = ({basicInfo, bio, details, experience, needs, projects }: {basicInfo: ProfileProps, bio?: string, details: Details, experience?: Experience[], needs?: Needs, projects?: Projects}) => {
+  const Details = [
   {
     title: 'Key Roles',
-    subdetails: ['Full time', 'Senior level', 'Flexible schedule']
+    subdetails: details.keyRoles
   },
   {
     title: 'Work Styles',
-    subdetails: ['Full time', 'Senior level', 'Flexible schedule']
+    subdetails: details.workStyles
   },
   {
     title: 'Skills & Strengths',
-    subdetails: ['Full time', 'Senior level', 'Flexible schedule']
+    subdetails: details.skills
   },
 ]
 
-const Experience = [
-  {
-    title: 'UI Team lead at Tech solutions',
-    date: 'Jul 2022-2024'
-  }, {
-    title: 'UI Team lead at Tech solutions',
-    date: 'Jul 2022-2024'
-  }, {
-    title: 'UI Team lead at Tech solutions',
-    date: 'Jul 2022-2024'
-  },
-]
+
 
 const Needs = [
   {
     title: 'Type of co-founder',
-    details: ['Tech co-founder', 'Business owner', 'Business owner', 'Business owner']
+    details: needs?.coFounder
   },
   {
     title: 'Current stage',
-    details: ['Tech co-founder', 'Business owner']
+    details: needs?.CurrentSkills
   },
   {
     title: 'Industry or sector',
-    details: ['Tech co-founder', 'Business owner']
+    details: needs?.Industry
   },
 ]
 
 const Projects = [
   {
     key: 'Project name',
-    value: 'FlipConnect'
+    value: projects?.name
   },
   {
     key: 'Project description',
-    value: 'FlipConnect'
+    value: projects?.description
   },
   {
     key: 'Project status',
-    value: 'FlipConnect'
+    value: projects?.status
   },
   {
     key: 'Website link',
-    value: 'FlipConnect'
+    value: projects?.link
   },
 ]
-
-const Profile = () => {
   return (
     <div className='bg-background md:rounded-[20px]  space-y-4'>
       <BasicInfo props={{
-        name: 'Clinton John',
-        role: 'UI/UX DESIGNER',
+        name: basicInfo.fullname,
+        role: basicInfo.role,
         location: {
-          state: 'Lagos',
-          country: 'Nigeria'
+          state: basicInfo.location?.state,
+          country: basicInfo.location?.country
         },
-        socials: 'LinkedIn-Github'
+        socials: basicInfo.socials
       }} />
 
       <div className='p-4 space-y-4'>
@@ -90,11 +113,11 @@ const Profile = () => {
         </KeyValue>
 
         <div className='md:flex gap-3 w-full py-2 space-y-3'>
-          {details.map((detail, idx) => (
+          {Details.map((detail, idx) => (
             <div key={idx} className=''>
               <Subcard text={`${detail.title}`} className='text-[16px] font-semibold '>
                 <div key={idx} className='flex flex-wrap gap-2 w-full max-w-full pt-[10px]'>
-                  {detail.subdetails.map((subdetail, idx) => (
+                  {detail.subdetails?.map((subdetail, idx) => (
                     <Pills key={idx} text={`${subdetail}`} />
                   ))}
                 </div>
@@ -105,7 +128,7 @@ const Profile = () => {
 
         <Subcard text='Experience' className='text-[16px] font-semibold '>
           <div className='md:flex justify-between pt-[10px] space-y-3'>
-            {Experience.map((ex, idx) => (
+            { experience?.map((ex, idx) => (
               <div key={idx}>
               <KeyValue label={{ value: ex.title, className: 'font-[500] text-[16px]' }}>
                 <p className='text-[14px] text-muted-foreground'>{ex.date}</p>
@@ -122,7 +145,7 @@ const Profile = () => {
                 <p className='text-[13px] font-[500]'>{need.title}:</p>
                 <div>
                 <div className='flex flex-wrap gap-2 w-full max-w-full'>
-                  {need.details.map((detail, idx) => (
+                  {need.details?.map((detail, idx) => (
                       <Pills key={idx} text={detail} />
                   ))}
                 </div>

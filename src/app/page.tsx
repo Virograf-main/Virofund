@@ -23,9 +23,8 @@ const newItems = [
 
 export default function Home() {
   return (
-    <div className="bg-black p-6">
-      {/* <Signin /> */}
-      <Profile/>
+    <div className="">
+      <Signin />
     </div>
   );
 }

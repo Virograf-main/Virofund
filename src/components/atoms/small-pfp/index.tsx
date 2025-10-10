@@ -14,7 +14,7 @@ const SmallPfp = ({ props, className = "", size }: { props?: SmallPfpType, class
     >
       {props?.image ? (
         <Image
-          src={props.image}
+          src={`https:${props.image}`}
           alt={props.alt || ""}
           fill
           className="object-cover rounded-full"
