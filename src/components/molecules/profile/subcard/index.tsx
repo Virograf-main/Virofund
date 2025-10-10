@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react'
 
 const Subcard = ({text, children, className=""}: {text: string, children: ReactNode, className?: string}) => {
   return (
-    <div className='border border-input rounded-[8px] p-[16px] flex-1'>
+    <div className='md:border border-input rounded-[8px] md:p-[16px] py-[16px] flex-1'>
         <KeyValue label={{value: text, className: className}} >{children} </KeyValue>
     </div>
   )

@@ -70,7 +70,7 @@ const Projects = [
 
 const Profile = () => {
   return (
-    <div className='bg-background rounded-[20px]  space-y-4'>
+    <div className='bg-background md:rounded-[20px]  space-y-4'>
       <BasicInfo props={{
         name: 'Clinton John',
         role: 'UI/UX DESIGNER',
@@ -84,16 +84,16 @@ const Profile = () => {
       <div className='p-4 space-y-4'>
         <KeyValue label={{
           value: 'Bio',
-          className: 'font-bold text-[24px] '
+          className: 'font-bold md:text-[24px] text-[18px]'
         }}>
           <p>A ”Product designer passionate about FinTech and solving real world problems”</p>
         </KeyValue>
 
-        <div className='flex gap-3 w-full py-2'>
+        <div className='md:flex gap-3 w-full py-2 space-y-3'>
           {details.map((detail, idx) => (
-            <div key={idx}>
+            <div key={idx} className=''>
               <Subcard text={`${detail.title}`} className='text-[16px] font-semibold '>
-                <div key={idx} className='flex gap-2 pt-[10px]'>
+                <div key={idx} className='flex flex-wrap gap-2 w-full max-w-full pt-[10px]'>
                   {detail.subdetails.map((subdetail, idx) => (
                     <Pills key={idx} text={`${subdetail}`} />
                   ))}
@@ -104,7 +104,7 @@ const Profile = () => {
         </div>
 
         <Subcard text='Experience' className='text-[16px] font-semibold '>
-          <div className='flex justify-between pt-[10px]'>
+          <div className='md:flex justify-between pt-[10px] space-y-3'>
             {Experience.map((ex, idx) => (
               <div key={idx}>
               <KeyValue label={{ value: ex.title, className: 'font-[500] text-[16px]' }}>
@@ -116,12 +116,12 @@ const Profile = () => {
         </Subcard>
 
         <Subcard text='What John is looking for'  className='text-[16px] font-semibold '>
-          <div className='flex justify-between'>
+          <div className='md:flex justify-between gap-2 space-y-3'>
             {Needs.map((need, idx) => (
               <div key={idx} className='flex flex-wrap items-center gap-2 pt-[10px]'>
                 <p className='text-[13px] font-[500]'>{need.title}:</p>
                 <div>
-                <div className='flex gap-1'>
+                <div className='flex flex-wrap gap-2 w-full max-w-full'>
                   {need.details.map((detail, idx) => (
                       <Pills key={idx} text={detail} />
                   ))}
@@ -134,7 +134,7 @@ const Profile = () => {
 
         <hr />
 
-        <KeyValue label={{ value: 'Startup or project', className: 'font-semibold text-[18px] ' }} className='p-4'>
+        <KeyValue label={{ value: 'Startup or project', className: 'font-semibold text-[18px] ' }} className='md:p-4'>
           <div className='pt-[10px] space-y-2'>
             {Projects.map((project, idx) => (
               <div key={idx} className='text-[14px]'> {project.key}: {project.value} </div>

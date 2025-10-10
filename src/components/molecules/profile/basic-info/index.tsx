@@ -19,12 +19,12 @@ const BasicInfo = ({props}: {props: BasicInfoProps}) => {
         <SmallPfp props={{
             image: props.image,
             alt: props.alt
-        }} className='w-52 h-52 sm:w-24 sm:h-24' />
+        }} className='md:w-52 md:h-52 w-24 h-24' />
         <div>
-            <p className='font-bold text-[30px]'>{props.name}</p>
-            <p className='font-extrabold text-[16px]'>{props.role}</p>
-            <p className='font-extrabold text-[16px]'>{props.location?.state} {props.location?.country ? `, ${props.location?.country}`  : ''}</p>
-            <p className='text-[18px]'>{props.socials}</p>
+            <p className='font-bold md:text-[30px] text-[20px]'>{props.name}</p>
+            <p className='font-extrabold md:text-[16px] text-[11px]'>{props.role}</p>
+            <p className='font-extrabold md:text-[16px] text-[11px]'>{props.location?.state} {props.location?.country ? `, ${props.location?.country}`  : ''}</p>
+            <p className='md:text-[18px] text-[12px]'>{props.socials}</p>
         </div>
     </div>
   )
