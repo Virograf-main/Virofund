@@ -12,11 +12,11 @@ const details = [
     subdetails: ['Full time', 'Senior level', 'Flexible schedule']
   },
   {
-    title: 'Key Roles',
+    title: 'Work Styles',
     subdetails: ['Full time', 'Senior level', 'Flexible schedule']
   },
   {
-    title: 'Key Roles',
+    title: 'Skills & Strengths',
     subdetails: ['Full time', 'Senior level', 'Flexible schedule']
   },
 ]
@@ -37,40 +37,40 @@ const Experience = [
 const Needs = [
   {
     title: 'Type of co-founder',
+    details: ['Tech co-founder', 'Business owner', 'Business owner', 'Business owner']
+  },
+  {
+    title: 'Current stage',
     details: ['Tech co-founder', 'Business owner']
   },
   {
-    title: 'Type of co-founder',
-    details: ['Tech co-founder', 'Business owner']
-  },
-  {
-    title: 'Type of co-founder',
+    title: 'Industry or sector',
     details: ['Tech co-founder', 'Business owner']
   },
 ]
 
 const Projects = [
   {
-    key: 'Project Name',
+    key: 'Project name',
     value: 'FlipConnect'
   },
   {
-    key: 'Project Name',
+    key: 'Project description',
     value: 'FlipConnect'
   },
   {
-    key: 'Project Name',
+    key: 'Project status',
     value: 'FlipConnect'
   },
   {
-    key: 'Project Name',
+    key: 'Website link',
     value: 'FlipConnect'
   },
 ]
 
 const Profile = () => {
   return (
-    <div className='bg-background rounded-[20px] p-4 space-y-4'>
+    <div className='bg-background rounded-[20px]  space-y-4'>
       <BasicInfo props={{
         name: 'Clinton John',
         role: 'UI/UX DESIGNER',
@@ -80,64 +80,68 @@ const Profile = () => {
         },
         socials: 'LinkedIn-Github'
       }} />
-      <hr className='' />
 
-      <KeyValue label={{
-        value: 'Bio'
-      }}>
-        <p>A ”Product designer passionate about FinTech and solving real world problems”</p>
-      </KeyValue>
+      <div className='p-4 space-y-4'>
+        <KeyValue label={{
+          value: 'Bio',
+          className: 'font-bold text-[24px] '
+        }}>
+          <p>A ”Product designer passionate about FinTech and solving real world problems”</p>
+        </KeyValue>
 
-      <div className='flex justify-between'>
-        {details.map((detail, idx) => (
-          <div key={idx}>
-            <Subcard text={`${detail.title}`} className='text-[16px] font-semibold'>
-              <div key={idx} className='flex gap-2'>
-                {detail.subdetails.map((subdetail, idx) => (
-                  <Pills text={`${subdetail}`} />
-                ))}
-              </div>
-            </Subcard>
-          </div>
-        ))}
-      </div>
-
-      <Subcard text='Experience'>
-        <div className='flex justify-between'>
-          {Experience.map((ex, idx) => (
-            <KeyValue label={{ value: ex.title }}>
-              <p>{ex.date}</p>
-            </KeyValue>
-          ))}
-        </div>
-      </Subcard>
-
-      <Subcard text='What John is looking for'>
-        <div className='flex justify-between'>
-          {Needs.map((need, idx) => (
-            <div key={idx} className='flex gap-2'>
-              <p>{need.title}:</p>
-              <div className='flex gap-1'>
-                {need.details.map((detail, idx) => (
-                  <div key={idx}>
-                    <Pills text={detail} />
-                  </div>
-                ))}
-              </div>
+        <div className='flex gap-3 w-full py-2'>
+          {details.map((detail, idx) => (
+            <div key={idx}>
+              <Subcard text={`${detail.title}`} className='text-[16px] font-semibold '>
+                <div key={idx} className='flex gap-2 pt-[10px]'>
+                  {detail.subdetails.map((subdetail, idx) => (
+                    <Pills key={idx} text={`${subdetail}`} />
+                  ))}
+                </div>
+              </Subcard>
             </div>
           ))}
         </div>
-      </Subcard>
 
-      <hr/>
+        <Subcard text='Experience' className='text-[16px] font-semibold '>
+          <div className='flex justify-between pt-[10px]'>
+            {Experience.map((ex, idx) => (
+              <div key={idx}>
+              <KeyValue label={{ value: ex.title, className: 'font-[500] text-[16px]' }}>
+                <p className='text-[14px] text-muted-foreground'>{ex.date}</p>
+              </KeyValue>
+              </div>
+            ))}
+          </div>
+        </Subcard>
 
-      <KeyValue label={{value: 'Startup or project'}}>
-        <div>
-          {Projects.map((project, idx) => (
-            <div key={idx} className=''> {project.key}: {project.value} </div>
-          ))}
-        </div>
-      </KeyValue>
+        <Subcard text='What John is looking for'  className='text-[16px] font-semibold '>
+          <div className='flex justify-between'>
+            {Needs.map((need, idx) => (
+              <div key={idx} className='flex flex-wrap items-center gap-2 pt-[10px]'>
+                <p className='text-[13px] font-[500]'>{need.title}:</p>
+                <div>
+                <div className='flex gap-1'>
+                  {need.details.map((detail, idx) => (
+                      <Pills key={idx} text={detail} />
+                  ))}
+                </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Subcard>
+
+        <hr />
+
+        <KeyValue label={{ value: 'Startup or project', className: 'font-semibold text-[18px] ' }} className='p-4'>
+          <div className='pt-[10px] space-y-2'>
+            {Projects.map((project, idx) => (
+              <div key={idx} className='text-[14px]'> {project.key}: {project.value} </div>
+            ))}
+          </div>
+        </KeyValue>
+      </div>
     </div>
   )
 }

@@ -15,11 +15,11 @@ type BasicInfoProps = {
 
 const BasicInfo = ({props}: {props: BasicInfoProps}) => {
   return (
-    <div className='flex gap-4 items-center' style={{ fontFamily: "var(--font-plus-jakarta-sans)"}}>
+    <div className='flex gap-4 items-center p-4 rounded-b-[20px] border-b-2 border-b-input' style={{ fontFamily: "var(--font-plus-jakarta-sans)"}}>
         <SmallPfp props={{
             image: props.image,
             alt: props.alt
-        }} className='w-8 h-8 sm:w-12 sm:h-12' />
+        }} className='w-52 h-52 sm:w-24 sm:h-24' />
         <div>
             <p className='font-bold text-[30px]'>{props.name}</p>
             <p className='font-extrabold text-[16px]'>{props.role}</p>

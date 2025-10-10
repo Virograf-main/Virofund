@@ -20,7 +20,7 @@ const SmallPfp = ({ props, className = "", size }: { props?: SmallPfpType, class
           className="object-cover rounded-full"
         />
       ) : (
-        <div className="rounded-full bg-muted-foreground w-full h-full" />
+        <div className="rounded-full bg-input w-full h-full" />
       )}
     </div>
   );

@@ -1,8 +1,8 @@
 import React from 'react'
 
-const Pills = ({text}: {text: string}) => {
+const Pills = ({text, key}: {text: string, key?: number}) => {
   return (
-    <div className='rounded-full border border-muted-foreground px-8 py-2 text-muted-foreground text-[10px] font-[500]'>{text}</div>
+    <div key={key} className='rounded-full border border-muted-foreground px-3 py-1 text-muted-foreground text-[10px] font-[500]'>{text}</div>
   )
 }
 
