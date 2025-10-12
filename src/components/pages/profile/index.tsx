@@ -93,7 +93,7 @@ const Projects = [
   },
 ]
   return (
-    <div className='bg-background md:rounded-[20px]  space-y-4'>
+    <div className='bg-background md:rounded-[20px] space-y-4'>
       <BasicInfo props={{
         name: basicInfo.fullname,
         role: basicInfo.role,
