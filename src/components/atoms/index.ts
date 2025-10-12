@@ -10,3 +10,4 @@ export * from "./date-picker";
 export * from "./logo";
 export * from "./stepper";
 export * from "./textarea";
+export * from "./tag";
