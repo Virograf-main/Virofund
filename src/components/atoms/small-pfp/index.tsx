@@ -6,16 +6,25 @@ type SmallPfpType = {
     alt?: string
 }
 
-const SmallPfp = ({props, height=6, width=6}: {props: SmallPfpType, height?: number, width?: number}) => {
-    return (
-        <div className={`rounded-full w-${width} h-${height}`}>
-            {props.image ?
-                (<Image src={`${props.image}`} alt={`${props.alt}`} fill className='object-cover' />)
-                :
-                (<div className='w-6 h-6 rounded-full bg-muted-foreground'></div>)
-            }
-        </div>
-    )
-}
+const SmallPfp = ({ props, className = "", size }: { props?: SmallPfpType, className?: string, size?: number }) => {
+  return (
+    <div
+      className={`rounded-full relative ${className}`}
+      style={size ? { width: size, height: size } : {}}
+    >
+      {props?.image ? (
+        <Image
+          src={`https:${props.image}`}
+          alt={props.alt || ""}
+          fill
+          className="object-cover rounded-full"
+        />
+      ) : (
+        <div className="rounded-full bg-input w-full h-full" />
+      )}
+    </div>
+  );
+};
+
 
 export default SmallPfp
