@@ -14,3 +14,4 @@ export * from "./tag";
 export * from "./card";
 export * from "./message";
 export * from "./runningprojects";
+export * from "./table";

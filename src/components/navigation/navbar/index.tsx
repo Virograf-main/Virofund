@@ -1,0 +1,25 @@
+"use client";
+import { Bell } from "lucide-react";
+import Image from "next/image";
+import React from "react";
+
+export function Navbar() {
+  return (
+    <nav className="py-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-[2em] font-semibold">Welcome back, John!</h1>
+        <div className="flex items-center gap-2">
+          <div className="rounded-full overflow-hidden h-[40px] w-[40px]">
+            <Image
+              src="/jpg/no-image.jpg"
+              width={50}
+              height={50}
+              alt="profile"
+            />
+          </div>
+          <Bell height={30} width={30} />
+        </div>
+      </div>
+    </nav>
+  );
+}
