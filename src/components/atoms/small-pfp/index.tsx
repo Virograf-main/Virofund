@@ -6,7 +6,7 @@ type SmallPfpType = {
     alt?: string
 }
 
-const SmallPfp = ({ props, className = "", size }: { props?: SmallPfpType, className?: string, size?: number }) => {
+const SmallPfp = ({ props, className = "", size=45 }: { props?: SmallPfpType, className?: string, size?: number }) => {
   return (
     <div
       className={`rounded-full relative ${className}`}
