@@ -15,7 +15,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         variant={variant}
         className={cn(
           "rounded-lg px-6 py-3 font-semibold transition cursor-pointer my-4 h-9",
-          variant !== "link" && " w-full",
+          variant !== "link" && " ",
           variant === "default" && "bg-[#128C72] hover:bg-[#107a63]",
           variant === "ghost" && "bg-transparent border border-[#D1D5DB]",
           variant === "secondary" && "bg-[#94F0C5] hover:bg-[#79c2a0] ",
