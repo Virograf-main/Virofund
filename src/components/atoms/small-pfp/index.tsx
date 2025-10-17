@@ -9,7 +9,7 @@ type SmallPfpType = {
 const SmallPfp = ({
   props,
   className = "",
-  size,
+  size = 45,
 }: {
   props?: SmallPfpType;
   className?: string;
