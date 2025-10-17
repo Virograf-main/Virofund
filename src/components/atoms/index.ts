@@ -11,3 +11,4 @@ export * from "./logo";
 export * from "./stepper";
 export * from "./textarea";
 export * from "./table";
+export * from "./tag";

@@ -5,7 +5,7 @@ import React from "react";
 
 export function Navbar() {
   return (
-    <nav className="py-4">
+    <nav className="py-2">
       <div className="flex items-center justify-between">
         <h1 className="text-[2em] font-semibold">Welcome back, John!</h1>
         <div className="flex items-center gap-2">

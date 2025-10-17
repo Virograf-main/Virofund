@@ -1,4 +1,5 @@
 import { Button, DataTable } from "@/components/atoms";
+import RequestCard from "@/components/molecules/request-card";
 
 export default function TeamTable() {
   const columns = [
@@ -47,20 +48,44 @@ export default function TeamTable() {
     },
   ];
 
+  const RequestCardProps = {
+    image: "/jpg/no-image.jpg",
+    alt: "string",
+    name: "Chido Obi",
+    email: "creativeobi@gmail.com",
+    available: "Onsite - Remote",
+    timeAvailable: "160h 55m",
+    details:
+      "A collaborative developer with innovative ideas and industry valued experience and top notch technicality",
+    keyValue: {
+      department: "string",
+      role: "string",
+      backgroundColour: "string",
+      dotColour: "string",
+    },
+  };
   return (
-    <section className="bg-white py-2 rounded-2xl">
-      <div className="flex justify-between items-center px-4 py-2">
-        <p className="font-semibold text-[1.2em]">Suggestions</p>
-        <Button variant="outline" className="m-0">
-          See All
-        </Button>
-      </div>
-      <DataTable
-        // caption="Team Members"
-        columns={columns}
-        data={data}
-        // rowsPerPage={3}
-      />
+    <section className="flex flex-col gap-6">
+      <section className="bg-white py-2 rounded-2xl">
+        <div className="flex justify-between items-center px-4 py-2">
+          <p className="font-semibold text-[1.2em]">Suggestions</p>
+          <Button variant="outline" className="m-0">
+            See All
+          </Button>
+        </div>
+        <DataTable columns={columns} data={data} />
+      </section>
+      <section className="bg-[#F3F4F6] p-2 rounded-2xl">
+        <p className="font-semibold text-[1.2em]">Co-founder Requests</p>
+        <div className="flex flex-col gap-4">
+          <RequestCard props={RequestCardProps} />
+          <RequestCard props={RequestCardProps} />
+          <RequestCard props={RequestCardProps} />
+          <RequestCard props={RequestCardProps} />
+          <RequestCard props={RequestCardProps} />
+          <RequestCard props={RequestCardProps} />
+        </div>
+      </section>
     </section>
   );
 }

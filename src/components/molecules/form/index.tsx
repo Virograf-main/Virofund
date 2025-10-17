@@ -192,13 +192,13 @@ export function Form() {
         {isPrevUser && <p className="text-[14px]">Forgot Password?</p>}
       </div>
 
-      <Button type="submit">
+      <Button type="submit" className="w-full">
         {isCreatingAccount ? "loading..." : "Sign in"}
       </Button>
 
       <Demarcation text="or continue with" />
 
-      <Button variant="outline" type="button">
+      <Button variant="outline" type="button" className="w-full">
         <Image
           src="/svg/google-svgrepo-com.svg"
           alt="google"

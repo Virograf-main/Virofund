@@ -203,3 +203,7 @@ select:-webkit-autofill:focus {
     display: flex;
   }
 }
+
+.scrollbar::-webkit-scrollbar {
+  display: none;
+}

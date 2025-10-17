@@ -1,12 +1,20 @@
-import Image from 'next/image'
-import React from 'react'
+import Image from "next/image";
+import React from "react";
 
 type SmallPfpType = {
-    image?: string
-    alt?: string
-}
+  image?: string;
+  alt?: string;
+};
 
-const SmallPfp = ({ props, className = "", size }: { props?: SmallPfpType, className?: string, size?: number }) => {
+const SmallPfp = ({
+  props,
+  className = "",
+  size,
+}: {
+  props?: SmallPfpType;
+  className?: string;
+  size?: number;
+}) => {
   return (
     <div
       className={`rounded-full relative ${className}`}
@@ -14,7 +22,7 @@ const SmallPfp = ({ props, className = "", size }: { props?: SmallPfpType, class
     >
       {props?.image ? (
         <Image
-          src={`https:${props.image}`}
+          src={`${props.image}`}
           alt={props.alt || ""}
           fill
           className="object-cover rounded-full"
@@ -26,5 +34,4 @@ const SmallPfp = ({ props, className = "", size }: { props?: SmallPfpType, class
   );
 };
 
-
-export default SmallPfp
+export default SmallPfp;
