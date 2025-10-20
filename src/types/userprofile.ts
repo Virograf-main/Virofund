@@ -16,3 +16,14 @@ export interface OnboardingData {
   preferredPersonalityTraits?: string[];
   preferredLocation?: string; // looks like your snippet got cut at "preferredLo"
 }
+
+export interface UserProfile {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isActive: boolean;
+  isAdmin: boolean;
+  createdAt: string; // ISO timestamp string
+  updatedAt: string; // ISO timestamp string
+}

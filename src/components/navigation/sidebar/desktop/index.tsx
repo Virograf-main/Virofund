@@ -31,11 +31,11 @@ export function DesktopSidebar() {
       route: "/requests",
       icon: <Boxes />,
     },
-    {
-      label: "Messages",
-      route: "/messages",
-      icon: <MessagesSquare />,
-    },
+    // {
+    //   label: "Messages",
+    //   route: "/messages",
+    //   icon: <MessagesSquare />,
+    // },
     {
       label: "Notifications",
       route: "/notifications",
@@ -58,7 +58,7 @@ export function DesktopSidebar() {
   const isActive = (route: string) =>
     pathName === route || pathName.startsWith(`${route}/`);
   return (
-    <aside className="w-64 py-6 flex flex-col justify-between">
+    <aside className="w-64 py-6 flex-col justify-between hidden xl:flex">
       <div className="flex flex-col gap-8">
         <div className="flex items-center gap-2 justify-center">
           <Image src="/svg/logo.svg" width={20} height={20} alt="logo" />

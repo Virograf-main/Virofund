@@ -1,13 +1,17 @@
+"use client";
 import { Button, DataTable } from "@/components/atoms";
+import { Messages } from "@/components/molecules";
 import RequestCard from "@/components/molecules/request-card";
+import { useMatches } from "@/store/useMatchesStore";
 
 export default function TeamTable() {
+  const { matches } = useMatches();
   const columns = [
     { key: "name", header: "Name" },
-    { key: "state", header: "State" },
+    { key: "location", header: "Location" },
     { key: "industry", header: "Industry" },
     { key: "skills", header: "Skill stack" },
-    { key: "hasStartup", header: "Has a startup?" },
+    { key: "score", header: "Match Score" },
   ];
 
   const data = [
@@ -64,28 +68,165 @@ export default function TeamTable() {
       dotColour: "string",
     },
   };
+
+  const sampleMessages = [
+    {
+      name: "Julian Chidi",
+      textmessage: "Hey! Did you finish the wireframe for the mobile app?",
+      day: "Today",
+      time: "6:30 PM",
+    },
+    {
+      name: "Amaka Peters",
+      textmessage: "Can you review the dashboard layout before our standup?",
+      day: "Today",
+      time: "5:45 PM",
+    },
+    {
+      name: "Emmanuel King",
+      textmessage: "Client just approved the final color palette 🎨",
+      day: "Yesterday",
+      time: "9:10 PM",
+    },
+    {
+      name: "Tomiwa Ade",
+      textmessage: "Please share the updated user journey slides.",
+      day: "Yesterday",
+      time: "3:20 PM",
+    },
+    {
+      name: "Lara Smith",
+      textmessage: "Let’s sync on the research findings tomorrow morning.",
+      day: "2 days ago",
+      time: "11:00 AM",
+    },
+    {
+      name: "Joshua Uche",
+      textmessage: "Your Figma file link seems broken — can you resend?",
+      day: "2 days ago",
+      time: "8:15 PM",
+    },
+    {
+      name: "Mariam Abdul",
+      textmessage: "The animations look amazing! Motion done right 🔥",
+      day: "3 days ago",
+      time: "7:40 PM",
+    },
+    {
+      name: "Mariam Abdul",
+      textmessage: "The animations look amazing! Motion done right 🔥",
+      day: "3 days ago",
+      time: "7:40 PM",
+    },
+    {
+      name: "Mariam Abdul",
+      textmessage: "The animations look amazing! Motion done right 🔥",
+      day: "3 days ago",
+      time: "7:40 PM",
+    },
+    {
+      name: "Mariam Abdul",
+      textmessage: "The animations look amazing! Motion done right 🔥",
+      day: "3 days ago",
+      time: "7:40 PM",
+    },
+    {
+      name: "Mariam Abdul",
+      textmessage: "The animations look amazing! Motion done right 🔥",
+      day: "3 days ago",
+      time: "7:40 PM",
+    },
+    {
+      name: "Mariam Abdul",
+      textmessage: "The animations look amazing! Motion done right 🔥",
+      day: "3 days ago",
+      time: "7:40 PM",
+    },
+  ];
+
+  const runningProjects = [
+    {
+      name: "FinFlow Mobile",
+      textmessage: "Building out the payment interface for iOS users.",
+      day: "This Week",
+      time: "In Progress",
+    },
+    {
+      name: "PayLink Dashboard",
+      textmessage: "Designing analytics cards and merchant reports.",
+      day: "Last Week",
+      time: "Review",
+    },
+    {
+      name: "WalletX UX Refresh",
+      textmessage: "Revamping navigation and microinteractions.",
+      day: "2 Weeks Ago",
+      time: "In Progress",
+    },
+  ];
+
+  const refinedMatches = matches.map((match) => {
+    const percentage = (match.overallScore * 100).toFixed(0); // round to nearest integer
+
+    const matchScore =
+      match.overallScore > 0.5 && match.overallScore < 0.75 ? (
+        <span className="text-red-600">{percentage}%</span>
+      ) : (
+        // percentage
+        <span className="text-primary">{percentage}%</span>
+      );
+    // percentage;
+
+    return {
+      name: match.matchedFounderDetails.name,
+      location: match.matchedFounderDetails.location,
+      industry: match.matchedFounderDetails.industry,
+      skills: match.matchedFounderDetails.skills.join(", "),
+      score: matchScore,
+    };
+  });
+
   return (
-    <section className="flex flex-col gap-6">
-      <section className="bg-white py-2 rounded-2xl">
-        <div className="flex justify-between items-center px-4 py-2">
-          <p className="font-semibold text-[1.2em]">Suggestions</p>
-          <Button variant="outline" className="m-0">
-            See All
-          </Button>
-        </div>
-        <DataTable columns={columns} data={data} />
+    <section className="xl:grid xl:grid-cols-[1fr_400px] xl:gap-6 h-[90vh] overflow-hidden">
+      <section className="flex flex-col gap-6 overflow-y-auto scrollbar">
+        <section className="bg-white py-2 rounded-2xl w-full">
+          <div className="flex justify-between items-center px-4 py-2">
+            <p className="font-semibold text-[1.2em]">Suggestions</p>
+            <Button variant="outline" className="m-0">
+              See All
+            </Button>
+          </div>
+
+          <div className="overflow-x-auto w-full">
+            {/* <DataTable /> */}
+            <DataTable
+              className="px-2"
+              columns={columns}
+              data={refinedMatches}
+            />
+          </div>
+        </section>
+
+        <section className="bg-[#F3F4F6] p-2 rounded-2xl">
+          <p className="font-semibold text-[1.2em] py-2">Co-founder Requests</p>
+          <div className="flex flex-col gap-4 ">
+            <RequestCard props={RequestCardProps} />
+            <RequestCard props={RequestCardProps} />
+            <RequestCard props={RequestCardProps} />
+            <RequestCard props={RequestCardProps} />
+            <RequestCard props={RequestCardProps} />
+            <RequestCard props={RequestCardProps} />
+          </div>
+        </section>
       </section>
-      <section className="bg-[#F3F4F6] p-2 rounded-2xl">
-        <p className="font-semibold text-[1.2em]">Co-founder Requests</p>
-        <div className="flex flex-col gap-4">
-          <RequestCard props={RequestCardProps} />
-          <RequestCard props={RequestCardProps} />
-          <RequestCard props={RequestCardProps} />
-          <RequestCard props={RequestCardProps} />
-          <RequestCard props={RequestCardProps} />
-          <RequestCard props={RequestCardProps} />
-        </div>
-      </section>
+      <div className="hidden xl:block">
+        <Messages
+          messages={sampleMessages}
+          projects={runningProjects}
+          projectCount={runningProjects.length}
+          // onSearch={handleSearch}
+        />
+      </div>
     </section>
   );
 }
