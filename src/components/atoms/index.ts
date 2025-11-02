@@ -16,3 +16,4 @@ export * from "./message";
 export * from "./runningprojects";
 export * from "./table";
 export * from "./tag";
+export * from "./loader";

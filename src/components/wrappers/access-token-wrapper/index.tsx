@@ -30,9 +30,8 @@ export function TokenChecker({
   const router = useRouter();
 
   useEffect(() => {
-    const checkToken = () => {
+    const checkToken: () => void = () => {
       const token = localStorage.getItem("accessToken");
-
       if (!token) {
         router.replace("/login"); // redirect if no token
         return;
@@ -42,7 +41,7 @@ export function TokenChecker({
         if (onTokenExpired) {
           onTokenExpired(); // call your refresh function
         } else {
-          router.replace("/login"); // fallback to login
+          router.replace("/"); // fallback to login
         }
       }
     };

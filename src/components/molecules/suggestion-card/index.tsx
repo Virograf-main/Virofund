@@ -20,7 +20,7 @@ interface SuggestionCardProps {
   className?: string;
 }
 
-export default function SuggestionCard({
+export function SuggestionCard({
   name,
   title,
   description,
