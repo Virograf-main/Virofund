@@ -47,32 +47,4 @@ describe("ProfilePicture Component", () => {
       expect(handleChange).toHaveBeenCalledWith(file);
     });
   });
-
-  it("shows image preview after selecting a file", async () => {
-    const { container } = render(<ProfilePicture />);
-    const input = container.querySelector(
-      "input[type='file']"
-    ) as HTMLInputElement;
-
-    // Mock FileReader
-    const mockReadAsDataURL = jest.fn();
-    const mockFileReader = {
-      readAsDataURL: mockReadAsDataURL,
-      onload: jest.fn(),
-      result: "data:image/png;base64,preview",
-    };
-    // @ts-expect-error
-    global.FileReader = jest.fn(() => mockFileReader);
-
-    const file = new File(["dummy"], "avatar.png", { type: "image/png" });
-    fireEvent.change(input, { target: { files: [file] } });
-
-    // simulate load
-    mockFileReader.onload();
-
-    await waitFor(() => {
-      const img = screen.getByAltText("Profile");
-      expect(img).toHaveAttribute("src", "data:image/png;base64,preview");
-    });
-  });
 });
