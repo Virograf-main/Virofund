@@ -1,27 +1,22 @@
-import type { OnboardingData, UserProfile } from "@/types/userprofile";
 import toast from "react-hot-toast";
-import { useOnboardingStore } from "@/store/onboardingStore"; // adjust path if needed
-import { getUserFromFirebase } from "./firebase";
-import { markUserOnboarded } from "./firebase"; // new function
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { useUserStore } from "@/store/userStore";
+import { base_url } from "./constants";
 
-export const generateMatch = async () => {
+const token = localStorage.getItem("accessToken");
+export const generateMatch = async (router: AppRouterInstance) => {
   try {
-    const token = localStorage.getItem("accessToken");
     if (!token) {
       toast.error("No access token found in localStorage");
       return;
     }
 
-    const response = await fetch("http://localhost:4000/matches/generate", {
+    const response = await fetch(`${base_url}/matches/generate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
-    // useUserStore.getState().setUser(data);
 
     if (!response.ok) {
       switch (response.status) {
@@ -32,6 +27,7 @@ export const generateMatch = async () => {
           toast.error("Unauthorized. Please log in again.");
           // Optionally clear token and redirect to login
           localStorage.removeItem("accessToken");
+          router.push("/");
           return [];
         case 403:
           toast.error(
@@ -68,13 +64,12 @@ export const generateMatch = async () => {
 };
 export const getMatches = async () => {
   try {
-    const token = localStorage.getItem("accessToken");
     if (!token) {
       toast.error("No access token found in localStorage");
       return;
     }
 
-    const response = await fetch("http://localhost:4000/matches", {
+    const response = await fetch(`${base_url}/matches`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

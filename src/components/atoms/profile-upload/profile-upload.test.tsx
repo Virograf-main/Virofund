@@ -61,7 +61,7 @@ describe("ProfilePicture Component", () => {
       onload: jest.fn(),
       result: "data:image/png;base64,preview",
     };
-    // @ts-ignore
+    // @ts-expect-error
     global.FileReader = jest.fn(() => mockFileReader);
 
     const file = new File(["dummy"], "avatar.png", { type: "image/png" });

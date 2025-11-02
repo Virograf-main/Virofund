@@ -1,12 +1,34 @@
+// __tests__/Demarcation.test.tsx
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { Demarcation } from "./index";
 
-// Mock the Separator component from "@/components/atoms"
+/* -------------------------------------------------
+   1. Type for the mocked Separator component
+   ------------------------------------------------- */
+interface SeparatorProps extends React.HTMLAttributes<HTMLHRElement> {
+  // Add any custom props your real Separator might accept
+  // e.g., orientation?: "horizontal" | "vertical";
+  orientation?: "horizontal" | "vertical";
+}
+
+/* -------------------------------------------------
+   2. Mock Separator – fully typed
+   ------------------------------------------------- */
 jest.mock("@/components/atoms", () => ({
-  Separator: (props: any) => <hr data-testid="separator" {...props} />,
+  Separator: (props: SeparatorProps) => (
+    <hr
+      data-testid="separator"
+      {...props}
+      // Ensure className is passed through
+      className={props.className}
+    />
+  ),
 }));
 
+/* -------------------------------------------------
+   3. Tests – no `any`, full type safety
+   ------------------------------------------------- */
 describe("Demarcation", () => {
   it("renders the provided text", () => {
     render(<Demarcation text="OR" />);
@@ -22,9 +44,17 @@ describe("Demarcation", () => {
   it("applies correct styling classes", () => {
     render(<Demarcation text="Divider" />);
     const separators = screen.getAllByTestId("separator");
-    separators.forEach((separator) =>
-      expect(separator).toHaveClass("h-px", "flex-1", "bg-gray-300")
-    );
-    expect(screen.getByText("Divider")).toHaveClass("text-xs", "text-gray-500");
+
+    // Each separator should have these classes
+    separators.forEach((separator) => {
+      expect(separator).toHaveClass("h-px");
+      expect(separator).toHaveClass("flex-1");
+      expect(separator).toHaveClass("bg-gray-300");
+    });
+
+    // Text should have its own classes
+    const textElement = screen.getByText("Divider");
+    expect(textElement).toHaveClass("text-xs");
+    expect(textElement).toHaveClass("text-gray-500");
   });
 });

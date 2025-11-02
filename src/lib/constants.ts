@@ -108,3 +108,6 @@ export const FINANCIAL_CONTRIBUTIONS = [
   "Seeking co-founder with investment capability",
   "Open to sweat equity arrangements",
 ];
+
+export const base_url =
+  process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:4000";

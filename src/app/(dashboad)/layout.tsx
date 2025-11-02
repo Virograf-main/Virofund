@@ -12,7 +12,7 @@ export default function RootLayout({
     <TokenChecker>
       <UserProfileWrapper>
         <section>
-          <div className="flex h-screen overflow-y-hidden">
+          <div className="flex h-screen overflow-y-auto">
             <DesktopSidebar />
             <div className="flex flex-col flex-1 px-6 bg-[#E5E7EB]">
               <Navbar />

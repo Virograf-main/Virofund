@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import React from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export function DesktopSidebar() {
   const pathName = usePathname();
@@ -67,7 +68,8 @@ export function DesktopSidebar() {
         <div className="flex flex-col px-2 gap-2">
           {sidebarItems.map((item, key) => {
             return (
-              <div
+              <Link
+                href={item.route}
                 key={key}
                 className={`w-full flex items-center p-2 gap-4 rounded-lg hover:bg-secondary transition-all duration-300 cursor-default ${
                   isActive(item.route) && "bg-secondary"
@@ -75,7 +77,7 @@ export function DesktopSidebar() {
               >
                 {item.icon || <Home />}
                 <p>{item.label}</p>
-              </div>
+              </Link>
             );
           })}
         </div>

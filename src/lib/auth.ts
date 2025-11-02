@@ -3,6 +3,8 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import { saveUserToFirebase, getUserFromFirebase } from "./firebase";
 import toast from "react-hot-toast";
 import { FirebaseUser } from "@/types/firebase";
+import { base_url } from "@/lib/constants";
+import { getProfile } from "@/lib/profile";
 
 export const authenticateUser = async (
   payload: Record<string, string>,
@@ -49,7 +51,7 @@ export const handleSignUp = async (
   setIsCreatingAccount(true);
 
   try {
-    const url = "http://localhost:4000/auth/register";
+    const url = `${base_url}/auth/register`;
     const data = await authenticateUser(
       { firstName, lastName, email, password },
       url
@@ -62,9 +64,9 @@ export const handleSignUp = async (
 
     toast.success("Account created successfully");
     setPrevuser(true); // switch back to login after signup
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error(err);
-    toast.error(err.message || "Something went wrong");
+    toast.error((err as Error).message || "Something went wrong");
   } finally {
     setIsCreatingAccount(false);
   }
@@ -93,18 +95,20 @@ export const handleLogin = async (
       return;
     }
 
-    const url = "http://localhost:4000/auth/login";
+    const url = `${base_url}/auth/login`;
     const data = await authenticateUser({ email, password }, url);
 
     if (!data) return; // API failed, stop
 
     // Save token
-    localStorage.setItem("accessToken", data.accessToken);
-
+    localStorage.setItem("accessToken", data.access_token);
+    console.log(localStorage.getItem("accessToken"));
     toast.success("Logged in successfully");
     console.log("Login success:", data);
 
     // ✅ Route depending on onboarded state
+    // const profile = await getProfile();
+    // console.log(profile);
     if (firebaseUser.isOnboarded) {
       router.push("/dashboard");
     } else {
@@ -112,9 +116,9 @@ export const handleLogin = async (
     }
 
     return data;
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error(err);
-    toast.error(err.message || "Login failed");
+    toast.error((err as Error).message || "Login failed");
   } finally {
     setIsLoggingIn(false);
   }
