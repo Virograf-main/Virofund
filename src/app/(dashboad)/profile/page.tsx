@@ -1,35 +1,34 @@
+// src/app/(dashboad)/profile/ProfilePage.tsx
 "use client";
+
 import Profile from "@/components/pages/profile";
 import { useUserStore } from "@/store/userStore";
-import React, { useEffect, useState } from "react";
 import { getMatchingProfile } from "@/lib/profile";
-import { Founder, UserProfile } from "@/types/userprofile";
+import { Founder } from "@/types/userprofile";
+import { useEffect, useState } from "react";
 
-const ProfilePage = () => {
+export default function ProfilePage() {
   const { user } = useUserStore();
-  const [profile, setProfile] = useState<Founder>();
+  const [profile, setProfile] = useState<Founder | undefined>();
 
+  // fetch only in the browser
   useEffect(() => {
-    const fetchProfile = async () => {
-      const data = await getMatchingProfile();
-      console.log(data);
-      if (data) {
-        setProfile(data);
-      }
-      console.log(data);
+    let mounted = true;
+    getMatchingProfile().then((data) => {
+      if (mounted) setProfile(data);
+    });
+    return () => {
+      mounted = false;
     };
-    fetchProfile();
   }, []);
+
   return (
     <div>
       <Profile
         basicInfo={{
-          fullname: user ? `${user?.firstName} ${user?.lastName}` : "No User",
+          fullname: user ? `${user.firstName} ${user.lastName}` : "No User",
           role: "UI/UX Designer",
-          location: {
-            state: profile?.location,
-            // country: "Nigeria",
-          },
+          location: { state: profile?.location },
           socials: "LinkedIn - GitHub",
           image: "/images/clinton.jpg",
         }}
@@ -52,11 +51,11 @@ const ProfilePage = () => {
         ]}
         needs={{
           coFounder: profile?.preferredFounderType
-            ? [profile?.preferredFounderType]
+            ? [profile.preferredFounderType]
             : [""],
           CurrentSkills: profile?.preferredSkills,
           Industry: profile?.preferredIndustry
-            ? [profile?.preferredIndustry]
+            ? [profile.preferredIndustry]
             : [],
         }}
         projects={{
@@ -69,6 +68,4 @@ const ProfilePage = () => {
       />
     </div>
   );
-};
-
-export default ProfilePage;
+}

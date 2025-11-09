@@ -24,17 +24,18 @@ export function UserProfileWrapper({
   const { setMatches } = useMatches();
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("accessToken");
-      console.log(token);
-      await getProfile().finally(() => setLoading(false));
-      if (!tableLoading) return;
-      const matches: FounderMatch[] = await generateMatch(router).finally(() =>
-        setTableLoading(false)
-      );
-      setMatches(matches);
-      // await getMatches
-    };
-    fetchUser();
+      if (typeof window !== "undefined") {
+        const token = localStorage.getItem("accessToken");
+        console.log(token);
+        await getProfile().finally(() => setLoading(false));
+        if (!tableLoading) return;
+        const matches: FounderMatch[] = await generateMatch(router).finally(() =>
+          setTableLoading(false)
+        );
+        setMatches(matches);
+        // await getMatches
+      }
+    };    fetchUser();
   }, []);
 
   if (loading) {

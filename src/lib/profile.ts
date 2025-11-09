@@ -13,6 +13,7 @@ export async function createProfile(
   setLoading: (bool: boolean) => void
 ) {
   try {
+    if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
       toast.error("No access token found in localStorage");
@@ -95,6 +96,7 @@ export async function createProfile(
 
 export const getProfile = async () => {
   try {
+    if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
       toast.error("No access token found in localStorage");
@@ -157,6 +159,7 @@ export const getProfile = async () => {
 };
 export const getMatchingProfile = async () => {
   try {
+    if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
       toast.error("No access token found in localStorage");
@@ -221,6 +224,7 @@ export const getSpecificProfile = async (
   router: AppRouterInstance
 ) => {
   try {
+    if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
       toast.error("No access token found in localStorage");
