@@ -1,4 +1,3 @@
-"use client"
 import { Card } from '@/components/atoms'
 import KeyValue from '@/components/atoms/keyvalue-pair'
 import Pills from '@/components/atoms/pills'

@@ -31,19 +31,17 @@ export function TokenChecker({
 
   useEffect(() => {
     const checkToken: () => void = () => {
-      if (typeof window !== "undefined") {
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
-          router.replace("/login"); // redirect if no token
-          return;
-        }
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        router.replace("/login"); // redirect if no token
+        return;
+      }
 
-        if (!isAccessTokenValid(token)) {
-          if (onTokenExpired) {
-            onTokenExpired(); // call your refresh function
-          } else {
-            router.replace("/"); // fallback to login
-          }
+      if (!isAccessTokenValid(token)) {
+        if (onTokenExpired) {
+          onTokenExpired(); // call your refresh function
+        } else {
+          router.replace("/"); // fallback to login
         }
       }
     };

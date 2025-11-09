@@ -1,34 +1,35 @@
-// src/app/(dashboad)/profile/ProfilePage.tsx
 "use client";
-
 import Profile from "@/components/pages/profile";
 import { useUserStore } from "@/store/userStore";
+import React, { useEffect, useState } from "react";
 import { getMatchingProfile } from "@/lib/profile";
-import { Founder } from "@/types/userprofile";
-import { useEffect, useState } from "react";
+import { Founder, UserProfile } from "@/types/userprofile";
 
-export default function ProfilePage() {
+const ProfilePage = () => {
   const { user } = useUserStore();
-  const [profile, setProfile] = useState<Founder | undefined>();
+  const [profile, setProfile] = useState<Founder>();
 
-  // fetch only in the browser
   useEffect(() => {
-    let mounted = true;
-    getMatchingProfile().then((data) => {
-      if (mounted) setProfile(data);
-    });
-    return () => {
-      mounted = false;
+    const fetchProfile = async () => {
+      const data = await getMatchingProfile();
+      console.log(data);
+      if (data) {
+        setProfile(data);
+      }
+      console.log(data);
     };
+    fetchProfile();
   }, []);
-
   return (
     <div>
       <Profile
         basicInfo={{
-          fullname: user ? `${user.firstName} ${user.lastName}` : "No User",
+          fullname: user ? `${user?.firstName} ${user?.lastName}` : "No User",
           role: "UI/UX Designer",
-          location: { state: profile?.location },
+          location: {
+            state: profile?.location,
+            // country: "Nigeria",
+          },
           socials: "LinkedIn - GitHub",
           image: "/images/clinton.jpg",
         }}
@@ -51,11 +52,11 @@ export default function ProfilePage() {
         ]}
         needs={{
           coFounder: profile?.preferredFounderType
-            ? [profile.preferredFounderType]
+            ? [profile?.preferredFounderType]
             : [""],
           CurrentSkills: profile?.preferredSkills,
           Industry: profile?.preferredIndustry
-            ? [profile.preferredIndustry]
+            ? [profile?.preferredIndustry]
             : [],
         }}
         projects={{
@@ -68,4 +69,6 @@ export default function ProfilePage() {
       />
     </div>
   );
-}
+};
+
+export default ProfilePage;
