@@ -96,125 +96,68 @@ export function DataTable<T extends object>({
       ) : (
         <div className="w-full">
           <div className="border rounded-lg w-full bg-white">
-            {/* <div className="overflow-x-auto w-full">
-              <div className="inline-block min-w-full align-middle">
-                <table
-                  className={cn("w-full border-collapse text-sm", minWidthClass)}
-                >
-                  {caption && (
-                    <caption className="text-sm text-gray-500 py-2">
-                      {caption}
-                    </caption>
-                  )}
 
-                  <thead className="bg-primary text-white">
-                    <tr>
-                      {columns.map((col) => (
-                        <th
-                          key={String(col.key)}
-                          className="px-4 py-3 text-left font-semibold whitespace-nowrap"
-                        >
-                          {col.header}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-
-                  <tbody className="bg-white">
-                    {paginatedData.length > 0 ? (
-                      paginatedData.map((row, i) => (
-                        <tr
-                          key={i}
-                          onClick={() => rowFn?.(row)}
-                          className="border-b hover:bg-secondary transition-colors duration-200 cursor-pointer"
-                        >
-                          {columns.map((col) => (
-                            <td
-                              key={String(col.key)}
-                              // className="px-4 py-3 whitespace-nowrap"
-                              className="px-4 py-3 whitespace-normal break-words text-sm max-w-[200px]"
-                            >
-                              {renderCell(row[col.key])}
-                            </td>
-                          ))}
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan={columns.length}
-                          className="text-center py-8 text-gray-500"
-                        >
-                          No data available
-                        </td>
-                      </tr>
+            <div className="w-full overflow-hidden">
+              <div className="overflow-x-auto w-full">
+                <div className="inline-block min-w-full align-middle">
+                  <table
+                    className={cn(
+                      "w-full border-collapse text-xs sm:text-sm min-w-[900px]",
+                      `${fluidBreakpoint}:min-w-0`
                     )}
-                  </tbody>
-                </table>
-              </div>
-            </div> */}
-
-           <div className="w-full overflow-hidden">
-  <div className="overflow-x-auto w-full">
-    <div className="inline-block min-w-full align-middle">
-      <table
-        className={cn(
-          "w-full border-collapse text-xs sm:text-sm min-w-[900px]",
-          `${fluidBreakpoint}:min-w-0`
-        )}
-      >
-        {caption && (
-          <caption className="text-xs sm:text-sm text-gray-500 py-2">
-            {caption}
-          </caption>
-        )}
-
-        <thead className="bg-primary text-white">
-          <tr>
-            {columns.map((col) => (
-              <th
-                key={String(col.key)}
-                className="px-2 sm:px-4 py-2 sm:py-3 text-left font-semibold whitespace-nowrap"
-              >
-                {col.header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-
-        <tbody>
-          {paginatedData.length > 0 ? (
-            paginatedData.map((row, i) => (
-              <tr
-                key={i}
-                onClick={() => rowFn?.(row)}
-                className="border-b hover:bg-secondary transition-colors cursor-pointer"
-              >
-                {columns.map((col) => (
-                  <td
-                    key={String(col.key)}
-                    className="px-2 sm:px-4 py-2 sm:py-3 whitespace-normal break-words text-sm max-w-[150px]"
                   >
-                    {renderCell(row[col.key])}
-                  </td>
-                ))}
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td
-                colSpan={columns.length}
-                className="text-center py-8 text-gray-500"
-              >
-                No data available
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+                    {caption && (
+                      <caption className="text-xs sm:text-sm text-gray-500 py-2">
+                        {caption}
+                      </caption>
+                    )}
+
+                    <thead className="bg-primary text-white">
+                      <tr>
+                        {columns.map((col) => (
+                          <th
+                            key={String(col.key)}
+                            className="px-2 sm:px-4 py-2 sm:py-3 text-left font-semibold whitespace-nowrap"
+                          >
+                            {col.header}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {paginatedData.length > 0 ? (
+                        paginatedData.map((row, i) => (
+                          <tr
+                            key={i}
+                            onClick={() => rowFn?.(row)}
+                            className="border-b hover:bg-secondary transition-colors cursor-pointer"
+                          >
+                            {columns.map((col) => (
+                              <td
+                                key={String(col.key)}
+                                className="px-2 sm:px-4 py-2 sm:py-3 whitespace-normal break-words text-sm max-w-[150px]"
+                              >
+                                {renderCell(row[col.key])}
+                              </td>
+                            ))}
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan={columns.length}
+                            className="text-center py-8 text-gray-500"
+                          >
+                            No data available
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
 
           </div>
         </div>

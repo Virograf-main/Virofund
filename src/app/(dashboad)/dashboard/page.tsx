@@ -14,60 +14,60 @@ export interface TableRow {
   score: React.ReactNode;
 }
 export default function TeamTable() {
-  // const { matches } = useMatches();
+  const { matches } = useMatches();
 
-  const matches = [
-    {
-      matchedFounderId: 1,
-      overallScore: 0.92,
-      matchedFounderDetails: {
-        name: "Amaka Petersinnwrrghvs",
-        location: "Lagos, Nigeria",
-        industry: "Fintech",
-        skills: ["React", "Node.js", "TypeScript"],
-      },
-    },
-    {
-      matchedFounderId: 2,
-      overallScore: 0.68,
-      matchedFounderDetails: {
-        name: "Tomiwa Ade",
-        location: "Abuja, Nigeria",
-        industry: "HealthTech",
-        skills: ["Python", "Flask", "Pandas"],
-      },
-    },
-    {
-      matchedFounderId: 3,
-      overallScore: 0.78,
-      matchedFounderDetails: {
-        name: "Chidi Obi",
-        location: "Nairobi, Kenya",
-        industry: "EdTech",
-        skills: ["Next.js", "Prisma", "Supabase"],
-      },
-    },
-    {
-      matchedFounderId: 4,
-      overallScore: 0.53,
-      matchedFounderDetails: {
-        name: "Lara Smith",
-        location: "Accra, Ghana",
-        industry: "E-commerce",
-        skills: ["Vue.js", "Firebase", "UI Design"],
-      },
-    },
-    {
-      matchedFounderId: 5,
-      overallScore: 0.97,
-      matchedFounderDetails: {
-        name: "Julian Chidi",
-        location: "Cape Town, South Africa",
-        industry: "AI/ML",
-        skills: ["TensorFlow", "Keras", "Python"],
-      },
-    },
-  ];
+  // const matches = [
+  //   {
+  //     matchedFounderId: 1,
+  //     overallScore: 0.92,
+  //     matchedFounderDetails: {
+  //       name: "Amaka Petersinnwrrghvs",
+  //       location: "Lagos, Nigeria",
+  //       industry: "Fintech",
+  //       skills: ["React", "Node.js", "TypeScript"],
+  //     },
+  //   },
+  //   {
+  //     matchedFounderId: 2,
+  //     overallScore: 0.68,
+  //     matchedFounderDetails: {
+  //       name: "Tomiwa Ade",
+  //       location: "Abuja, Nigeria",
+  //       industry: "HealthTech",
+  //       skills: ["Python", "Flask", "Pandas"],
+  //     },
+  //   },
+  //   {
+  //     matchedFounderId: 3,
+  //     overallScore: 0.78,
+  //     matchedFounderDetails: {
+  //       name: "Chidi Obi",
+  //       location: "Nairobi, Kenya",
+  //       industry: "EdTech",
+  //       skills: ["Next.js", "Prisma", "Supabase"],
+  //     },
+  //   },
+  //   {
+  //     matchedFounderId: 4,
+  //     overallScore: 0.53,
+  //     matchedFounderDetails: {
+  //       name: "Lara Smith",
+  //       location: "Accra, Ghana",
+  //       industry: "E-commerce",
+  //       skills: ["Vue.js", "Firebase", "UI Design"],
+  //     },
+  //   },
+  //   {
+  //     matchedFounderId: 5,
+  //     overallScore: 0.97,
+  //     matchedFounderDetails: {
+  //       name: "Julian Chidi",
+  //       location: "Cape Town, South Africa",
+  //       industry: "AI/ML",
+  //       skills: ["TensorFlow", "Keras", "Python"],
+  //     },
+  //   },
+  // ];
 
 
 
@@ -225,70 +225,7 @@ export default function TeamTable() {
     // assuming each row has a userId field
     router.push(`/profile/${row.userId}`);
   };
-  // return (
-  //   <section 
-  //   // className="xl:grid xl:grid-cols-[1fr_400px] xl:gap-6 h-[90vh] "
-  //   className="xl:grid xl:grid-cols-[1fr_400px] xl:gap-6 h-[90vh] overflow-x-hidden"
-  //   >
-  //     <section className="flex flex-col gap-6 overflow-y-auto scrollbar">
-  //       <section className="bg-white py-2 rounded-2xl w-full">
-  //         <div className="flex justify-between items-center px-4 py-2">
-  //           <p className="font-semibold text-[1.2em]">Suggestions</p>
-  //           <Button variant="outline" className="m-0">
-  //             See All
-  //           </Button>
-  //         </div>
-
-  //         {/* <div className="brder w-full max-w-[100%] overflow-x-auto">
-  //           <DataTable
-  //             className="px-2"
-  //             columns={columns}
-  //             data={refinedMatches}
-  //             rowFn={handleRowClick}
-  //           />
-  //         </div> */}
-
-
-  //         <div className="overflow-x-auto w-full">
-  //           <div className="min-w-full">
-  //             <DataTable
-  //               className="w-full"
-  //               columns={columns}
-  //               data={refinedMatches}
-  //               rowFn={handleRowClick}
-  //             />
-  //           </div>
-  //         </div>
-
-  //       </section>
-
-  //       <section className="bg-[#F3F4F6] p-2 rounded-2xl">
-  //         <p className="font-semibold text-[1.2em] py-2">Co-founder Requests</p>
-  //         <div className="flex flex-col gap-4 ">
-  //           {/* <RequestCard props={RequestCardProps} />
-  //           <RequestCard props={RequestCardProps} />
-  //           <RequestCard props={RequestCardProps} />
-  //           <RequestCard props={RequestCardProps} />
-  //           <RequestCard props={RequestCardProps} />
-  //           <RequestCard props={RequestCardProps} /> */}
-  //         </div>
-  //       </section>
-  //     </section>
-  //     <div className="hidden xl:block">
-  //       <Messages
-  //         messages={sampleMessages}
-  //         projects={runningProjects}
-  //         projectCount={runningProjects.length}
-  //       // onSearch={handleSearch}
-  //       />
-  //     </div>
-  //   </section>
-  // );
-
-
-
-
-  // 
+  
   
   return (
     <section className="xl:grid xl:grid-cols-[1fr_400px] xl:gap-6 h-[90vh] sm:max-w-[300px] max-h-[600px]  max-w-[400px] md:max-w-full mx-auto">
