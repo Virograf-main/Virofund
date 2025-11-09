@@ -14,7 +14,7 @@ export default function RootLayout({
         <section>
           <div className="flex h-screen overflow-y-auto">
             <DesktopSidebar />
-            <div className="flex flex-col flex-1 px-6 bg-[#E5E7EB]">
+            <div className="flex flex-col flex-1 px-3 md:px-6 bg-[#E5E7EB]">
               <Navbar />
               <main className="overflow-y-auto scrollbar py-2">{children}</main>
             </div>
