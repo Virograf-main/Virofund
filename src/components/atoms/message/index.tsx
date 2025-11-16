@@ -13,9 +13,17 @@ type MessageProps = {
   textmessage: string;
   day: string;
   time?: string;
+  pinned?: boolean
+  id?: string
   handleApprove?: () => void;
   handleReject?: () => void;
 };
+
+type ChatMessageProps = {
+  day: string
+  textmessage: string
+  time: string
+}
 
 export const Message = ({
   props,
@@ -24,7 +32,7 @@ export const Message = ({
 }: {
   props: MessageProps;
   className?: string;
-  children: ReactNode;
+  children?: ReactNode;
 }) => {
   return (
     <div
@@ -56,7 +64,8 @@ export const Message = ({
             </div>
           </div>
           <div>
-            {/* <Star className='inline-flex w-auto h-auto shrink-0 text-primary p-1' size={16} /> */}
+          { props.pinned && <Star className='inline-flex w-auto h-auto shrink-0 text-primary p-1' size={16} />}
+            <Star className='inline-flex w-auto h-auto shrink-0 text-primary p-1' size={16} />
             {children}
           </div>
         </div>
@@ -64,3 +73,17 @@ export const Message = ({
     </div>
   );
 };
+
+
+
+
+export const ChatMessage = ({props}: {props: ChatMessageProps}) => {
+  return (
+    <div className="">
+      <div className="w-[50%] bg-accent p-2 py-2 rounded-md">
+      <p>{props.textmessage}</p>
+      <p className="flex justify-end">{props.time}</p>
+      </div>
+    </div>
+  )
+}
