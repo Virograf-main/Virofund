@@ -14,61 +14,66 @@ export interface TableRow {
   score: React.ReactNode;
 }
 export default function TeamTable() {
-  const { matches } = useMatches();
+  // const { matches } = useMatches();
 
-  // const matches = [
-  //   {
-  //     matchedFounderId: 1,
-  //     overallScore: 0.92,
-  //     matchedFounderDetails: {
-  //       name: "Amaka Petersinnwrrghvs",
-  //       location: "Lagos, Nigeria",
-  //       industry: "Fintech",
-  //       skills: ["React", "Node.js", "TypeScript"],
-  //     },
-  //   },
-  //   {
-  //     matchedFounderId: 2,
-  //     overallScore: 0.68,
-  //     matchedFounderDetails: {
-  //       name: "Tomiwa Ade",
-  //       location: "Abuja, Nigeria",
-  //       industry: "HealthTech",
-  //       skills: ["Python", "Flask", "Pandas"],
-  //     },
-  //   },
-  //   {
-  //     matchedFounderId: 3,
-  //     overallScore: 0.78,
-  //     matchedFounderDetails: {
-  //       name: "Chidi Obi",
-  //       location: "Nairobi, Kenya",
-  //       industry: "EdTech",
-  //       skills: ["Next.js", "Prisma", "Supabase"],
-  //     },
-  //   },
-  //   {
-  //     matchedFounderId: 4,
-  //     overallScore: 0.53,
-  //     matchedFounderDetails: {
-  //       name: "Lara Smith",
-  //       location: "Accra, Ghana",
-  //       industry: "E-commerce",
-  //       skills: ["Vue.js", "Firebase", "UI Design"],
-  //     },
-  //   },
-  //   {
-  //     matchedFounderId: 5,
-  //     overallScore: 0.97,
-  //     matchedFounderDetails: {
-  //       name: "Julian Chidi",
-  //       location: "Cape Town, South Africa",
-  //       industry: "AI/ML",
-  //       skills: ["TensorFlow", "Keras", "Python"],
-  //     },
-  //   },
-  // ];
+  const matches = [
+    {
+      matchedFounderId: 1,
+      overallScore: 0.92,
+      matchedFounderDetails: {
+        name: "Amaka Petersinnwrrghvs",
+        location: "Lagos, Nigeria",
+        industry: "Fintech",
+        skills: ["React", "Node.js", "TypeScript"],
+      },
+    },
+    {
+      matchedFounderId: 2,
+      overallScore: 0.68,
+      matchedFounderDetails: {
+        name: "Tomiwa Ade",
+        location: "Abuja, Nigeria",
+        industry: "HealthTech",
+        skills: ["Python", "Flask", "Pandas"],
+      },
+    },
+    {
+      matchedFounderId: 3,
+      overallScore: 0.78,
+      matchedFounderDetails: {
+        name: "Chidi Obi",
+        location: "Nairobi, Kenya",
+        industry: "EdTech",
+        skills: ["Next.js", "Prisma", "Supabase"],
+      },
+    },
+    {
+      matchedFounderId: 4,
+      overallScore: 0.53,
+      matchedFounderDetails: {
+        name: "Lara Smith",
+        location: "Accra, Ghana",
+        industry: "E-commerce",
+        skills: ["Vue.js", "Firebase", "UI Design"],
+      },
+    },
+    {
+      matchedFounderId: 5,
+      overallScore: 0.97,
+      matchedFounderDetails: {
+        name: "Julian Chidi",
+        location: "Cape Town, South Africa",
+        industry: "AI/ML",
+        skills: ["TensorFlow", "Keras", "Python"],
+      },
+    },
+  ];
 
+const users = [
+  { id: "user1", name: "Derin" },
+  { id: "user2", name: "Ti Developer" },
+  { id: "user3", name: "Melody" },
+];
 
 
   const router = useRouter();
@@ -263,11 +268,12 @@ export default function TeamTable() {
 
       {/* Right column - Messages */}
       <div className="hidden xl:block">
-        <Messages
+        {/* <Messages
           messages={sampleMessages}
           projects={runningProjects}
           projectCount={runningProjects.length}
-        />
+        /> */}
+         <Messages currentUserId="user1" users={users} />
       </div>
     </section>
   );
