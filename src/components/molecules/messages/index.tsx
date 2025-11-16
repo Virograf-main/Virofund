@@ -3,37 +3,72 @@ import { Card, ChatMessage, Input, Message } from "@/components/atoms";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { subscribeToMessages, sendMessage, MessageData } from "@/lib/firebase/messages";
+import {
+  subscribeToMessages,
+  sendMessage,
+  MessageData,
+  getLastMessage
+} from "@/lib/firebase/messages";
+import { serverTimestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 
 type MessagesProps = {
-  currentUserId: string;   // Pass logged-in user ID
-  users: { id: string; name: string }[]; // Other users to show as conversations
+  currentUserId: string;
+  users: { id: string; name: string; image?: string }[];
 };
 
-type AllMessages = {
-  name: string
-}
+
+const formatMessageTime = (message: MessageData) => {
+  const value = message.timestamp; // must match Firestore field
+
+  if (!value) return "";
+
+  // Timestamp is good → convert
+  if (value instanceof Timestamp) {
+    return value.toDate().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  // Still a serverTimestamp placeholder → show nothing
+  return "";
+};
 
 export const Messages = ({ currentUserId, users }: MessagesProps) => {
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<MessageData[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [lastMessages, setLastMessages] = useState<Record<string, MessageData | null>>({});
 
-  // Generate conversation ID
-  const getConversationId = (userId1: string, userId2: string) => {
-    return [userId1, userId2].sort().join("_");
-  };
+  const getConversationId = (u1: string, u2: string) =>
+    [u1, u2].sort().join("_");
 
-  // Subscribe to messages of active conversation
   useEffect(() => {
     if (!activeConversationId) return;
 
-    const unsubscribe = subscribeToMessages(activeConversationId, (msgs) => {
+    const unsub = subscribeToMessages(activeConversationId, (msgs) => {
       setChatMessages(msgs);
     });
 
-    return () => unsubscribe();
+    return () => unsub();
   }, [activeConversationId]);
+
+  // Load last messages for conversation previews
+  useEffect(() => {
+    users.forEach((user) => {
+      if (user.id === currentUserId) return;
+
+      const convoId = getConversationId(currentUserId, user.id);
+      const unsub = subscribeToMessages(convoId, (msgs) => {
+        const last = msgs.length ? msgs[msgs.length - 1] : null;
+        setLastMessages((prev) => ({ ...prev, [convoId]: last }));
+      });
+
+      return () => unsub();
+    });
+  }, [users, currentUserId]);
+
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !activeConversationId) return;
@@ -42,19 +77,37 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
       name: currentUserId,
       textmessage: newMessage,
       day: "Today",
-      time: new Date().toLocaleTimeString(),
+      timestamp: serverTimestamp(),
     });
 
     setNewMessage("");
   };
 
-  // --- Chat view ---
+
+  const getOtherUser = () => {
+  if (!activeConversationId) return null;
+
+  const [u1, u2] = activeConversationId.split("_");
+  const otherId = u1 === currentUserId ? u2 : u1;
+
+  return users.find((u) => u.id === otherId) || null;
+};
+
+  // CHAT SCREEN ------------------------------------------------
   if (activeConversationId) {
+    const otherUser = getOtherUser();
     return (
       <Card className="h-[90vh] flex flex-col">
         <div className="p-4 border-b flex items-center gap-4">
           <button onClick={() => setActiveConversationId(null)}>&larr;</button>
-          <p className="font-semibold">{activeConversationId}</p>
+          {/* <p className="font-semibold">{activeConversationId}</p> */}
+          {/* { users.map((user, idx) => (
+
+          <p key={idx} className="font-semibold">{user.name}</p>
+          ))} */}
+            <p className="font-semibold">
+          {otherUser ? otherUser.name : "Unknown User"}
+        </p>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
@@ -66,7 +119,13 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
               >
-                <ChatMessage props={msg}/>
+                <ChatMessage 
+                // props={msg} 
+                 props={{
+                ...msg,
+                time: formatMessageTime(msg)
+              }}
+                />
               </motion.div>
             ))}
           </AnimatePresence>
@@ -78,20 +137,18 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type a message"
           />
-          <div>
           <button
             onClick={handleSendMessage}
             className="bg-primary text-white px-4 py-1 rounded"
           >
             Send
           </button>
-          </div>
         </div>
       </Card>
     );
   }
 
-  // --- Conversation list view ---
+  // CONVERSATION LIST ----------------------------------------
   return (
     <Card className="h-[90vh]">
       <div className="p-6 space-y-3">
@@ -107,23 +164,36 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
       <div className="h-full overflow-y-auto scrollbar rounded-b-2xl pb-26">
         <AnimatePresence initial={false}>
           {users.map((user) => {
-            if (user.id === currentUserId) return null; // don't show self
-            const conversationId = getConversationId(currentUserId, user.id);
+            if (user.id === currentUserId) return null;
+
+            const convoId = getConversationId(currentUserId, user.id);
+            const last = lastMessages[convoId];
 
             return (
               <motion.div
-                key={conversationId}
+                key={convoId}
                 layout
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
                 className="border-t cursor-pointer p-2"
-                onClick={() => setActiveConversationId(conversationId)}
+                onClick={() => setActiveConversationId(convoId)}
               >
-                <p className="font-medium">{user.name}</p>
-                {/* <Message props={user.name}/> */}
-                {/* Optionally, last message preview */}
+                <Message
+                  props={{
+                    name: user.name,
+                    textmessage: last?.textmessage || "Tap to chat",
+                    day: last?.day || "",
+                    // time: last?.timeStamp?.toDate
+                    //   ? new Date(last.timeStamp.toDate()).toLocaleTimeString([], {
+                    //       hour: "2-digit",
+                    //       minute: "2-digit",
+                    //     })
+                    //   : "",
+                    time: last ? formatMessageTime(last) : '',
+                    image: user.image || "",
+                  }}
+                />
               </motion.div>
             );
           })}
@@ -132,6 +202,210 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
     </Card>
   );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+// "use client";
+// import { Card, ChatMessage, Input, Message } from "@/components/atoms";
+// import { motion, AnimatePresence } from "framer-motion";
+// import { Search } from "lucide-react";
+// import React, { useState, useEffect } from "react";
+// import { subscribeToMessages, sendMessage, MessageData, getLastMessage } from "@/lib/firebase/messages";
+// import { serverTimestamp } from "firebase/firestore";
+
+// type MessagesProps = {
+//   currentUserId: string;   // Pass logged-in user ID
+//   users: { id: string; name: string, image?: string }[]; // Other users to show as conversations
+// };
+
+// type AllMessages = {
+//   name: string
+// }
+
+// export const Messages = ({ currentUserId, users }: MessagesProps) => {
+//   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+//   const [chatMessages, setChatMessages] = useState<MessageData[]>([]);
+//   const [newMessage, setNewMessage] = useState("");
+//   const [lastMessages, setLastMessages] = useState<Record<string, MessageData | null>>({});
+
+
+//   // Generate conversation ID
+//   const getConversationId = (userId1: string, userId2: string) => {
+//     return [userId1, userId2].sort().join("_");
+//   };
+
+//   // Subscribe to messages of active conversation
+//   useEffect(() => {
+//     if (!activeConversationId) return;
+
+//     const unsubscribe = subscribeToMessages(activeConversationId, (msgs) => {
+//       setChatMessages(msgs);
+//     });
+
+//     return () => unsubscribe();
+//   }, [activeConversationId]);
+
+//   useEffect(() => {
+//   users.forEach((user) => {
+//     if (user.id === currentUserId) return;
+
+//     const convoId = getConversationId(currentUserId, user.id);
+//     const unsubscribe = subscribeToMessages(convoId, (msgs) => {
+//       if (msgs.length > 0) {
+//         const last = msgs[msgs.length - 1];
+//         setLastMessages((prev) => ({ ...prev, [convoId]: last }));
+//       } else {
+//         setLastMessages((prev) => ({ ...prev, [convoId]: null }));
+//       }
+//     });
+
+//     return () => unsubscribe();
+//   });
+// }, [users, currentUserId]);
+
+
+
+// useEffect(() => {
+//   const loadLastMessages = async () => {
+//     const results: Record<string, MessageData | null> = {};
+
+//     for (const user of users) {
+//       if (user.id === currentUserId) continue;
+
+//       const conversationId = getConversationId(currentUserId, user.id);
+//       results[conversationId] = await getLastMessage(conversationId);
+//     }
+
+//     setLastMessages(results);
+//   };
+
+//   loadLastMessages();
+// }, [users, currentUserId]);
+
+
+//   const handleSendMessage = async () => {
+//     if (!newMessage.trim() || !activeConversationId) return;
+
+//     await sendMessage(activeConversationId, {
+//       name: currentUserId,
+//       textmessage: newMessage,
+//       day: "Today",
+//       // time: new Date().toISOString(),
+//       timeStamp: serverTimestamp(),
+//       // new Date().toLocaleTimeString(),
+//     });
+
+//     setNewMessage("");
+//   };
+
+//   // --- Chat view ---
+//   if (activeConversationId) {
+//     return (
+//       <Card className="h-[90vh] flex flex-col">
+//         <div className="p-4 border-b flex items-center gap-4">
+//           <button onClick={() => setActiveConversationId(null)}>&larr;</button>
+//           <p className="font-semibold">{activeConversationId}</p>
+//         </div>
+
+//         <div className="flex-1 overflow-y-auto p-4 space-y-2">
+//           <AnimatePresence initial={false}>
+//             {chatMessages.map((msg, idx) => (
+//               <motion.div
+//                 key={msg.id || idx}
+//                 initial={{ opacity: 0, y: 10 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 exit={{ opacity: 0, y: -10 }}
+//               >
+//                 <ChatMessage props={msg}/>
+//               </motion.div>
+//             ))}
+//           </AnimatePresence>
+//         </div>
+
+//         <div className="p-4 border-t flex items-center gap-2">
+//           <Input
+//             value={newMessage}
+//             onChange={(e) => setNewMessage(e.target.value)}
+//             placeholder="Type a message"
+//           />
+//           <div>
+//           <button
+//             onClick={handleSendMessage}
+//             className="bg-primary text-white px-4 py-1 rounded"
+//           >
+//             Send
+//           </button>
+//           </div>
+//         </div>
+//       </Card>
+//     );
+//   }
+
+
+//   // const convoId = getConversationId(currentUserId, user.id);
+// // const last = lastMessages[convoId];
+
+
+//   // --- Conversation list view ---
+//   return (
+//     <Card className="h-[90vh]">
+//       <div className="p-6 space-y-3">
+//         <div className="relative">
+//           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" size={18} />
+//           <Input
+//             className="pl-10 bg-primary/20 placeholder:text-primary"
+//             placeholder="Search or start a new chat"
+//           />
+//         </div>
+//       </div>
+
+//       <div className="h-full overflow-y-auto scrollbar rounded-b-2xl pb-26">
+//         <AnimatePresence initial={false}>
+//           {users.map((user) => {
+//   if (user.id === currentUserId) return null;
+
+//   const conversationId = getConversationId(currentUserId, user.id);
+//   const last = lastMessages[conversationId];
+
+//   return (
+//     <motion.div
+//       key={conversationId}
+//       layout
+//       initial={{ opacity: 0, y: 10 }}
+//       animate={{ opacity: 1, y: 0 }}
+//       exit={{ opacity: 0, y: -10 }}
+//       transition={{ duration: 0.25 }}
+//       className="border-t cursor-pointer p-2"
+//       onClick={() => setActiveConversationId(conversationId)}
+//     >
+//       <Message 
+//         props={{
+//           name: user.name,
+//           textmessage: last?.textmessage || "Tap to chat",
+//           day: last?.day || "",
+//           time: last?.time || "",
+//           image: user.image || "",
+//         }}
+//       />
+//     </motion.div>
+//   );
+// })}
+
+//         </AnimatePresence>
+//       </div>
+//     </Card>
+//   );
+// };
 
 
 

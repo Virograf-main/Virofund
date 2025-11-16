@@ -1,12 +1,15 @@
-import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, query, orderBy, limit, getDocs, FieldValue, Timestamp } from "firebase/firestore";
 import { messagingDB } from "./init";
+import { db } from "../firebase";
+// import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
+// import { db } from "./firebase"; // adjust path
 
 export type MessageData = {
   id?: string;
   name: string;
   textmessage: string;
   day: string;
-  time: string;
+  timestamp:FieldValue | Timestamp | null;
   pinned?: boolean;
 };
 
@@ -35,6 +38,24 @@ export const sendMessage = async (conversationId: string, message: MessageData) 
   await addDoc(messagesRef, message);
 };
 
+
+export const getLastMessage = async (conversationId: string) => {
+  try {
+    const messagesRef = collection(db, "conversations", conversationId, "messages");
+
+    const q = query(messagesRef, orderBy("time", "desc"), limit(1));
+
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) return null;
+
+    const doc = snapshot.docs[0];
+    return { id: doc.id, ...doc.data() } as MessageData;
+  } catch (err) {
+    console.error("getLastMessage ERROR:", err);
+    return null;
+  }
+};
 
 
 
