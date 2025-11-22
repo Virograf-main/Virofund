@@ -9,6 +9,11 @@ export const endpoints = (params, query) => {
         browse_matched_users: `${baseUrl}/matches/browse`,
         aceept_reject_matched_user: `${baseUrl}/matches/${query}/status`,
     }
+     const Profiles = {
+        profiles: `${baseUrl}/profiles`,
+        my_profile: `${baseUrl}/profiles/me`,
+        user_profile: `${baseUrl}/profiles/${params}`,
+    }
 
-    return {Matches}
+    return {Matches, Profiles}
 }

@@ -90,7 +90,18 @@ export function DataTable<T extends object>({
           </div>
           <p className="text-gray-500">Generating matches...</p>
         </div>
-      ) : (
+      ) :
+      data.length === 0 ? 
+      (
+         <div className="flex flex-col items-center py-10">
+          {/* <div className="w-[40px] mb-2">
+            <Loader />
+          </div> */}
+          <p className="text-gray-500">No data available</p>
+        </div>
+      )
+      :
+      (
         <div className="w-full">
           <div className="border rounded-lg w-full bg-white">
             <div className="overflow-x-auto w-full">
@@ -145,6 +156,8 @@ export function DataTable<T extends object>({
                     </tr>
                   )}
                 </tbody>
+
+                
               </table>
             </div>
           </div>

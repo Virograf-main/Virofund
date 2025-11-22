@@ -3,8 +3,12 @@ import { Button, Column, DataTable } from "@/components/atoms";
 import { Messages } from "@/components/molecules";
 import { useMatches } from "@/store/useMatchesStore";
 import { useRouter } from "next/navigation";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { endpoints } from '@/config/endpoints'
+import { useQuery } from '@tanstack/react-query';
+import { instance } from "@/lib/axios"; 
+
+
 // types/table.ts
 export interface TableRow {
   userId: number;
@@ -15,8 +19,12 @@ export interface TableRow {
   score: React.ReactNode;
 }
 export default function TeamTable() {
-  const { matches } = useMatches();
+  const { matches, setMatches  } = useMatches();
   const router = useRouter();
+  // const { setMatches } = useMatches();
+
+
+
   const columns: Column<TableRow>[] = [
     { key: "name", header: "Name" },
     { key: "location", header: "Location" },
@@ -138,11 +146,27 @@ export default function TeamTable() {
     },
   ];
 
- const { data: matchedusers } = useQuery({
-  queryfn: () => 
-    instance.get(`${endpoints().Matches.get_matches}`)
- })
+//  const { data: matchedusers } = useQuery({
+//   queryFn: () => 
+//     instance.get(`${endpoints().Matches.get_matches}`),
+  
+//   queryKey: [''],
+//  })
 
+const { data: matchedUsers } = useQuery({
+  queryKey: ["matched-users"],
+  queryFn: async () => {
+    const res = await instance.get(endpoints().Matches.get_matches);
+    return res.data;
+  },
+});
+
+
+  useEffect(() => {
+  if (matchedUsers) {
+    setMatches(matchedUsers);
+  }
+}, [matchedUsers, setMatches]);
 
 
   const refinedMatches = matches?.map((match) => {
