@@ -4,6 +4,7 @@ import { Messages } from "@/components/molecules";
 import { useMatches } from "@/store/useMatchesStore";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
+import { endpoints } from '@/config/endpoints'
 // types/table.ts
 export interface TableRow {
   userId: number;
@@ -137,7 +138,14 @@ export default function TeamTable() {
     },
   ];
 
-  const refinedMatches = matches.map((match) => {
+ const { data: matchedusers } = useQuery({
+  queryfn: () => 
+    instance.get(`${endpoints().Matches.get_matches}`)
+ })
+
+
+
+  const refinedMatches = matches?.map((match) => {
     const percentage = (match.overallScore * 100).toFixed(0); // round to nearest integer
 
     const matchScore =
