@@ -14,9 +14,18 @@ export default function ProfilePage() {
   // fetch only in the browser
   useEffect(() => {
     let mounted = true;
+
     getMatchingProfile().then((data) => {
-      if (mounted) setProfile(data);
+      if (!mounted) return;
+
+      if (data && "id" in data) {
+        // assuming Founder has an `id` field
+        setProfile(data);
+      } else {
+        setProfile(undefined); // or handle message
+      }
     });
+
     return () => {
       mounted = false;
     };
