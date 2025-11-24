@@ -1,11 +1,10 @@
 import type { Founder, OnboardingData, UserProfile } from "@/types/userprofile";
 import toast from "react-hot-toast";
 import { useOnboardingStore } from "@/store/onboardingStore"; // adjust path if needed
-import { getUserFromFirebase } from "./firebase";
-import { markUserOnboarded } from "./firebase"; // new function
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useUserStore } from "@/store/userStore";
 import { base_url } from "./constants";
+import { handleApiError } from "@/lib/middleware";
 
 export async function createProfile(
   data: OnboardingData,
@@ -32,53 +31,13 @@ export async function createProfile(
     const text = await response.text();
 
     if (!response.ok) {
-      switch (response.status) {
-        case 400:
-          toast.error("Bad request. Please check your inputs.");
-          break;
-        case 401:
-          toast.error("Unauthorized. Please log in again.");
-          // Optionally clear token and redirect to login
-          localStorage.removeItem("accessToken");
-          break;
-        case 403:
-          toast.error(
-            "Forbidden. You don’t have permission to perform this action."
-          );
-          break;
-        case 404:
-          toast.error("Resource not found. Please try again later.");
-          break;
-        case 409:
-          toast.error("User profile already exists.");
-          break;
-        case 422:
-          toast.error("Invalid data. Please review your inputs.");
-          break;
-        case 500:
-          toast.error("Server error. Please try again later.");
-          break;
-        default:
-          toast.error(
-            `Unexpected error ${response.status}: ${
-              text || response.statusText
-            }`
-          );
-      }
+      handleApiError(response);
       setLoading(false);
       return;
     }
 
     // ✅ Success toast
     toast.success("Profile created successfully");
-
-    // ✅ Mark Firebase user as onboarded
-    const firebaseUser = localStorage.getItem("userId")
-      ? await getUserFromFirebase(localStorage.getItem("email")!)
-      : null;
-    if (firebaseUser) {
-      await markUserOnboarded(firebaseUser.id);
-    }
 
     // ✅ Clear onboarding store
     const onboardingStore = useOnboardingStore.getState();
@@ -115,49 +74,22 @@ export const getProfile = async () => {
     useUserStore.getState().setUser(data);
 
     if (!response.ok) {
-      switch (response.status) {
-        case 400:
-          toast.error("Bad request. Please check your inputs.");
-          break;
-        case 401:
-          toast.error("Unauthorized. Please log in again.");
-          // Optionally clear token and redirect to login
-          localStorage.removeItem("accessToken");
-          break;
-        case 403:
-          toast.error(
-            "Forbidden. You don’t have permission to perform this action."
-          );
-          break;
-        case 404:
-          toast.error("Resource not found. Please try again later.");
-          break;
-        case 409:
-          toast.error("User profile already exists.");
-          break;
-        case 422:
-          toast.error("Invalid data. Please review your inputs.");
-          break;
-        case 500:
-          toast.error("Server error. Please try again later.");
-          break;
-        default:
-          toast.error(
-            `Unexpected error ${response.status}: ${response.statusText}`
-          );
-      }
-      // setLoading(false);
+      handleApiError(response);
+      return;
     }
   } catch (error) {
-    // setLoading(false);
     console.error("Error creating profile:", error);
     toast.error("Failed to create profile");
     return;
-  } finally {
-    // setLoading(false);
   }
 };
-export const getMatchingProfile = async () => {
+type GetMatchingProfileResult =
+  | Founder
+  | { profileExists: false; message: string };
+
+export const getMatchingProfile = async (): Promise<
+  GetMatchingProfileResult | undefined
+> => {
   try {
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
@@ -175,37 +107,8 @@ export const getMatchingProfile = async () => {
     });
 
     if (!response.ok) {
-      switch (response.status) {
-        case 400:
-          toast.error("Bad request. Please check your inputs.");
-          break;
-        case 401:
-          toast.error("Unauthorized. Please log in again.");
-          // Optionally clear token and redirect to login
-          localStorage.removeItem("accessToken");
-          break;
-        case 403:
-          toast.error(
-            "Forbidden. You don’t have permission to perform this action."
-          );
-          break;
-        case 404:
-          toast.error("Resource not found. Please try again later.");
-          break;
-        case 409:
-          toast.error("User profile already exists.");
-          break;
-        case 422:
-          toast.error("Invalid data. Please review your inputs.");
-          break;
-        case 500:
-          toast.error("Server error. Please try again later.");
-          break;
-        default:
-          toast.error(
-            `Unexpected error ${response.status}: ${response.statusText}`
-          );
-      }
+      handleApiError(response);
+      return;
     }
     const data: Founder = await response.json();
     return data;
@@ -240,48 +143,15 @@ export const getSpecificProfile = async (
     });
 
     if (!response.ok) {
-      switch (response.status) {
-        case 400:
-          toast.error("Bad request. Please check your inputs.");
-          break;
-        case 401:
-          toast.error("Unauthorized. Please log in again.");
-          // Optionally clear token and redirect to login
-          localStorage.removeItem("accessToken");
-          router.push("/");
-          break;
-        case 403:
-          toast.error(
-            "Forbidden. You don’t have permission to perform this action."
-          );
-          break;
-        case 404:
-          toast.error("Resource not found. Please try again later.");
-          break;
-        case 409:
-          toast.error("User profile already exists.");
-          break;
-        case 422:
-          toast.error("Invalid data. Please review your inputs.");
-          break;
-        case 500:
-          toast.error("Server error. Please try again later.");
-          break;
-        default:
-          toast.error(
-            `Unexpected error ${response.status}: ${response.statusText}`
-          );
-      }
+      handleApiError(response, router);
+      return;
     }
     const data: Founder = await response.json();
     console.log(data);
     return data;
   } catch (error) {
-    // setLoading(false);
     console.error("Error creating profile:", error);
     toast.error("Failed to create profile");
     return;
-  } finally {
-    // setLoading(false);
   }
 };

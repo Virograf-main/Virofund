@@ -6,6 +6,7 @@ import {
   MultiSelect,
   ProfilePicture,
   SelectElement,
+  Textarea,
 } from "@/components/atoms";
 import {
   COMMITMENT_LEVELS,
@@ -31,6 +32,19 @@ const financialContributions = FINANCIAL_CONTRIBUTIONS.map((value) => ({
   label: value,
 }));
 
+const riskManagement = [
+  "Conservative",
+  "Moderate",
+  "Aggressive",
+  "Calculated Risk-taker",
+  "Risk-averse",
+];
+
+const riskManagementStyles = riskManagement.map((value) => ({
+  value,
+  label: value,
+}));
+
 export function ProfileSetup() {
   const { data, updateField } = useOnboardingStore();
   return (
@@ -40,6 +54,20 @@ export function ProfileSetup() {
           <ProfilePicture
             value="/jpg/blank-profile.webp"
             className="m-auto md:m-0"
+          />
+          <Input
+            label="Preferred username (optional)"
+            type="text"
+            placeholder="John Doe"
+            value={data.userName}
+            onChange={(e) => updateField("userName", e.target.value)}
+          />
+          <Textarea
+            label="Write a short bio about yourself and what you do."
+            placeholder="Add bio"
+            rows={10}
+            value={data.bio}
+            onChange={(e) => updateField("bio", e.target.value)}
           />
         </Div>
       </Section>
@@ -66,6 +94,13 @@ export function ProfileSetup() {
             items={financialContributions}
             value={data.financialContribution}
             onChange={(value) => updateField("financialContribution", value)}
+          />
+          <SelectElement
+            label="How do you handle risk and uncertainty?"
+            placeholder="Select one"
+            items={riskManagementStyles}
+            value={data.riskManagementStyle}
+            onChange={(value) => updateField("riskManagementStyle", value)}
           />
         </Div>
       </Section>
