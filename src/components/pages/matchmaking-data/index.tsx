@@ -114,7 +114,7 @@ export function MatchmakingData() {
           />
         </Div>
       </Section>
-      <Button onClick={handleCreate} disabled={loading}>
+      <Button className="w-full" onClick={handleCreate} disabled={loading}>
         {loading ? "Loading..." : "Finish"}
       </Button>
     </div>

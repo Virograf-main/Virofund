@@ -51,6 +51,8 @@ export function CofounderProfile() {
             label="What past successes or failures (if any) have you had in startups or business?"
             placeholder="Add a brief description here"
             rows={8}
+            value={data.pastExperience}
+            onChange={(e) => updateField("pastExperience", e.target.value)}
           />
           <MultiSelect
             label="What personality traits would you prefer in a co-founder?"
@@ -80,7 +82,7 @@ export function CofounderProfile() {
         </Div>
       </Section>
       <Link href="/matchmaking-data">
-        <Button>Next</Button>
+        <Button className="w-full">Next</Button>
       </Link>
     </div>
   );
