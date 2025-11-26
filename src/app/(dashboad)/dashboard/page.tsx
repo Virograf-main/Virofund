@@ -201,20 +201,26 @@ const { data: matchedUsers } = useQuery({
     // assuming each row has a userId field
     router.push(`/profile/${row.userId}`);
   };
+  
+  
   return (
-    <section className="xl:grid xl:grid-cols-[1fr_400px] xl:gap-6 h-[90vh] ">
-      <section className="flex flex-col gap-6 overflow-y-auto scrollbar">
-        <section className="bg-white py-2 rounded-2xl w-full">
-          <div className="flex justify-between items-center px-4 py-2">
+    <section className="xl:grid xl:grid-cols-[1fr_400px] xl:gap-6 h-[90vh] sm:max-w-[300px] max-h-[600px]  max-w-[400px] md:max-w-full mx-auto">
+      {/* Left column - make it scrollable */}
+      <section className="flex flex-col gap-6 h-full overflow-y-auto scrollbar">
+        
+        {/* Table section - constrain height and make scrollable */}
+        <section className="bg-white py-2 rounded-2xl w-full flex flex-col   ">
+          <div className="flex justify-between items-center px-4 py-2 flex-shrink-0">
             <p className="font-semibold text-[1.2em]">Suggestions</p>
             <Button variant="outline" className="m-0">
               See All
             </Button>
           </div>
 
-          <div className="border w-full max-w-[100%] overflow-x-auto">
+          {/* Table container - this is the key fix */}
+          <div className="overflow-x-auto overflow-y-auto flex-1 min-h-0">
             <DataTable
-              className="px-2"
+              className="w-full"
               columns={columns}
               data={refinedMatches}
               rowFn={handleRowClick}
@@ -222,25 +228,23 @@ const { data: matchedUsers } = useQuery({
           </div>
         </section>
 
-        <section className="bg-[#F3F4F6] p-2 rounded-2xl">
+        {/* Co-founder Requests section */}
+        <section className="bg-[#F3F4F6] p-2 rounded-2xl flex-shrink-0">
           <p className="font-semibold text-[1.2em] py-2">Co-founder Requests</p>
-          <div className="flex flex-col gap-4 ">
-            {/* <RequestCard props={RequestCardProps} />
-            <RequestCard props={RequestCardProps} />
-            <RequestCard props={RequestCardProps} />
-            <RequestCard props={RequestCardProps} />
-            <RequestCard props={RequestCardProps} />
-            <RequestCard props={RequestCardProps} /> */}
+          <div className="flex flex-col gap-4">
+            {/* Your request cards */}
           </div>
         </section>
       </section>
+
+      {/* Right column - Messages */}
       <div className="hidden xl:block">
-        <Messages
+        {/* <Messages
           messages={sampleMessages}
           projects={runningProjects}
           projectCount={runningProjects.length}
-          // onSearch={handleSearch}
-        />
+        /> */}
+         <Messages currentUserId="user1" users={matchedUsers} />
       </div>
     </section>
   );
