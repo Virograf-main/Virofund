@@ -43,7 +43,7 @@ export const Messages = ({
     if (onSearch) onSearch(searchQuery);
   };
   return (
-    <div className="font-sans  overflow-hidden rounded-2xl bg-white">
+    <div className="font-sans  overflow-hidden rounded-2xl bg-white h-full ">
       <Card className="h-[90vh]">
         <div className="p-6 space-y-3 font-sans">
           <div className="relative">

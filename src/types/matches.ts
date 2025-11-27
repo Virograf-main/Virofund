@@ -8,9 +8,9 @@ export interface MatchedFounderDetails {
 }
 
 export interface FounderMatch {
-  id: number;
-  founderId: number;
-  matchedFounderId: number;
+  id: string;
+  founderId: string;
+  matchedFounderId: string;
   overallScore: number;
   industryScore: number;
   skillsScore: number;

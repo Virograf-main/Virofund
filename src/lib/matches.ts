@@ -21,7 +21,8 @@ export const generateMatch = async (router: AppRouterInstance) => {
     });
 
     if (!response.ok) {
-      handleApiError(response);
+      const error = await response.json();
+      handleApiError(error);
       return [];
     }
     const data = await response.json();
@@ -51,10 +52,49 @@ export const getMatches = async () => {
     });
 
     if (!response.ok) {
-      handleApiError(response);
+      const error = await response.json();
+      handleApiError(error);
+      return [];
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error creating profile:", error);
+    toast.error("Failed to create profile");
+    return;
+  }
+};
+
+/**
+ * Sends a match request to a specific user
+ * @param userId - the user ID
+ * @returns json of sender and receiver id
+ */
+export const sendRequest = async (userId: string) => {
+  try {
+    if (typeof window === "undefined") return;
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      toast.error("Unauthorized, please log in again");
+      return;
+    }
+
+    const response = await fetch(`${base_url}/matches/request/${userId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      handleApiError(error);
       return;
     }
     const data = await response.json();
+    console.log(data);
+    toast.success("Request sent successfully");
     return data;
   } catch (error) {
     console.error("Error creating profile:", error);

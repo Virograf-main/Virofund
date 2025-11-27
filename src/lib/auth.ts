@@ -96,6 +96,7 @@ export const handleLogin = async (
 
     // ✅ Route depending on onboarded state
     const profile = await getMatchingProfile();
+    console.log(profile);
 
     if (!profile) {
       router.push("/welcome");
@@ -159,7 +160,8 @@ export async function refreshToken() {
     });
 
     if (!response.ok) {
-      handleApiError(response);
+      const error = await response.json();
+      handleApiError(error);
       return;
     }
     const data = await response.json();

@@ -31,7 +31,8 @@ export async function createProfile(
     const text = await response.text();
 
     if (!response.ok) {
-      handleApiError(response);
+      const error = await response.json();
+      handleApiError(error);
       setLoading(false);
       return;
     }
@@ -74,7 +75,8 @@ export const getProfile = async () => {
     useUserStore.getState().setUser(data);
 
     if (!response.ok) {
-      handleApiError(response);
+      const error = await response.json();
+      handleApiError(error);
       return;
     }
   } catch (error) {
@@ -107,7 +109,8 @@ export const getMatchingProfile = async (): Promise<
     });
 
     if (!response.ok) {
-      handleApiError(response);
+      const error = await response.json();
+      handleApiError(error);
       return;
     }
     const data: Founder = await response.json();
@@ -134,7 +137,7 @@ export const getSpecificProfile = async (
       return;
     }
 
-    const response = await fetch(`${base_url}/profiles/${id}`, {
+    const response = await fetch(`${base_url}/users/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -143,7 +146,8 @@ export const getSpecificProfile = async (
     });
 
     if (!response.ok) {
-      handleApiError(response, router);
+      const error = await response.json();
+      handleApiError(error);
       return;
     }
     const data: Founder = await response.json();
