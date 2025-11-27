@@ -152,6 +152,11 @@ export default function TeamTable() {
   
 //   queryKey: [''],
 //  })
+const users = [
+  { id: "user1", name: "Derin" },
+  { id: "user2", name: "Ti Developer" },
+  { id: "user3", name: "Melody" },
+];
 
 const { data: matchedUsers } = useQuery({
   queryKey: ["matched-users"],
@@ -168,6 +173,7 @@ const { data: matchedUsers } = useQuery({
   }
 }, [matchedUsers, setMatches]);
 
+const rando: TableRow[] = []
 
   const refinedMatches = matches?.map((match) => {
     const percentage = (match.overallScore * 100).toFixed(0); // round to nearest integer
@@ -222,7 +228,8 @@ const { data: matchedUsers } = useQuery({
             <DataTable
               className="w-full"
               columns={columns}
-              data={refinedMatches}
+              // data={refinedMatches || ''}
+              data={rando}
               rowFn={handleRowClick}
             />
           </div>
@@ -244,7 +251,7 @@ const { data: matchedUsers } = useQuery({
           projects={runningProjects}
           projectCount={runningProjects.length}
         /> */}
-         <Messages currentUserId="user1" users={matchedUsers} />
+         <Messages currentUserId="user1" users={matchedUsers ? matchedUsers : users } />
       </div>
     </section>
   );
