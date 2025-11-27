@@ -2,11 +2,12 @@
 import { Button, Column, DataTable } from "@/components/atoms";
 import { Messages } from "@/components/molecules";
 import { useMatches } from "@/store/useMatchesStore";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 // types/table.ts
 export interface TableRow {
-  userId: number;
+  userId: string;
   name: string;
   location: string;
   industry: string;
@@ -68,8 +69,6 @@ export default function TeamTable() {
   //     },
   //   },
   // ];
-
-
 
   const router = useRouter();
   const columns: Column<TableRow>[] = [
@@ -215,7 +214,7 @@ export default function TeamTable() {
     };
   });
   const handleRowClick = (row: {
-    userId: number;
+    userId: string;
     name: string;
     location: string;
     industry: string;
@@ -225,38 +224,63 @@ export default function TeamTable() {
     // assuming each row has a userId field
     router.push(`/profile/${row.userId}`);
   };
-  
-  
+
   return (
-    <section className="xl:grid xl:grid-cols-[1fr_400px] xl:gap-6 h-[90vh] sm:max-w-[300px] max-h-[600px]  max-w-[400px] md:max-w-full mx-auto">
+    <section className="xl:grid xl:grid-cols-[1fr_400px] xl:gap-6 h-[90vh]  max-h-[600px]   md:max-w-full mx-auto">
       {/* Left column - make it scrollable */}
       <section className="flex flex-col gap-6 h-full overflow-y-auto scrollbar">
-        
         {/* Table section - constrain height and make scrollable */}
-        <section className="bg-white py-2 rounded-2xl w-full flex flex-col   ">
-          <div className="flex justify-between items-center px-4 py-2 flex-shrink-0">
-            <p className="font-semibold text-[1.2em]">Suggestions</p>
-            <Button variant="outline" className="m-0">
-              See All
-            </Button>
-          </div>
+        {refinedMatches.length > 0 ? (
+          <section className="bg-white py-2 rounded-2xl w-full flex flex-col   ">
+            <div className="flex justify-between items-center px-4 py-2 flex-shrink-0">
+              <p className="font-semibold text-[1.2em]">Suggestions</p>
+              <Button
+                variant="outline"
+                className="m-0"
+                onClick={() => router.replace("/suggestions")}
+              >
+                See All
+              </Button>
+            </div>
 
-          {/* Table container - this is the key fix */}
-          <div className="overflow-x-auto overflow-y-auto flex-1 min-h-0">
-            <DataTable
-              className="w-full"
-              columns={columns}
-              data={refinedMatches}
-              rowFn={handleRowClick}
-            />
+            {/* Table container - this is the key fix */}
+            <div className="overflow-x-auto overflow-y-auto flex-1 min-h-0 overflow-scroll w-full">
+              <DataTable
+                className="w-full"
+                columns={columns}
+                data={refinedMatches}
+                rowFn={handleRowClick}
+              />
+            </div>
+          </section>
+        ) : (
+          <div className="flex justify-center items-center">
+            <div className="flex flex-col gap-4">
+              <Image
+                src="/svg/no-data.svg"
+                width={200}
+                height={200}
+                alt="no data"
+              />
+              <p className="text-center">No Match Generated</p>
+            </div>
           </div>
-        </section>
+        )}
 
         {/* Co-founder Requests section */}
         <section className="bg-[#F3F4F6] p-2 rounded-2xl flex-shrink-0">
           <p className="font-semibold text-[1.2em] py-2">Co-founder Requests</p>
-          <div className="flex flex-col gap-4">
-            {/* Your request cards */}
+          {/* <div className="flex flex-col gap-4">Your request cards</div> */}
+          <div className="flex justify-center items-center">
+            <div className="flex flex-col gap-4">
+              <Image
+                src="/svg/no-data.svg"
+                width={200}
+                height={200}
+                alt="no data"
+              />
+              <p className="text-center">No Co-founder Requests</p>
+            </div>
           </div>
         </section>
       </section>

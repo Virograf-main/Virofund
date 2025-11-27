@@ -28,6 +28,15 @@ const initialData: OnboardingData = {
   preferredFinancial: "",
   preferredPersonalityTraits: [],
   preferredLocation: "",
+  gender: "",
+  dateOfBirth: "",
+  linkedInUrl: "",
+  hasStartup: false,
+  workStyle: "",
+  riskManagementStyle: "",
+  bio: "",
+  pastExperience: "",
+  userName: "noname",
 };
 
 export const useOnboardingStore = create<OnboardingStore>()(
@@ -38,7 +47,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
         set((state) => ({
           data: { ...state.data, [field]: value },
         })),
-      reset: () => set({ data: initialData }), // use initialData, not {}
+      reset: () => set({ data: initialData }),
     }),
     {
       name: "onboarding-storage",

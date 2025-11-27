@@ -15,15 +15,16 @@ import {
 } from "@/lib/constants";
 import Link from "next/link";
 import { useOnboardingStore } from "@/store/onboardingStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { formatDateToYMD } from "@/lib/helpers";
 
 const gender = [
   {
-    value: "male",
+    value: "Male",
     label: "Male",
   },
   {
-    value: "female",
+    value: "Female",
     label: "Female",
   },
 ];
@@ -42,36 +43,20 @@ const skillCategories = SKILL_CATEGORIES.map((value) => {
 });
 
 const decideBoolean = [
-  {
-    value: "yes",
-    label: "Yes",
-  },
-  {
-    value: "no",
-    label: "No",
-  },
+  { value: "true", label: "Yes" },
+  { value: "false", label: "No" },
 ];
-const roles = [
-  {
-    value: "technical",
-    label: "Technical",
-  },
-  {
-    value: "business",
-    label: "Business",
-  },
-  {
-    value: "creative",
-    label: "Creative",
-  },
-  {
-    value: "other",
-    label: "Other",
-  },
-];
+const roles = ["Remote", "Hybrid", "On-site"];
+
+const workStyles = roles.map((value) => {
+  return { value: value, label: value };
+});
 
 export function AboutYou() {
   const { data, updateField } = useOnboardingStore();
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const disabled = !data.gender || !date || !data.location || !data.industry;
+
   return (
     <div>
       <Section title="Tell us about yourself">
@@ -80,8 +65,18 @@ export function AboutYou() {
             label="Gender"
             placeholder="Select Gender"
             items={gender}
+            value={data.gender}
+            onChange={(value) => updateField("gender", value)}
           />
-          <DatePicker label="Date of birth" placeholder="pick a date" />
+          <DatePicker
+            label="Date of birth"
+            placeholder="pick a date"
+            value={date}
+            onChange={(value) => {
+              setDate(value);
+              updateField("dateOfBirth", formatDateToYMD(value));
+            }}
+          />
           <SelectElement
             label="Location"
             placeholder="Select Location"
@@ -94,9 +89,11 @@ export function AboutYou() {
       <Section title="Industry & Experience">
         <Div>
           <SelectElement
-            label="Are you a first time founder?"
+            label="Do you already have a startup?"
             placeholder="Select one"
             items={decideBoolean}
+            value={String(data.hasStartup)}
+            onChange={(value) => updateField("hasStartup", value === "true")}
           />
           <SelectElement
             items={industries}
@@ -125,9 +122,11 @@ export function AboutYou() {
             onChange={(value) => updateField("founderStatus", value)}
           />
           <SelectElement
-            label="What best describes your role"
+            label="What best describes your preferred work style?"
             placeholder="Select one"
-            items={roles}
+            items={workStyles}
+            value={data.workStyle}
+            onChange={(value) => updateField("workStyle", value)}
           />
         </Div>
       </Section>
@@ -144,11 +143,13 @@ export function AboutYou() {
             label="Linkedin Profile URL"
             placeholder="https://linkedin.com/..."
             type="text"
+            value={data.linkedInUrl}
+            onChange={(e) => updateField("linkedInUrl", e.target.value)}
           />
         </Div>
       </Section>
       <Link href="/profile-setup">
-        <Button>Next</Button>
+        <Button className="w-full">Next</Button>
       </Link>
     </div>
   );

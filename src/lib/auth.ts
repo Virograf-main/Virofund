@@ -1,10 +1,9 @@
 // import { authenticateUser } from "./auth";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { saveUserToFirebase, getUserFromFirebase } from "./firebase";
 import toast from "react-hot-toast";
-import { FirebaseUser } from "@/types/firebase";
 import { base_url } from "@/lib/constants";
-import { getProfile } from "@/lib/profile";
+import { getMatchingProfile } from "@/lib/profile";
+import { handleApiError } from "@/lib/middleware";
 
 export const authenticateUser = async (
   payload: Record<string, string>,
@@ -59,9 +58,6 @@ export const handleSignUp = async (
 
     if (!data) return; // API failed, stop
 
-    // Save to Firebase after backend success
-    await saveUserToFirebase({ firstName, lastName, email });
-
     toast.success("Account created successfully");
     setPrevuser(true); // switch back to login after signup
   } catch (err: unknown) {
@@ -87,33 +83,31 @@ export const handleLogin = async (
   setIsLoggingIn(true);
 
   try {
-    // Check Firebase user first
-    const firebaseUser: FirebaseUser | null = await getUserFromFirebase(email);
-    if (!firebaseUser) {
-      toast.error("User not found");
-      setIsLoggingIn(false);
-      return;
-    }
-
     const url = `${base_url}/auth/login`;
     const data = await authenticateUser({ email, password }, url);
 
-    if (!data) return; // API failed, stop
+    if (!data) return;
 
     // Save token
     localStorage.setItem("accessToken", data.access_token);
-    console.log(localStorage.getItem("accessToken"));
+    localStorage.setItem("refreshToken", data.refresh_token);
+
     toast.success("Logged in successfully");
-    console.log("Login success:", data);
 
     // ✅ Route depending on onboarded state
-    // const profile = await getProfile();
-    // console.log(profile);
-    if (firebaseUser.isOnboarded) {
-      router.push("/dashboard");
-    } else {
+    const profile = await getMatchingProfile();
+    console.log(profile);
+
+    if (!profile) {
       router.push("/welcome");
+      return;
     }
+
+    if ("profileExists" in profile && profile.profileExists === false) {
+      router.push("/welcome");
+      return;
+    }
+    router.push("/dashboard");
 
     return data;
   } catch (err: unknown) {
@@ -141,5 +135,39 @@ export function isAccessTokenValid(token: string | null): boolean {
   } catch (e) {
     console.error("Failed to parse token:", e);
     return false;
+  }
+}
+
+/**
+ * Refreshes the access token once it is expired
+ * @param token - the JWT refresh token
+ * @returns new access token and refresh token if the refresh token is correct
+ */
+
+export async function refreshToken() {
+  const refreshToken = localStorage.getItem("refreshToken");
+  if (!refreshToken) return;
+
+  try {
+    const url = `${base_url}/auth/refresh`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      handleApiError(error);
+      return;
+    }
+    const data = await response.json();
+    localStorage.setItem("accessToken", data.access_token);
+    localStorage.setItem("refreshToken", data.refresh_token);
+  } catch (err) {
+    console.log("error getting access token: ", err);
   }
 }

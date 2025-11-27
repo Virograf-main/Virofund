@@ -1,6 +1,6 @@
 import { Logo } from "@/components/atoms";
 import { Stepper } from "@/components/pages";
-import { TokenChecker } from "@/components/wrappers";
+import ClientTokenWrapper from "@/components/wrappers/client-token-wrapper";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -20,9 +20,9 @@ export default function RootLayout({
       </nav>
       <Stepper />
 
-      <TokenChecker>
+      <ClientTokenWrapper>
         <section className="max-w-[600px] m-auto px-6">{children}</section>
-      </TokenChecker>
+      </ClientTokenWrapper>
     </section>
   );
 }

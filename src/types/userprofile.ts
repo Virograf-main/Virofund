@@ -14,7 +14,16 @@ export interface OnboardingData {
   preferredCommitmentLevel?: string;
   preferredFinancial?: string;
   preferredPersonalityTraits?: string[];
-  preferredLocation?: string; // looks like your snippet got cut at "preferredLo"
+  preferredLocation?: string;
+  gender: string;
+  dateOfBirth: string;
+  linkedInUrl: string;
+  hasStartup: boolean;
+  workStyle: string;
+  riskManagementStyle: string;
+  bio: string;
+  pastExperience: string;
+  userName: string;
 }
 
 export interface UserProfile {

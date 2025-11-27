@@ -43,19 +43,6 @@ export function SuggestionCard({
       style={rootStyle}
     >
       <CardContent className="p-5">
-        {/* Bookmark button */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onBookmark?.();
-          }}
-          aria-label="bookmark"
-          title="Bookmark"
-          className="absolute right-3 top-3 rounded-full p-2 border border-border bg-background/80 hover:scale-105 transition-transform"
-        >
-          <BookmarkPlusIcon className="h-7 w-7" />
-        </button>
-
         {/* Header: avatar and name */}
         <div className="flex items-center gap-3">
           <Avatar className="h-15 w-15">
@@ -75,7 +62,7 @@ export function SuggestionCard({
 
         {/* Description */}
         {description && (
-          <p className="mt-3 text-md text-muted-foreground text-black leading-relaxed">
+          <p className="mt-3 text-md text-muted-foreground  leading-relaxed">
             {description}
           </p>
         )}
