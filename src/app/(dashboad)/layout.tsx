@@ -2,6 +2,7 @@ import { DesktopSidebar } from "@/components/navigation";
 import { Navbar } from "@/components/navigation";
 import { TokenChecker } from "@/components/wrappers";
 import { UserProfileWrapper } from "@/components/wrappers/user-profile-wrapper";
+import { Providers } from "../providers";
 
 export default function RootLayout({
   children,
@@ -11,6 +12,8 @@ export default function RootLayout({
   return (
     <TokenChecker>
       <UserProfileWrapper>
+        
+        <Providers>
         <section>
           <div className="flex h-screen overflow-y-auto">
             <DesktopSidebar />
@@ -20,6 +23,7 @@ export default function RootLayout({
             </div>
           </div>
         </section>
+        </Providers>
       </UserProfileWrapper>
     </TokenChecker>
   );

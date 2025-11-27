@@ -3,7 +3,12 @@ import { Button, Column, DataTable } from "@/components/atoms";
 import { Messages } from "@/components/molecules";
 import { useMatches } from "@/store/useMatchesStore";
 import { useRouter } from "next/navigation";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
+import { endpoints } from '@/config/endpoints'
+import { useQuery } from '@tanstack/react-query';
+import { instance } from "@/lib/axios"; 
+
+
 // types/table.ts
 export interface TableRow {
   userId: number;
@@ -14,69 +19,12 @@ export interface TableRow {
   score: React.ReactNode;
 }
 export default function TeamTable() {
-  // const { matches } = useMatches();
-
-  const matches = [
-    {
-      matchedFounderId: 1,
-      overallScore: 0.92,
-      matchedFounderDetails: {
-        name: "Amaka Petersinnwrrghvs",
-        location: "Lagos, Nigeria",
-        industry: "Fintech",
-        skills: ["React", "Node.js", "TypeScript"],
-      },
-    },
-    {
-      matchedFounderId: 2,
-      overallScore: 0.68,
-      matchedFounderDetails: {
-        name: "Tomiwa Ade",
-        location: "Abuja, Nigeria",
-        industry: "HealthTech",
-        skills: ["Python", "Flask", "Pandas"],
-      },
-    },
-    {
-      matchedFounderId: 3,
-      overallScore: 0.78,
-      matchedFounderDetails: {
-        name: "Chidi Obi",
-        location: "Nairobi, Kenya",
-        industry: "EdTech",
-        skills: ["Next.js", "Prisma", "Supabase"],
-      },
-    },
-    {
-      matchedFounderId: 4,
-      overallScore: 0.53,
-      matchedFounderDetails: {
-        name: "Lara Smith",
-        location: "Accra, Ghana",
-        industry: "E-commerce",
-        skills: ["Vue.js", "Firebase", "UI Design"],
-      },
-    },
-    {
-      matchedFounderId: 5,
-      overallScore: 0.97,
-      matchedFounderDetails: {
-        name: "Julian Chidi",
-        location: "Cape Town, South Africa",
-        industry: "AI/ML",
-        skills: ["TensorFlow", "Keras", "Python"],
-      },
-    },
-  ];
-
-const users = [
-  { id: "user1", name: "Derin" },
-  { id: "user2", name: "Ti Developer" },
-  { id: "user3", name: "Melody" },
-];
-
-
+  const { matches, setMatches  } = useMatches();
   const router = useRouter();
+  // const { setMatches } = useMatches();
+
+
+
   const columns: Column<TableRow>[] = [
     { key: "name", header: "Name" },
     { key: "location", header: "Location" },
@@ -198,7 +146,36 @@ const users = [
     },
   ];
 
-  const refinedMatches = matches.map((match) => {
+//  const { data: matchedusers } = useQuery({
+//   queryFn: () => 
+//     instance.get(`${endpoints().Matches.get_matches}`),
+  
+//   queryKey: [''],
+//  })
+const users = [
+  { id: "user1", name: "Derin" },
+  { id: "user2", name: "Ti Developer" },
+  { id: "user3", name: "Melody" },
+];
+
+const { data: matchedUsers } = useQuery({
+  queryKey: ["matched-users"],
+  queryFn: async () => {
+    const res = await instance.get(endpoints().Matches.get_matches);
+    return res.data;
+  },
+});
+
+
+  useEffect(() => {
+  if (matchedUsers) {
+    setMatches(matchedUsers);
+  }
+}, [matchedUsers, setMatches]);
+
+const rando: TableRow[] = []
+
+  const refinedMatches = matches?.map((match) => {
     const percentage = (match.overallScore * 100).toFixed(0); // round to nearest integer
 
     const matchScore =
@@ -251,7 +228,8 @@ const users = [
             <DataTable
               className="w-full"
               columns={columns}
-              data={refinedMatches}
+              // data={refinedMatches || ''}
+              data={rando}
               rowFn={handleRowClick}
             />
           </div>
@@ -273,7 +251,7 @@ const users = [
           projects={runningProjects}
           projectCount={runningProjects.length}
         /> */}
-         <Messages currentUserId="user1" users={users} />
+         <Messages currentUserId="user1" users={matchedUsers ? matchedUsers : users } />
       </div>
     </section>
   );
