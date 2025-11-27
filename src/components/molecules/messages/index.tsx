@@ -7,7 +7,7 @@ import {
   subscribeToMessages,
   sendMessage,
   MessageData,
-  getLastMessage
+  getLastMessage,
 } from "@/lib/firebase/messages";
 import { serverTimestamp } from "firebase/firestore";
 import { Timestamp } from "firebase/firestore";
@@ -16,7 +16,6 @@ type MessagesProps = {
   currentUserId: string;
   users: { id: string; name: string; image?: string }[];
 };
-
 
 const formatMessageTime = (message: MessageData) => {
   const value = message.timestamp; // must match Firestore field
@@ -36,10 +35,14 @@ const formatMessageTime = (message: MessageData) => {
 };
 
 export const Messages = ({ currentUserId, users }: MessagesProps) => {
-  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [activeConversationId, setActiveConversationId] = useState<
+    string | null
+  >(null);
   const [chatMessages, setChatMessages] = useState<MessageData[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [lastMessages, setLastMessages] = useState<Record<string, MessageData | null>>({});
+  const [lastMessages, setLastMessages] = useState<
+    Record<string, MessageData | null>
+  >({});
 
   const getConversationId = (u1: string, u2: string) =>
     [u1, u2].sort().join("_");
@@ -69,7 +72,6 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
     });
   }, [users, currentUserId]);
 
-
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !activeConversationId) return;
 
@@ -83,15 +85,14 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
     setNewMessage("");
   };
 
-
   const getOtherUser = () => {
-  if (!activeConversationId) return null;
+    if (!activeConversationId) return null;
 
-  const [u1, u2] = activeConversationId.split("_");
-  const otherId = u1 === currentUserId ? u2 : u1;
+    const [u1, u2] = activeConversationId.split("_");
+    const otherId = u1 === currentUserId ? u2 : u1;
 
-  return users.find((u) => u.id === otherId) || null;
-};
+    return users.find((u) => u.id === otherId) || null;
+  };
 
   // CHAT SCREEN ------------------------------------------------
   if (activeConversationId) {
@@ -105,9 +106,9 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 
           <p key={idx} className="font-semibold">{user.name}</p>
           ))} */}
-            <p className="font-semibold">
-          {otherUser ? otherUser.name : "Unknown User"}
-        </p>
+          <p className="font-semibold">
+            {otherUser ? otherUser.name : "Unknown User"}
+          </p>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
@@ -119,12 +120,12 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
               >
-                <ChatMessage 
-                // props={msg} 
-                 props={{
-                ...msg,
-                time: formatMessageTime(msg)
-              }}
+                <ChatMessage
+                  // props={msg}
+                  props={{
+                    ...msg,
+                    time: formatMessageTime(msg),
+                  }}
                 />
               </motion.div>
             ))}
@@ -153,7 +154,10 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
     <Card className="h-[90vh]">
       <div className="p-6 space-y-3">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" size={18} />
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-primary"
+            size={18}
+          />
           <Input
             className="pl-10 bg-primary/20 placeholder:text-primary"
             placeholder="Search or start a new chat"
@@ -190,7 +194,7 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
                     //       minute: "2-digit",
                     //     })
                     //   : "",
-                    time: last ? formatMessageTime(last) : '',
+                    time: last ? formatMessageTime(last) : "",
                     image: user.image || "",
                   }}
                 />
@@ -202,18 +206,6 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
     </Card>
   );
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 // "use client";
 // import { Card, ChatMessage, Input, Message } from "@/components/atoms";
@@ -237,7 +229,6 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 //   const [chatMessages, setChatMessages] = useState<MessageData[]>([]);
 //   const [newMessage, setNewMessage] = useState("");
 //   const [lastMessages, setLastMessages] = useState<Record<string, MessageData | null>>({});
-
 
 //   // Generate conversation ID
 //   const getConversationId = (userId1: string, userId2: string) => {
@@ -273,8 +264,6 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 //   });
 // }, [users, currentUserId]);
 
-
-
 // useEffect(() => {
 //   const loadLastMessages = async () => {
 //     const results: Record<string, MessageData | null> = {};
@@ -291,7 +280,6 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 
 //   loadLastMessages();
 // }, [users, currentUserId]);
-
 
 //   const handleSendMessage = async () => {
 //     if (!newMessage.trim() || !activeConversationId) return;
@@ -351,10 +339,8 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 //     );
 //   }
 
-
 //   // const convoId = getConversationId(currentUserId, user.id);
 // // const last = lastMessages[convoId];
-
 
 //   // --- Conversation list view ---
 //   return (
@@ -388,7 +374,7 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 //       className="border-t cursor-pointer p-2"
 //       onClick={() => setActiveConversationId(conversationId)}
 //     >
-//       <Message 
+//       <Message
 //         props={{
 //           name: user.name,
 //           textmessage: last?.textmessage || "Tap to chat",
@@ -406,17 +392,6 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 //     </Card>
 //   );
 // };
-
-
-
-
-
-
-
-
-
-
-
 
 // "use client";
 // import { Card, Input, Message } from "@/components/atoms";
@@ -454,7 +429,6 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 //   // generate conversation ID for two users
 //   const conversationId = [currentUserId, otherUserId].sort().join("_");
 //   const testConversationId = "test-convo"; // any string you choose
-
 
 //   // Load conversation list (for testing just show one conversation)
 //   useEffect(() => {
@@ -522,7 +496,7 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 //   }
 
 //   // Conversations list view (click to open chat)
-  
+
 //         console.log('conv', conversations)
 //   return (
 //     <Card className="h-[90vh]">
@@ -563,18 +537,6 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 //   );
 // };
 
-
-
-
-
-
-
-
-
-
-
-
-
 // "use client";
 // import { Card, Input, Message, RunningProjects } from "@/components/atoms";
 // import { cn } from "@/lib/utils";
@@ -593,7 +555,7 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 // };
 
 // type MessagesProps = {
-//   messages?: MessageData[]; 
+//   messages?: MessageData[];
 //   projects: MessageData[];
 //   projectCount: number;
 //   onSearch?: (query: string) => void;
@@ -608,7 +570,7 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 
 //   // Load conversations list (hardcode for now)
 //   useEffect(() => {
-//     // const conversationId = "global"; 
+//     // const conversationId = "global";
 //     const conversationId = [currentUserId, otherUserId].sort().join("_");
 
 //     const unsubscribe = subscribeToMessages(conversationId, (msgs: MessageData[]) => {
@@ -715,18 +677,6 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 //   );
 // };
 
-
-
-
-
-
-
-
-
-
-
-
-
 // "use client";
 // import { Card, Input, Message, RunningProjects } from "@/components/atoms";
 // import { cn } from "@/lib/utils";
@@ -735,7 +685,6 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 // import React, { useState } from "react";
 // import { useEffect } from "react";
 // import { subscribeToMessages } from "@/lib/firebase/messages";
-
 
 // type MessageData = {
 //   name: string;
@@ -766,8 +715,6 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 //   const [data, setData] = useState<MessageData[]>([]);
 //   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
 
-
-
 //   useEffect(() => {
 //   // hardcode conversation for now; later you’ll pass the ID from props
 //   const conversationId = "global";
@@ -779,7 +726,6 @@ export const Messages = ({ currentUserId, users }: MessagesProps) => {
 
 //   return () => unsubscribe();
 // }, []);
-
 
 //   const togglePin = (index: number) => {
 //     const updated = [...data];
