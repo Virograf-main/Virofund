@@ -5,6 +5,26 @@ import { Button } from "../../atoms";
 import { Star, Timer } from "lucide-react";
 import { MoreVerticalDots } from "../../atoms/more-vertical";
 import SmallPfp from "@/components/atoms/small-pfp";
+import { Timestamp } from "firebase/firestore";
+import { MessageData } from "@/lib/firebase/messages";
+
+
+const formatMessageTime = (message: MessageData) => {
+  const value = message.timestamp; // must match Firestore field
+
+  if (!value) return "";
+
+  // Timestamp is good → convert
+  if (value instanceof Timestamp) {
+    return value.toDate().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  // Still a serverTimestamp placeholder → show nothing
+  return "";
+};
 
 type MessageProps = {
   image?: string;
@@ -13,9 +33,17 @@ type MessageProps = {
   textmessage: string;
   day: string;
   time?: string;
+  pinned?: boolean
+  id?: string
   handleApprove?: () => void;
   handleReject?: () => void;
 };
+
+type ChatMessageProps = {
+  day: string
+  textmessage: string
+  time: string
+}
 
 export const Message = ({
   props,
@@ -24,7 +52,7 @@ export const Message = ({
 }: {
   props: MessageProps;
   className?: string;
-  children: ReactNode;
+  children?: ReactNode;
 }) => {
   return (
     <div
@@ -44,19 +72,20 @@ export const Message = ({
             </div>
             <div className="flex flex-col gap-2">
               <div>
-                <p className=" text-[12px] font-bold">{props.name}</p>
-                <p className=" text-[10px] font-[500]">{props.textmessage}</p>
+                <p className=" text-[14px] font-bold">{props.name}</p>
+                <p className=" text-[12x] font-[500]">{props.textmessage}</p>
               </div>
 
-              <div className="flex items-center gap-1  text-[10px] text-ring">
-                <Timer size={10} className="" />
+              <div className="flex items-center gap-1  text-[12px] text-ring">
+                <Timer size={15} className="" />
                 <p className=" ">{props.day}</p>
                 <p>{props.time}</p>
               </div>
             </div>
           </div>
           <div>
-            {/* <Star className='inline-flex w-auto h-auto shrink-0 text-primary p-1' size={16} /> */}
+          { props.pinned && <Star className='inline-flex w-auto h-auto shrink-0 text-primary p-1' size={16} />}
+            <Star className='inline-flex w-auto h-auto shrink-0 text-primary p-1' size={16} />
             {children}
           </div>
         </div>
@@ -64,3 +93,17 @@ export const Message = ({
     </div>
   );
 };
+
+
+
+
+export const ChatMessage = ({props}: {props: ChatMessageProps}) => {
+  return (
+    <div className="">
+      <div className="w-[50%] bg-accent p-2 py-2 rounded-md">
+      <p>{props.textmessage}</p>
+      <p className="flex justify-end">{props.time}</p>
+      </div>
+    </div>
+  )
+}

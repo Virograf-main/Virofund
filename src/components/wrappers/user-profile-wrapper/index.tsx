@@ -1,6 +1,6 @@
 "use client";
 import { TokenChecker } from "@/components/wrappers/access-token-wrapper";
-import { generateMatch, getMatches } from "@/lib/matches";
+import { generateMatch, getIncomingRequests, getMatches } from "@/lib/matches";
 import { getMatchingProfile, getProfile } from "@/lib/profile";
 import { useUserStore } from "@/store/userStore";
 import { UserProfile } from "@/types/userprofile";
@@ -25,17 +25,17 @@ export function UserProfileWrapper({
   useEffect(() => {
     const fetchUser = async () => {
       if (typeof window !== "undefined") {
-        const token = localStorage.getItem("accessToken");
-        console.log(token);
         await getProfile().finally(() => setLoading(false));
         if (!tableLoading) return;
-        const matches: FounderMatch[] = await generateMatch(router).finally(() =>
-          setTableLoading(false)
+        const matches: FounderMatch[] = await generateMatch(router).finally(
+          () => setTableLoading(false)
         );
         setMatches(matches);
-        // await getMatches
+        const data = await getIncomingRequests();
+        console.log(data);
       }
-    };    fetchUser();
+    };
+    fetchUser();
   }, []);
 
   if (loading) {

@@ -6,6 +6,9 @@ import { useUserStore } from "@/store/userStore";
 import { getMatchingProfile } from "@/lib/profile";
 import { Founder } from "@/types/userprofile";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { endpoints } from "@/config/endpoints";
+import { instance } from "@/lib/axios";
 
 export default function ProfilePage() {
   const { user } = useUserStore();
@@ -31,6 +34,15 @@ export default function ProfilePage() {
     };
   }, []);
 
+  const { data: myprofile } = useQuery({
+    queryKey: ["my-profile"],
+    queryFn: async () => {
+      const res = await instance.get(endpoints().Profiles.my_profile);
+      return res.data;
+    },
+  });
+
+  console.log('this is meee', myprofile)
   return (
     <div>
       <Profile

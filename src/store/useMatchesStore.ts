@@ -8,7 +8,7 @@ interface FounderMatchStore {
   setMatches: (matches: FounderMatch[]) => void;
   addMatch: (match: FounderMatch) => void;
   updateMatchStatus: (
-    id: number,
+    id: string,
     status: "pending" | "approved" | "rejected"
   ) => void;
   setLoading: (loading: boolean) => void;
