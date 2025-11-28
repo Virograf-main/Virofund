@@ -18,7 +18,7 @@ export const RequestSection = () => {
       setRequests(data);
     };
     fetchIncomingRequests();
-  });
+  }, []);
   return (
     <section className="bg-[#F3F4F6] p-2 rounded-2xl flex-shrink-0">
       <p className="font-semibold text-[1.2em] py-2">Co-founder Requests</p>
