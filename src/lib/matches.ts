@@ -138,3 +138,43 @@ export const getIncomingRequests = async () => {
     return;
   }
 };
+
+export const approveRequest = async (requestId: string) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/matches/requests/${requestId}/status`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: "accepted",
+      }),
+    }
+  );
+
+  if (!res.ok) throw new Error("Failed to approve");
+  return res.json();
+};
+
+export const rejectRequest = async (requestId: string) => {
+  const token = localStorage.getItem("accessToken");
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/matches/requests/${requestId}/status`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: "rejected",
+      }),
+    }
+  );
+
+  if (!res.ok) throw new Error("Failed to reject");
+  return res.json();
+};

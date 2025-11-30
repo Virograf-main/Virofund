@@ -41,6 +41,7 @@ export const RequestSection = () => {
             <RequestCard
               key={request.id}
               props={{
+                userId: `${request.sender.id}`,
                 image: "",
                 alt: "",
                 name: `${request.sender.firstName} ${request.sender.lastName}`,
