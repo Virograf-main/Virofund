@@ -27,19 +27,51 @@ export interface OnboardingData {
 }
 
 export interface UserProfile {
-  id: number;
+  id: string;
+  email: string;
   firstName: string;
   lastName: string;
-  email: string;
   isActive: boolean;
   isAdmin: boolean;
-  createdAt: string; // ISO timestamp string
-  updatedAt: string; // ISO timestamp string
+  createdAt: string;
+  updatedAt: string;
+  profile: Profile;
+}
+
+export interface Profile {
+  id: string;
+  userName: string;
+  bio: string;
+  dateOfBirth: string;
+  gender: string;
+  linkedInUrl: string;
+  founderStatus: string;
+  skills: string[];
+  industry: string;
+  currentOccupation: string;
+  yearsExperience: number;
+  commitmentLevel: string;
+  financialContribution: string;
+  personalityTraits: string[];
+  location: string;
+  workStyle: string;
+  hasStartup: boolean;
+  riskManagementStyle: string;
+  pastExperience: string;
+  preferredSkills: string[];
+  preferredFounderType: string;
+  preferredIndustry: string;
+  preferredCommitmentLevel: string;
+  preferredFinancial: string;
+  preferredPersonalityTraits: string[];
+  preferredLocation: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Founder {
-  id: number;
-  userId: number;
+  id: string;
+  userId: string;
   founderStatus: string;
   skills: string[];
   industry: string;

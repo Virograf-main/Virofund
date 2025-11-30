@@ -42,22 +42,22 @@ export default function ProfilePage() {
     },
   });
 
-  console.log('this is meee', myprofile)
+  console.log("this is meee", myprofile);
   return (
     <div>
       <Profile
         basicInfo={{
-          fullname: user ? `${user.firstName} ${user.lastName}` : "No User",
+          fullname: user ? `${user?.firstName} ${user?.lastName}` : "No user",
           role: "UI/UX Designer",
-          location: { state: profile?.location },
+          location: { state: user?.profile.location },
           socials: "LinkedIn - GitHub",
           image: "/images/clinton.jpg",
         }}
-        bio="Building products that make money move easier."
+        bio={user?.profile.bio}
         details={{
           keyRoles: ["Full time", "Senior level"],
-          workStyles: profile?.personalityTraits,
-          skills: profile?.skills,
+          workStyles: user?.profile.workStyle ? [user?.profile.workStyle] : [],
+          skills: user?.profile.skills,
         }}
         experience={[
           { title: "UI Team Lead at Tech Solutions", date: "Jul 2022 - 2024" },
@@ -71,12 +71,12 @@ export default function ProfilePage() {
           },
         ]}
         needs={{
-          coFounder: profile?.preferredFounderType
-            ? [profile.preferredFounderType]
+          coFounder: user?.profile.preferredFounderType
+            ? [user?.profile.preferredFounderType]
             : [""],
-          CurrentSkills: profile?.preferredSkills,
-          Industry: profile?.preferredIndustry
-            ? [profile.preferredIndustry]
+          CurrentSkills: user?.profile.preferredSkills,
+          Industry: user?.profile.preferredIndustry
+            ? [user.profile.preferredIndustry]
             : [],
         }}
         projects={{

@@ -10,6 +10,7 @@ import { FounderMatch } from "@/types/matches";
 import toast from "react-hot-toast";
 import { useTableStore } from "@/store/useTableStore";
 import { useRouter } from "next/navigation";
+import { Loader } from "@/components/atoms";
 export function UserProfileWrapper({
   children,
 }: {
@@ -39,7 +40,11 @@ export function UserProfileWrapper({
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
   }
   return <>{children}</>;
 }

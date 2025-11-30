@@ -7,6 +7,7 @@ import {
   MessagesSquare,
   Settings,
   Sparkles,
+  UserRound,
   X,
 } from "lucide-react";
 import Image from "next/image";
@@ -20,7 +21,6 @@ export function MobileSidebar({
   setIsOpen: (val: boolean) => void;
 }) {
   const pathName = usePathname();
-  console.log(pathName);
   const sidebarItems = [
     {
       label: "Dashboard",
@@ -37,11 +37,11 @@ export function MobileSidebar({
       route: "/requests",
       icon: <Boxes />,
     },
-    // {
-    //   label: "Messages",
-    //   route: "/messages",
-    //   icon: <MessagesSquare />,
-    // },
+    {
+      label: "Profile",
+      route: "/profile",
+      icon: <UserRound />,
+    },
     {
       label: "Notifications",
       route: "/notifications",
@@ -82,6 +82,7 @@ export function MobileSidebar({
                 className={`w-full flex items-center p-2 gap-4 rounded-lg hover:bg-secondary transition-all duration-300 cursor-default ${
                   isActive(item.route) && "bg-secondary"
                 }`}
+                onClick={() => setIsOpen(false)}
               >
                 {item.icon || <Home />}
                 <p>{item.label}</p>
