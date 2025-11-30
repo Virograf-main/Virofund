@@ -1,5 +1,6 @@
 "use client";
 
+import { Loader } from "@/components/atoms";
 import RequestCard from "@/components/molecules/request-card";
 import { getIncomingRequests } from "@/lib/matches";
 import { ConnectionRequest } from "@/types/matches";
@@ -8,19 +9,30 @@ import { useEffect, useState } from "react";
 
 export const RequestSection = () => {
   const [requests, setRequests] = useState<ConnectionRequest[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchIncomingRequests = async () => {
       const data = await getIncomingRequests();
       if (!data) {
+        setLoading(false);
         return;
       }
       setRequests(data);
+      setLoading(false);
     };
     fetchIncomingRequests();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
   return (
-    <section className="bg-[#F3F4F6] p-2 rounded-2xl flex-shrink-0">
+    <section className="bg-[#F3F4F6] p-2 rounded-2xl shrink-0">
       <p className="font-semibold text-[1.2em] py-2">Co-founder Requests</p>
       {/* <div className="flex flex-col gap-4">Your request cards</div> */}
       {requests.length > 0 ? (
