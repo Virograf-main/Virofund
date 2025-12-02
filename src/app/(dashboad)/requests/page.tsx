@@ -32,6 +32,10 @@ const RequestPage = () => {
     fetchIncomingRequests();
   }, []);
 
+  {
+    /* Test handlers */
+  }
+
   const handleApprove = async (requestId: string) => {
     setLoadingApproveId(requestId);
     try {
