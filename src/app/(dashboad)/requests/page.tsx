@@ -28,51 +28,8 @@ const RequestPage = () => {
     fetchIncomingRequests();
   }, []);
 
-  // const handleApprove = async (requestId: string) => {
-  //   setLoadingAction(requestId);
-  //   try {
-  //     await approveRequest(requestId);
-  //     toast.success("Co-founder request approved!");
-  //     setRequests((prev) => prev.filter((r) => r.id !== requestId));
-  //   } catch (err) {
-  //     toast.error("Failed to approve request");
-  //   } finally {
-  //     setLoadingAction(null);
-  //   }
-  // };
-
-  // const handleReject = async (requestId: string, senderName: string) => {
-  //   setLoadingAction(requestId);
-  //   try {
-  //     await rejectRequest(requestId);
-  //     toast.success("Request rejected");
-  //     setRequests((prev) => prev.filter((r) => r.id !== requestId));
-
-  // toast(
-  //   <div className="flex items-center gap-3">
-  //     <span>Rejected {senderName}</span>
-  //     <button
-  //       onClick={() => {
-  //         toast.dismiss();
-  //         handleApprove(requestId);
-  //       }}
-  //       className="font-medium text-primary hover:underline"
-  //     >
-  //       Undo
-  //     </button>
-  //   </div>,
-  //   { duration: 6000 }
-  // );
-
-  //   } catch (err) {
-  //     toast.error("Failed to reject request");
-  //   } finally {
-  //     setLoadingAction(null);
-  //   }
-  // };
-
   {
-    /* Test handlers 😪😪😪 send money to 7040734334 palmpay 😌🤙*/
+    /* Test handlers */
   }
 
   const handleApprove = async (requestId: string) => {
