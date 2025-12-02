@@ -34,15 +34,14 @@ export const RequestSection = () => {
   return (
     <section className="bg-[#F3F4F6] p-2 rounded-2xl shrink-0">
       <p className="font-semibold text-[1.2em] py-2">Co-founder Requests</p>
-      {/* <div className="flex flex-col gap-4">Your request cards</div> */}
       {requests.length > 0 ? (
         <div className="flex flex-col gap-4">
           {requests.map((request) => (
             <RequestCard
               key={request.id}
               props={{
-                userId: `${request.sender.id}`,
                 image: "",
+                userId: request.sender.id,
                 alt: "",
                 name: `${request.sender.firstName} ${request.sender.lastName}`,
                 email: request.sender.email,

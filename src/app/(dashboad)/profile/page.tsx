@@ -33,16 +33,6 @@ export default function ProfilePage() {
       mounted = false;
     };
   }, []);
-
-  const { data: myprofile } = useQuery({
-    queryKey: ["my-profile"],
-    queryFn: async () => {
-      const res = await instance.get(endpoints().Profiles.my_profile);
-      return res.data;
-    },
-  });
-
-  console.log("this is meee", myprofile);
   return (
     <div>
       <Profile

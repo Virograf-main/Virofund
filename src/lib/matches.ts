@@ -2,6 +2,8 @@ import toast from "react-hot-toast";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { base_url } from "./constants";
 import { handleApiError } from "@/lib/middleware";
+import { ConnectionRequest } from "@/types/matches";
+import { createChat } from "@/lib/chats";
 
 export const generateMatch = async (router: AppRouterInstance) => {
   try {
@@ -133,48 +135,75 @@ export const getIncomingRequests = async () => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error creating profile:", error);
-    toast.error("Failed to create profile");
+    console.error("Error getting profile:", error);
+    toast.error("Failed to get profile");
     return;
   }
 };
 
 export const approveRequest = async (requestId: string) => {
   const token = localStorage.getItem("accessToken");
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/matches/requests/${requestId}/status`,
-    {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        status: "accepted",
-      }),
-    }
-  );
 
-  if (!res.ok) throw new Error("Failed to approve");
-  return res.json();
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/matches/requests/${requestId}/status`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: "accepted",
+        }),
+      }
+    );
+
+    if (!res.ok) {
+      const error = await res.json();
+      handleApiError(error);
+      return;
+    }
+    const data: ConnectionRequest = await res.json();
+    await createChat(
+      data.id,
+      data.sender.id,
+      data.receiver.id,
+      `${data.sender.firstName + " " + data.sender.lastName}`,
+      `${data.receiver.firstName + " " + data.receiver.lastName}`
+    );
+    return data;
+  } catch (err) {
+    toast.error("Failed to accept request");
+    console.log("Error updating request", err);
+  }
 };
 
 export const rejectRequest = async (requestId: string) => {
   const token = localStorage.getItem("accessToken");
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/matches/requests/${requestId}/status`,
-    {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        status: "rejected",
-      }),
-    }
-  );
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/matches/requests/${requestId}/status`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: "rejected",
+        }),
+      }
+    );
 
-  if (!res.ok) throw new Error("Failed to reject");
-  return res.json();
+    if (!res.ok) {
+      const error = await res.json();
+      handleApiError(error);
+      return;
+    }
+    return res.json();
+  } catch (err) {
+    toast.error("Failed to reject request");
+    console.log("Error updating request", err);
+  }
 };

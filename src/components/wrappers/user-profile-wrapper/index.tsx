@@ -33,7 +33,6 @@ export function UserProfileWrapper({
         );
         setMatches(matches);
         const data = await getIncomingRequests();
-        console.log(data);
       }
     };
     fetchUser();

@@ -13,7 +13,7 @@ type InputProps = React.ComponentPropsWithoutRef<typeof ShadInput> & {
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ label, description, error, className, ...props }, ref) => {
     return (
-      <div className="flex flex-col gap-1 my-2">
+      <div className="flex flex-col gap-1 my-2 flex-1 w-full">
         {label && (
           <ShadLabel className="font-semibold text-sm">{label}</ShadLabel>
         )}

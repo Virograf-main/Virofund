@@ -5,17 +5,15 @@ import { useParams } from "next/navigation";
 import Profile from "@/components/pages/profile";
 import { useTableStore } from "@/store/useTableStore";
 import { getSpecificProfile } from "@/lib/profile";
-import { Founder } from "@/types/userprofile";
+import { Founder, UserProfile } from "@/types/userprofile";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 function UserProfilePage() {
   const params = useParams();
   const router = useRouter();
-  const [user, setUser] = useState<Founder>();
+  const [user, setUser] = useState<UserProfile>();
   const userId = params.userId as string;
-  const { matches } = useMatches();
-  const { loading } = useTableStore();
   useEffect(() => {
     async function fetchUser() {
       const data = await getSpecificProfile(userId, router);
@@ -31,20 +29,24 @@ function UserProfilePage() {
     <div>
       <Profile
         basicInfo={{
-          fullname: "No User",
+          fullname: user?.profile?.userName
+            ? user?.profile?.userName
+            : user?.firstName + " " + user?.lastName,
           role: "UI/UX Designer",
           location: {
-            state: user?.location,
+            state: user?.profile.location,
             // country: "Nigeria",
           },
-          socials: "LinkedIn - GitHub",
+          socials: user?.profile.linkedInUrl,
           image: "/images/clinton.jpg",
         }}
-        bio="Building products that make money move easier."
+        bio={user?.profile.bio}
         details={{
           keyRoles: ["Full time", "Senior level"],
-          //  workStyles: currentMatchProfile[0].matchedFounderDetails.,
-          skills: user?.skills,
+          workStyles: user?.profile.workStyle
+            ? [user?.profile.workStyle]
+            : ["unspecified"],
+          skills: user?.profile.skills,
         }}
         experience={[
           { title: "UI Team Lead at Tech Solutions", date: "Jul 2022 - 2024" },
@@ -58,11 +60,13 @@ function UserProfilePage() {
           },
         ]}
         needs={{
-          coFounder: user?.preferredFounderType
-            ? [user?.preferredFounderType]
+          coFounder: user?.profile.preferredFounderType
+            ? [user?.profile.preferredFounderType]
             : [""],
-          CurrentSkills: user?.preferredSkills,
-          Industry: user?.preferredIndustry ? [user?.preferredIndustry] : [],
+          CurrentSkills: user?.profile.preferredSkills,
+          Industry: user?.profile.preferredIndustry
+            ? [user?.profile.preferredIndustry]
+            : [],
         }}
         projects={{
           name: "FlipConnect",

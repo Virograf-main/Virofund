@@ -9,6 +9,8 @@ import { endpoints } from "@/config/endpoints";
 import { useQuery } from "@tanstack/react-query";
 import { instance } from "@/lib/axios";
 import { RequestSection } from "@/components/pages/dashboard/requestCard";
+import { getUserChats } from "@/lib/chats";
+import { useUserStore } from "@/store/userStore";
 
 // types/table.ts
 export interface TableRow {
@@ -19,8 +21,9 @@ export interface TableRow {
   skills: string;
   score: React.ReactNode;
 }
-export default function TeamTable() {
+export default function Dashboard() {
   const { matches, setMatches } = useMatches();
+  const { user } = useUserStore();
   const router = useRouter();
 
   const columns: Column<TableRow>[] = [
@@ -84,6 +87,15 @@ export default function TeamTable() {
     router.push(`/profile/${row.userId}`);
   };
 
+  useEffect(() => {
+    const fetchUserChats = async () => {
+      if (!user) return;
+      const data = await getUserChats(user?.id);
+      console.log(data);
+    };
+    fetchUserChats();
+  }, []);
+
   return (
     <section className="xl:grid xl:grid-cols-[1fr_400px] xl:gap-6 h-[90vh]  max-h-[600px]   md:max-w-full mx-auto">
       {/* Left column - make it scrollable */}
@@ -132,10 +144,7 @@ export default function TeamTable() {
 
       {/* Right column - Messages */}
       <div className="hidden xl:block">
-        <Messages
-          currentUserId="user1"
-          users={matchedUsers ? matchedUsers : users}
-        />
+        <Messages />
       </div>
     </section>
   );

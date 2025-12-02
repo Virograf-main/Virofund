@@ -15,65 +15,22 @@ const RequestPage = () => {
   const [requests, setRequests] = useState<ConnectionRequest[]>([]);
   const [loadingApproveId, setLoadingApproveId] = useState<string | null>(null);
   const [loadingRejectId, setLoadingRejectId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchIncomingRequests = async () => {
       try {
+        setLoading(true);
         const data = await getIncomingRequests();
         setRequests(data || []);
       } catch (err) {
         toast.error("Failed to load requests");
+      } finally {
+        setLoading(false);
       }
     };
     fetchIncomingRequests();
   }, []);
-
-  // const handleApprove = async (requestId: string) => {
-  //   setLoadingAction(requestId);
-  //   try {
-  //     await approveRequest(requestId);
-  //     toast.success("Co-founder request approved!");
-  //     setRequests((prev) => prev.filter((r) => r.id !== requestId));
-  //   } catch (err) {
-  //     toast.error("Failed to approve request");
-  //   } finally {
-  //     setLoadingAction(null);
-  //   }
-  // };
-
-  // const handleReject = async (requestId: string, senderName: string) => {
-  //   setLoadingAction(requestId);
-  //   try {
-  //     await rejectRequest(requestId);
-  //     toast.success("Request rejected");
-  //     setRequests((prev) => prev.filter((r) => r.id !== requestId));
-
-  // toast(
-  //   <div className="flex items-center gap-3">
-  //     <span>Rejected {senderName}</span>
-  //     <button
-  //       onClick={() => {
-  //         toast.dismiss();
-  //         handleApprove(requestId);
-  //       }}
-  //       className="font-medium text-primary hover:underline"
-  //     >
-  //       Undo
-  //     </button>
-  //   </div>,
-  //   { duration: 6000 }
-  // );
-
-  //   } catch (err) {
-  //     toast.error("Failed to reject request");
-  //   } finally {
-  //     setLoadingAction(null);
-  //   }
-  // };
-
-  {
-    /* Test handlers 😪😪😪 send money to 7040734334 palmpay 😌🤙*/
-  }
 
   const handleApprove = async (requestId: string) => {
     setLoadingApproveId(requestId);
@@ -122,9 +79,6 @@ const RequestPage = () => {
 
       <div className="space-y-4">
         {requests.map((request: ConnectionRequest) => {
-          const fullName =
-            `${request.sender.firstName} ${request.sender.lastName}`.trim();
-
           return (
             <RequestCard
               key={request.id}
