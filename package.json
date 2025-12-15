@@ -2,6 +2,10 @@
   "name": "virofund-mvp",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.19.6",
+    "npm": ">=10.2.4"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build --turbopack",
