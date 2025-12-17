@@ -7,6 +7,7 @@ import {
   MessagesSquare,
   Settings,
   Sparkles,
+  UserRound,
 } from "lucide-react";
 import Image from "next/image";
 import React from "react";
@@ -32,11 +33,11 @@ export function DesktopSidebar() {
       route: "/requests",
       icon: <Boxes />,
     },
-    // {
-    //   label: "Messages",
-    //   route: "/messages",
-    //   icon: <MessagesSquare />,
-    // },
+    {
+      label: "Profile",
+      route: "/profile",
+      icon: <UserRound />,
+    },
     {
       label: "Notifications",
       route: "/notifications",

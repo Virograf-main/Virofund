@@ -1,6 +1,6 @@
 "use client";
 import { TokenChecker } from "@/components/wrappers/access-token-wrapper";
-import { generateMatch, getMatches } from "@/lib/matches";
+import { generateMatch, getIncomingRequests, getMatches } from "@/lib/matches";
 import { getMatchingProfile, getProfile } from "@/lib/profile";
 import { useUserStore } from "@/store/userStore";
 import { UserProfile } from "@/types/userprofile";
@@ -10,6 +10,7 @@ import { FounderMatch } from "@/types/matches";
 import toast from "react-hot-toast";
 import { useTableStore } from "@/store/useTableStore";
 import { useRouter } from "next/navigation";
+import { Loader } from "@/components/atoms";
 export function UserProfileWrapper({
   children,
 }: {
@@ -31,14 +32,18 @@ export function UserProfileWrapper({
           () => setTableLoading(false)
         );
         setMatches(matches);
-        // await getMatches
+        const data = await getIncomingRequests();
       }
     };
     fetchUser();
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
   }
   return <>{children}</>;
 }

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 interface TokenCheckerProps {
-  onTokenExpired?: () => void; // your refresh function
+  onTokenExpired?: () => Promise<void>; // your refresh function
   checkIntervalMs?: number; // how often to check, default 60s
   children: React.ReactNode;
 }
@@ -30,7 +30,7 @@ export function TokenChecker({
   const router = useRouter();
 
   useEffect(() => {
-    const checkToken: () => void = () => {
+    const checkToken: () => void = async () => {
       if (typeof window !== "undefined") {
         const token = localStorage.getItem("accessToken");
         console.log(token);
@@ -41,7 +41,9 @@ export function TokenChecker({
 
         if (!isAccessTokenValid(token)) {
           if (onTokenExpired) {
-            onTokenExpired(); // call your refresh function
+            await onTokenExpired().then(() => {
+              console.log("token refreshed");
+            }); // call your refresh function
           } else {
             router.replace("/"); // fallback to login
           }

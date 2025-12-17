@@ -23,3 +23,19 @@ export interface FounderMatch {
   matchedFounderDetails: MatchedFounderDetails;
   createdAt: string; // ISO date string
 }
+
+export interface ConnectionRequest {
+  id: string;
+  sender: UserInfo;
+  receiver: UserInfo;
+  status: "pending" | "accepted" | "declined" | string;
+  compatibilityScore: number;
+  createdAt: string; // or Date if you convert it
+}
+
+export interface UserInfo {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}

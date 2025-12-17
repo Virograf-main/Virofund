@@ -150,12 +150,12 @@ export const getSpecificProfile = async (
       handleApiError(error);
       return;
     }
-    const data: Founder = await response.json();
+    const data: UserProfile = await response.json();
     console.log(data);
     return data;
   } catch (error) {
-    console.error("Error creating profile:", error);
-    toast.error("Failed to create profile");
+    console.error("Error getting profile:", error);
+    toast.error("Failed to get profile");
     return;
   }
 };
