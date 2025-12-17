@@ -33,6 +33,7 @@ export function TokenChecker({
     const checkToken: () => void = async () => {
       if (typeof window !== "undefined") {
         const token = localStorage.getItem("accessToken");
+        console.log(token);
         if (!token) {
           router.replace("/"); // redirect if no token
           return;
