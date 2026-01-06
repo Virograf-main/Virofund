@@ -103,7 +103,7 @@ export default function Dashboard() {
         {/* Table section - constrain height and make scrollable */}
         {refinedMatches.length > 0 ? (
           <section className="bg-white py-2 rounded-2xl w-full flex flex-col   ">
-            <div className="flex justify-between items-center px-4 py-2 flex-shrink-0">
+            <div className="flex justify-between items-center px-4 py-2 shrink-0">
               <p className="font-semibold text-[1.2em]">Suggestions</p>
               <Button
                 variant="outline"

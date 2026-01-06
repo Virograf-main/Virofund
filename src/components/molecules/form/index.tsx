@@ -66,26 +66,26 @@ export function Form() {
         onSubmit={
           isPrevUser
             ? (e) =>
-                handleLogin(e, setIsCreatingAccount, email, password, router)
+              handleLogin(e, setIsCreatingAccount, email, password, router)
             : (e) => {
-                e.preventDefault();
-                const allPassed = rules.every((rule) => rule.test(password));
-                if (!allPassed) {
-                  return toast.error(
-                    "Password must be at least 8 characters, include an uppercase letter, a number, and a special character"
-                  );
-                }
-                handleSignUp(
-                  e,
-                  setIsCreatingAccount,
-                  true,
-                  password,
-                  firstName,
-                  lastName,
-                  email,
-                  setIsPrevUser
+              e.preventDefault();
+              const allPassed = rules.every((rule) => rule.test(password));
+              if (!allPassed) {
+                return toast.error(
+                  "Password must be at least 8 characters, include an uppercase letter, a number, and a special character"
                 );
               }
+              handleSignUp(
+                e,
+                setIsCreatingAccount,
+                true,
+                password,
+                firstName,
+                lastName,
+                email,
+                setIsPrevUser
+              );
+            }
         }
         className="glass no-glass p-6 rounded-t-3xl"
       >
@@ -169,9 +169,8 @@ export function Form() {
                 return (
                   <li
                     key={idx}
-                    className={`flex items-center gap-2 ${
-                      passed ? "text-green-600" : "text-red-500"
-                    }`}
+                    className={`flex items-center gap-2 ${passed ? "text-green-600" : "text-red-500"
+                      }`}
                   >
                     {passed ? (
                       <CheckCircle2 size={16} />
@@ -187,6 +186,7 @@ export function Form() {
         </div>
         <div className="flex items-center justify-between">
           <Checkbox
+            required={!isPrevUser}
             label={
               isPrevUser ? (
                 "Remember me"
@@ -207,7 +207,7 @@ export function Form() {
           variant={isCreatingAccount ? "loading" : "default"}
           className="w-full"
         >
-          {isCreatingAccount ? <p>Loading...</p> : <p>Sign in</p>}
+          {isCreatingAccount ? <p>Loading...</p> : <p> {isPrevUser ?  'Sign in' : 'Sign up' }</p>}
         </Button>
         <Demarcation text="or continue with" />
         <Button variant="outline" type="button" className="w-full">

@@ -10,7 +10,7 @@ export const generateMatch = async (router: AppRouterInstance) => {
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
+      toast.error("Your session has expired. Please sign in again.");
       return;
     }
 
@@ -41,7 +41,7 @@ export const getMatches = async () => {
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
+      toast.error("Your session has expired. Please sign in again.");
       return;
     }
 

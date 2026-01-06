@@ -15,7 +15,7 @@ export async function createProfile(
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
+      toast.error("Your session has expired. Please sign in again.");
       return;
     }
 
@@ -59,7 +59,7 @@ export const getProfile = async () => {
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
+      toast.error("Your session has expired. Please sign in again.");
       return;
     }
 
@@ -96,7 +96,7 @@ export const getMatchingProfile = async (): Promise<
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
+      toast.error("Your session has expired. Please sign in again.");
       return;
     }
 
@@ -133,7 +133,7 @@ export const getSpecificProfile = async (
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
+      toast.error("Your session has expired. Please sign in again.");
       return;
     }
 
