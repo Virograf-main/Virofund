@@ -216,33 +216,37 @@ export function Form() {
           />
           {isPrevUser && <p className="text-[14px]">Forgot Password?</p>}
         </div>
-        <Button
-          type="submit"
-          variant={isCreatingAccount ? "secondary" : "default"}
-          className="w-full"
-        >
-          {isCreatingAccount ? <p>Loading...</p> : <p>Sign in</p>}
-        </Button>
-        <Demarcation text="or continue with" />
-        <Button variant="outline" type="button" className="w-full">
-          <Image
-            src="/svg/google-svgrepo-com.svg"
-            alt="google"
-            width={20}
-            height={20}
-          />
-          <p>Google</p>
-        </Button>
-        {/* Toggle sign in/up */}
-        <p className="text-center text-[14px]">
-          {isPrevUser ? "Don't have an account? " : "Already have an account? "}
-          <span
-            className="text-link cursor-pointer text-[#007aff]"
-            onClick={handleClick}
+        <div className="flex flex-col gap-4 my-2">
+          <Button
+            type="submit"
+            variant={isCreatingAccount ? "secondary" : "default"}
+            className="w-full"
           >
-            {isPrevUser ? "Sign up" : "Sign in"}
-          </span>
-        </p>
+            {isCreatingAccount ? <p>Loading...</p> : <p>Sign in</p>}
+          </Button>
+          <Demarcation text="or continue with" />
+          <Button variant="outline" type="button" className="w-full">
+            <Image
+              src="/svg/google-svgrepo-com.svg"
+              alt="google"
+              width={20}
+              height={20}
+            />
+            <p>Google</p>
+          </Button>
+          {/* Toggle sign in/up */}
+          <p className="text-center text-[14px]">
+            {isPrevUser
+              ? "Don't have an account? "
+              : "Already have an account? "}
+            <span
+              className="text-link cursor-pointer text-[#007aff]"
+              onClick={handleClick}
+            >
+              {isPrevUser ? "Sign up" : "Sign in"}
+            </span>
+          </p>
+        </div>
       </form>
 
       <OtpDialog
