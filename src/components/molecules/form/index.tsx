@@ -8,12 +8,21 @@ import {
   Loader,
 } from "@/components/atoms";
 import { motion, AnimatePresence } from "framer-motion";
-import { handleSignUp, handleLogin } from "@/lib/auth";
+import {
+  handleSendOtp,
+  handleLogin,
+  handleSignUp,
+  resendOtp,
+} from "@/lib/auth";
 import Image from "next/image";
 import { Eye, EyeOff, CheckCircle2, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useModal } from "@/hooks/useOpenModalHook";
+import { UrlDialog } from "@/components/molecules/modal/url-dialog";
+import { InputOtp } from "@/components/atoms/otp";
+import { OtpDialog } from "@/components/molecules/OtmModal";
 
 const fieldVariants = {
   hidden: { opacity: 0, height: 0, marginBottom: 0 },
@@ -30,6 +39,7 @@ export function Form() {
   const [lastName, setLastName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const Modal = useModal();
 
   const handleClick = () => {
     setIsPrevUser(!isPrevUser);
@@ -53,6 +63,10 @@ export function Form() {
       label: "One number",
       test: (pw: string) => /\d/.test(pw),
     },
+    {
+      label: "One special character (@$!%*?&)",
+      test: (pw: string) => /[@$!%*?&]/.test(pw),
+    },
   ];
 
   return (
@@ -72,10 +86,10 @@ export function Form() {
                 const allPassed = rules.every((rule) => rule.test(password));
                 if (!allPassed) {
                   return toast.error(
-                    "Password must be at least 8 characters, include an uppercase letter, a number, and a special character"
+                    "Password must be at least 8 characters, include an uppercase letter, a number, and a special character",
                   );
                 }
-                handleSignUp(
+                handleSendOtp(
                   e,
                   setIsCreatingAccount,
                   true,
@@ -83,7 +97,7 @@ export function Form() {
                   firstName,
                   lastName,
                   email,
-                  setIsPrevUser
+                  () => Modal.openModal("otp"),
                 );
               }
         }
@@ -204,7 +218,7 @@ export function Form() {
         </div>
         <Button
           type="submit"
-          variant={isCreatingAccount ? "loading" : "default"}
+          variant={isCreatingAccount ? "secondary" : "default"}
           className="w-full"
         >
           {isCreatingAccount ? <p>Loading...</p> : <p>Sign in</p>}
@@ -230,6 +244,11 @@ export function Form() {
           </span>
         </p>
       </form>
+
+      <OtpDialog
+        onVerify={(otp) => handleSignUp(otp, setIsPrevUser)}
+        onResend={resendOtp}
+      />
     </div>
   );
 }

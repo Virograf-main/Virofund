@@ -51,7 +51,14 @@ export function DatePicker({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
-          <Calendar mode="single" selected={value} onSelect={onChange} />
+          <Calendar
+            mode="single"
+            selected={value}
+            onSelect={onChange}
+            captionLayout="dropdown"
+            fromYear={1900}
+            toYear={new Date().getFullYear()}
+          />
         </PopoverContent>
       </Popover>
     </div>
