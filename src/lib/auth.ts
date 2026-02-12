@@ -6,8 +6,8 @@ import { getMatchingProfile } from "@/lib/profile";
 import { handleApiError } from "@/lib/middleware";
 
 export const authenticateUser = async (
-  payload: Record<string, string>,
-  url: string
+  payload: Record<string, string | boolean>,
+  url: string,
 ) => {
   try {
     const res = await fetch(url, {
@@ -31,7 +31,7 @@ export const authenticateUser = async (
   }
 };
 
-export const handleSignUp = async (
+export const handleSendOtp = async (
   e: React.FormEvent<HTMLFormElement>,
   setIsCreatingAccount: (bool: boolean) => void,
   isChecked: boolean,
@@ -39,7 +39,8 @@ export const handleSignUp = async (
   firstName: string,
   lastName: string,
   email: string,
-  setPrevuser: (bool: boolean) => void
+  // setPrevuser: (bool: boolean) => void,
+  openOtpModal?: () => void,
 ) => {
   e.preventDefault();
 
@@ -50,16 +51,21 @@ export const handleSignUp = async (
   setIsCreatingAccount(true);
 
   try {
-    const url = `${base_url}/auth/register`;
-    const data = await authenticateUser(
-      { firstName, lastName, email, password },
-      url
+    const url = `${base_url}/auth/otp/send`;
+    localStorage.setItem(
+      "pendingUser",
+      JSON.stringify({ firstName, lastName, password, email }),
     );
+    const data = await authenticateUser({ email, isRegistering: true }, url);
 
     if (!data) return; // API failed, stop
-
-    toast.success("Account created successfully");
-    setPrevuser(true); // switch back to login after signup
+    if (data.message !== "OTP sent") {
+      toast.error(data.message || "Failed to send OTP");
+      return;
+    }
+    toast.success("OTP sent to email. Please check your inbox.");
+    openOtpModal?.();
+    // setPrevuser(true); // switch back to login after signup
   } catch (err: unknown) {
     console.error(err);
     toast.error((err as Error).message || "Something went wrong");
@@ -68,12 +74,69 @@ export const handleSignUp = async (
   }
 };
 
+export const resendOtp = async () => {
+  try {
+    const pendingUserStr = localStorage.getItem("pendingUser");
+    if (!pendingUserStr) {
+      toast.error("No pending registration found");
+      return;
+    }
+
+    const { email } = JSON.parse(pendingUserStr);
+
+    const url = `${base_url}/auth/otp/send`;
+    const data = await authenticateUser({ email, isRegistering: true }, url);
+
+    if (!data) return;
+
+    toast.success("OTP resent successfully");
+  } catch (err: unknown) {
+    toast.error((err as Error).message || "Failed to resend OTP");
+  }
+};
+
+export const handleSignUp = async (
+  otp: string,
+  setIsPrevUser: (bool: boolean) => void,
+): Promise<void> => {
+  if (!otp) {
+    toast.error("Enter OTP");
+    return;
+  }
+
+  try {
+    const url = `${base_url}/auth/register`;
+
+    const pendingUserStr = localStorage.getItem("pendingUser");
+    if (!pendingUserStr) {
+      toast.error("No pending registration found");
+      return;
+    }
+
+    const pendingUser = JSON.parse(pendingUserStr);
+
+    const data = await authenticateUser({ ...pendingUser, otp }, url);
+
+    if (!data) return;
+
+    localStorage.setItem("accessToken", data.access_token);
+    localStorage.setItem("refreshToken", data.refresh_token);
+
+    toast.success("Account created successfully");
+    setIsPrevUser(true); // switch to login after successful signup
+    localStorage.removeItem("pendingUser");
+  } catch (err: unknown) {
+    console.error(err);
+    toast.error((err as Error).message || "Failed to verify OTP");
+  }
+};
+
 export const handleLogin = async (
   e: React.FormEvent<HTMLFormElement>,
   setIsLoggingIn: (bool: boolean) => void,
   email: string,
   password: string,
-  router: AppRouterInstance // 👈 pass in next/router or useRouter from your component
+  router: AppRouterInstance, // 👈 pass in next/router or useRouter from your component
 ) => {
   e.preventDefault();
 
