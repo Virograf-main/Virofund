@@ -38,10 +38,12 @@ export function Form() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const router = useRouter();
   const Modal = useModal();
 
   const handleClick = () => {
+
     setIsPrevUser(!isPrevUser);
     setEmail("");
     setPassword("");
@@ -80,26 +82,29 @@ export function Form() {
         onSubmit={
           isPrevUser
             ? (e) =>
-                handleLogin(e, setIsCreatingAccount, email, password, router)
+              handleLogin(e, setIsCreatingAccount, email, password, router)
             : (e) => {
-                e.preventDefault();
-                const allPassed = rules.every((rule) => rule.test(password));
-                if (!allPassed) {
-                  return toast.error(
-                    "Password must be at least 8 characters, include an uppercase letter, a number, and a special character",
-                  );
-                }
-                handleSendOtp(
-                  e,
-                  setIsCreatingAccount,
-                  true,
-                  password,
-                  firstName,
-                  lastName,
-                  email,
-                  () => Modal.openModal("otp"),
+              e.preventDefault();
+              if (!agreedToTerms) {
+                return toast.error("You must agree to the Terms and Conditions");
+              }
+              const allPassed = rules.every((rule) => rule.test(password));
+              if (!allPassed) {
+                return toast.error(
+                  "Password must be at least 8 characters, include an uppercase letter, a number, and a special character",
                 );
               }
+              handleSendOtp(
+                e,
+                setIsCreatingAccount,
+                true,
+                password,
+                firstName,
+                lastName,
+                email,
+                () => Modal.openModal("otp"),
+              );
+            }
         }
         className="glass no-glass p-6 rounded-t-3xl"
       >
@@ -123,7 +128,7 @@ export function Form() {
             transition={{ duration: 0.3 }}
             className="text-[14px]"
           >
-            Select a method to {isPrevUser ? "login" : "Sign in"}
+            Select a method to {isPrevUser ? "login" : "Sign up"}
           </motion.p>
         </article>
         {/* Conditional fields */}
@@ -183,9 +188,8 @@ export function Form() {
                 return (
                   <li
                     key={idx}
-                    className={`flex items-center gap-2 ${
-                      passed ? "text-green-600" : "text-red-500"
-                    }`}
+                    className={`flex items-center gap-2 ${passed ? "text-green-600" : "text-red-500"
+                      }`}
                   >
                     {passed ? (
                       <CheckCircle2 size={16} />
@@ -201,6 +205,8 @@ export function Form() {
         </div>
         <div className="flex items-center justify-between">
           <Checkbox
+            checked={agreedToTerms} 
+            onClick={() => setAgreedToTerms((prev) => !prev)}
             label={
               isPrevUser ? (
                 "Remember me"
@@ -219,10 +225,11 @@ export function Form() {
         <div className="flex flex-col gap-4 my-2">
           <Button
             type="submit"
+            disabled={!isPrevUser && !agreedToTerms}
             variant={isCreatingAccount ? "secondary" : "default"}
             className="w-full"
           >
-            {isCreatingAccount ? <p>Loading...</p> : <p>Sign in</p>}
+            {isPrevUser ? ( isCreatingAccount ? <p>Loading...</p> : <p>Sign in</p>) : ( isCreatingAccount ? <p>Loading...</p> : <p>Sign up</p>)}
           </Button>
           <Demarcation text="or continue with" />
           <Button variant="outline" type="button" className="w-full">
