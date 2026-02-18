@@ -234,3 +234,25 @@ export async function refreshToken() {
     console.log("error getting access token: ", err);
   }
 }
+
+// export async function refreshToken() {
+//   const refreshToken = localStorage.getItem("refreshToken");
+//   if (!refreshToken) throw new Error("No refresh token");
+
+//   const response = await fetch(`${base_url}/auth/refresh`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify({ refreshToken }),
+//   });
+
+//   if (!response.ok) {
+//     throw new Error("Refresh failed");
+//   }
+
+//   const data = await response.json();
+
+//   localStorage.setItem("accessToken", data.access_token);
+//   localStorage.setItem("refreshToken", data.refresh_token);
+// }
