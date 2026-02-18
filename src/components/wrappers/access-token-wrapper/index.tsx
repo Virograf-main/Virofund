@@ -12,12 +12,24 @@ interface TokenCheckerProps {
 // Utility function to check token validity
 function isAccessTokenValid(token: string | null): boolean {
   if (!token) return false;
+
+  const parts = token.split(".");
+  if (parts.length !== 3) {
+    console.warn("Invalid JWT format");
+    return false;
+  }
+
   try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
+    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+
+    const payload = JSON.parse(atob(base64));
+
+    if (!payload?.exp) return false;
+
     const now = Math.floor(Date.now() / 1000);
-    return payload.exp && payload.exp > now;
+    return payload.exp > now;
   } catch (e) {
-    console.error("Failed to parse token:", e);
+    console.error("Failed to decode token payload:", e);
     return false;
   }
 }
@@ -30,23 +42,34 @@ export function TokenChecker({
   const router = useRouter();
 
   useEffect(() => {
-    const checkToken: () => void = async () => {
-      if (typeof window !== "undefined") {
-        const token = localStorage.getItem("accessToken");
-        console.log(token);
-        if (!token) {
-          router.replace("/"); // redirect if no token
-          return;
-        }
+    const checkToken = async () => {
+      if (typeof window === "undefined") return;
 
-        if (!isAccessTokenValid(token)) {
+      const token = localStorage.getItem("accessToken");
+
+      if (!token) {
+        router.replace("/");
+        return;
+      }
+
+      const valid = isAccessTokenValid(token);
+
+      if (!valid) {
+        try {
           if (onTokenExpired) {
-            await onTokenExpired().then(() => {
-              console.log("token refreshed");
-            }); // call your refresh function
+            await onTokenExpired();
+
+            // re-check after refresh
+            const newToken = localStorage.getItem("accessToken");
+            if (!isAccessTokenValid(newToken)) {
+              router.replace("/");
+            }
           } else {
-            router.replace("/"); // fallback to login
+            router.replace("/");
           }
+        } catch (err) {
+          console.error("Refresh failed:", err);
+          router.replace("/");
         }
       }
     };
