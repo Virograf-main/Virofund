@@ -20,6 +20,7 @@ interface MultiSelectProps {
   className?: string;
   max?: number; // ✅ optional max
   label?: string; // ✅ optional label
+  error?: boolean;
 }
 
 export function MultiSelect({
@@ -30,7 +31,8 @@ export function MultiSelect({
   className,
   max,
   label = "select one or multiple",
-}: MultiSelectProps) {
+  error= false
+ }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false);
 
   const toggleItem = (val: string) => {

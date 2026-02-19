@@ -13,10 +13,10 @@ import {
   FOUNDER_STATUSES,
   SKILL_CATEGORIES,
 } from "@/lib/constants";
-import Link from "next/link";
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { useEffect, useState } from "react";
 import { formatDateToYMD } from "@/lib/helpers";
+import { useRouter } from "next/navigation"; // Add this import
 
 const gender = [
   {
@@ -53,12 +53,106 @@ const workStyles = roles.map((value) => {
 });
 
 export function AboutYou() {
+  const router = useRouter(); // For programmatic navigation
   const { data, updateField } = useOnboardingStore();
   const [date, setDate] = useState<Date | undefined>(new Date());
-  const disabled = !data.gender || !date || !data.location || !data.industry;
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
+  // Optional: Sync date from store if needed (e.g., on mount)
+  useEffect(() => {
+    if (data.dateOfBirth) {
+      setDate(new Date(data.dateOfBirth));
+    }
+  }, [data.dateOfBirth]);
+
+  // Auto-dismiss alert after 7 seconds
+  useEffect(() => {
+    if (showAlert) {
+      const timer = setTimeout(() => {
+        setShowAlert(false);
+      }, 7000);
+      return () => clearTimeout(timer);
+    }
+  }, [showAlert]);
+
+  const handleNext = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!data.gender) newErrors.gender = "Gender is required";
+    if (!data.dateOfBirth) newErrors.dateOfBirth = "Date of Birth is required";
+    if (!data.location) newErrors.location = "Location is required";
+    if (!data.industry) newErrors.industry = "Industry is required";
+
+    // Add more validations if other fields are required, e.g.:
+    if (!data.yearsExperience) newErrors.yearsExperience = "Years of experience is required";
+    if (!data.founderStatus) newErrors.founderStatus = "Founder status is required";
+    // if (data.skills.length < 3) newErrors.skills = "Select at least 3 skills"; // Example for MultiSelect
+    if (!data.linkedInUrl) newErrors.linkedInUrl = "LinkedIn URL is required";
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+
+      const fieldDisplayNames: Record<string, string> = {
+        gender: "Gender",
+        dateOfBirth: "Date of Birth",
+        location: "Location",
+        industry: "Industry",
+        yearsExperience: "Years of Experience",
+        founderStatus: "Founder Status",
+        linkedInUrl: "LinkedIn Profile URL",   // ← fixed nicely here
+        // Add more fields later if needed
+      };
+      if (Object.keys(newErrors).length > 4) {
+        setAlertMessage("Whoa, looks like a lot is missing! Please fill out all required fields to continue.");
+      } else {
+        const missedFields = Object.keys(newErrors)
+          .map((key) => fieldDisplayNames[key] || key)  // use nice name if exists, fallback to key
+          .join(", ");
+
+        setAlertMessage(`Please fill in the following fields: ${missedFields}`);
+      }
+      setShowAlert(true);
+      return;
+    }
+    // If valid, clear errors/alert and navigate
+    setErrors({});
+    setShowAlert(false);
+    router.push("/profile-setup");
+  };
 
   return (
     <div>
+   
+      {showAlert && (
+  <div className="fixed top-6 left-1/2 transform -translate-x-1/2 max-w-md w-full z-50 
+                  flex items-center gap-4 p-4 rounded-xl border border-red-200 
+                  bg-white/95 backdrop-blur-sm shadow-2xl shadow-red-200/50 
+                  animate-in fade-in zoom-in duration-300">
+    
+    {/* Round Svg alert icon*/}
+    <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+      <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+    {/* Message */}
+    <div className="flex-1">
+      <h3 className="text-sm font-bold text-red-900">Attention Required</h3>
+      <p className="text-xs text-red-700 leading-relaxed">{alertMessage}</p>
+    </div>
+
+    {/* Close X Button */}
+    <button
+      onClick={() => setShowAlert(false)}
+      className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+    >
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+)}
       <Section title="Tell us about yourself">
         <Div>
           <SelectElement
@@ -67,6 +161,7 @@ export function AboutYou() {
             items={gender}
             value={data.gender}
             onChange={(value) => updateField("gender", value)}
+            error={!!errors.gender} // Pass error prop (add to your SelectElement if needed)
           />
           <DatePicker
             label="Date of birth"
@@ -76,6 +171,7 @@ export function AboutYou() {
               setDate(value);
               updateField("dateOfBirth", formatDateToYMD(value));
             }}
+            error={!!errors.dateOfBirth} // Pass error prop (add to your DatePicker if needed)
           />
           <SelectElement
             label="Location"
@@ -83,6 +179,7 @@ export function AboutYou() {
             items={locations}
             value={data.location}
             onChange={(value) => updateField("location", value)}
+            error={!!errors.location}
           />
         </Div>
       </Section>
@@ -100,6 +197,7 @@ export function AboutYou() {
             label="What industry do you work in?"
             value={data.industry}
             onChange={(value) => updateField("industry", value)}
+            error={!!errors.industry}
           />
         </Div>
       </Section>
@@ -113,6 +211,7 @@ export function AboutYou() {
             onChange={(e) =>
               updateField("yearsExperience", Number(e.target.value))
             }
+            error={!!errors.yearsExperience} // If you make this required
           />
 
           <SelectElement
@@ -120,6 +219,7 @@ export function AboutYou() {
             items={founderStatuses}
             value={data.founderStatus}
             onChange={(value) => updateField("founderStatus", value)}
+            error={!!errors.founderStatus} // If required
           />
           <SelectElement
             label="What best describes your preferred work style?"
@@ -138,6 +238,7 @@ export function AboutYou() {
             value={data.skills}
             onChange={(value) => updateField("skills", value)}
             max={3}
+            error={!!errors.skills} // If required
           />
           <Input
             label="Linkedin Profile URL"
@@ -145,12 +246,13 @@ export function AboutYou() {
             type="text"
             value={data.linkedInUrl}
             onChange={(e) => updateField("linkedInUrl", e.target.value)}
+            error={!!errors.linkedInUrl}
           />
         </Div>
       </Section>
-      <Link href="/profile-setup">
-        <Button className="w-full">Next</Button>
-      </Link>
+      <Button onClick={handleNext} className="w-full">
+        Next
+      </Button>
     </div>
   );
 }
