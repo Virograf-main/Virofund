@@ -66,7 +66,7 @@ export function Form() {
       test: (pw: string) => /\d/.test(pw),
     },
     {
-      label: "One special character (@$!%*?&)",
+      label: "One special character ",
       test: (pw: string) => /[@$!%*?&]/.test(pw),
     },
   ];
