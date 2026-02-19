@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 type InputProps = React.ComponentPropsWithoutRef<typeof ShadInput> & {
   label?: string; // optional label text
   description?: string; // optional helper text
-  error?: string; // optional error text
+  error?: boolean // optional error text
 };
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ label, description, error, className, ...props }, ref) => {
+  ({ label, description, error=false , className, ...props }, ref) => {
     return (
       <div className="flex flex-col gap-1 my-2 flex-1 w-full">
         {label && (

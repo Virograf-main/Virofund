@@ -39,6 +39,7 @@ interface SelectElementProps {
   label?: string;
   value?: string;
   onChange?: (value: string) => void;
+  error?: boolean;
 }
 
 export const SelectElement = ({
@@ -47,6 +48,7 @@ export const SelectElement = ({
   label = "",
   value,
   onChange,
+  error= false
 }: SelectElementProps) => {
   return (
     <div>

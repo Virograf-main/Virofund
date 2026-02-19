@@ -19,6 +19,7 @@ interface DatePickerProps {
   onChange?: (date: Date | undefined) => void;
   label?: string;
   placeholder?: string;
+  error?: boolean;
 }
 
 export function DatePicker({
@@ -26,6 +27,7 @@ export function DatePicker({
   onChange,
   label,
   placeholder = "Pick a date",
+  error = false
 }: DatePickerProps) {
   return (
     <div className="flex flex-col gap-1">

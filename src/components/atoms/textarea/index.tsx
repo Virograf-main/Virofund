@@ -8,11 +8,11 @@ import { cn } from "@/lib/utils";
 type TextareaProps = React.ComponentPropsWithoutRef<typeof ShadTextarea> & {
   label?: string; // optional label text
   description?: string; // optional helper text
-  error?: string; // optional error text
+  error?: boolean; // optional error text
 };
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ label, description, error, className, rows = 4, ...props }, ref) => {
+  ({ label, description, error=false, className, rows = 4, ...props }, ref) => {
     return (
       <div className="flex flex-col gap-1 my-2">
         {label && (
