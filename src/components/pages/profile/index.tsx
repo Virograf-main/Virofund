@@ -97,7 +97,7 @@ export default function Profile({ profile }: { profile: FounderProfile }) {
   return (
     <div
       style={{ fontFamily: "'DM Sans', sans-serif" }}
-      className="min-h-screen bg-[#FAF8F4] p-4 md:p-8"
+      className="min-h-screen  p-4 md:p-8"
     >
       <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap"

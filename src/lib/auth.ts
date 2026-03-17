@@ -281,12 +281,31 @@ export const handleResetPassword = async (
     const email = localStorage.getItem("resetEmail");
     if (!email) { toast.error("Session expired, please try again"); return; }
 
-    const url = `${base_url}/auth/otp/verify?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}`;
-    const res = await fetch(url, { method: "GET" });
-    const data = await res.json();
+    // Step 1: Verify OTP (GET with body)
+    const verifyRes = await fetch(`${base_url}/auth/otp/verify`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp }),
+    });
 
-    if (!res.ok) {
-      toast.error(data.message || "Invalid OTP");
+    const verifyData = await verifyRes.json();
+
+    if (!verifyRes.ok) {
+      toast.error(verifyData.message || "Invalid OTP");
+      return;
+    }
+
+    // Step 2: Update password (PATCH)
+    const updateRes = await fetch(`${base_url}/auth/password/update`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password: newPassword }),
+    });
+
+    const updateData = await updateRes.json();
+
+    if (!updateRes.ok) {
+      toast.error(updateData.message || "Failed to update password");
       return;
     }
 

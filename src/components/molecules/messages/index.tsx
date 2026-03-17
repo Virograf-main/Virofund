@@ -221,17 +221,15 @@ export const Messages = () => {
 
   // CONVERSATION LIST ----------------------------------------
   return (
-    <Card className="h-[85vh]">
+    <Card className="h-full">
       {chats.length === 0 ? (
-        <div className="h-full w-full flex flex-col items-center justify-center">
-          <Image
-            src="/svg/no-data.svg"
-            width={200}
-            height={200}
-            alt="no data"
-          />
-          <p className="text-center">
-            Your matched co-founders will appear here
+        <div className="h-full w-full flex flex-col items-center justify-center gap-3 p-10 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <span className="text-2xl">💬</span>
+          </div>
+          <h3 className="font-semibold text-[#1C1A16]">No conversations yet</h3>
+          <p className="text-sm text-gray-400 max-w-[220px]">
+            Once you connect with a co-founder, your chats will appear here.
           </p>
         </div>
       ) : (

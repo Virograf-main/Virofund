@@ -120,7 +120,7 @@ export function OtpDialog({
         )}
 
         <p className="text-xs text-muted-foreground text-center">
-          Didn't receive the code? Check spam folder.
+          Didn&apos;t receive the code? Check spam folder.
         </p>
 
         <div className="space-y-3 pt-2">

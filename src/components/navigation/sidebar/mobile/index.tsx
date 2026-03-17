@@ -9,6 +9,7 @@ import {
   UserRound,
   X,
   LogOut,
+  MessageCircle,
 } from "lucide-react";
 import Image from "next/image";
 import React from "react";
@@ -27,6 +28,11 @@ const sidebarItems = [
     icon: <Boxes size={20} />,
   },
   { label: "Profile", route: "/profile", icon: <UserRound size={20} /> },
+  {
+    label: "Messages",
+    route: "/messages",
+    icon: <MessageCircle size={20} />,
+  },
   // { label: "Notifications", route: "/notifications", icon: <Bell size={20} /> },
 ];
 

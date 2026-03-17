@@ -27,14 +27,22 @@ export function Navbar() {
   return (
     <nav className="py-2">
       <div className="flex items-center justify-between">
-        <h1 className="text-[1.5em] lg:text-[2em] font-semibold hidden xl:block">
+        <h1
+          className="text-[1.5em] lg:text-[2em] font-semibold hidden xl:block"
+          style={{ fontFamily: "'DM Serif Display', serif" }}
+        >
           {title}
         </h1>
         <div className="flex gap-2 items-center xl:hidden">
           <MenuIcon onClick={() => setIsOpen(true)} />
-          <h1 className="text-[1.5em] lg:text-[2em] font-semibold">Virofund</h1>
+          <h1
+            className="text-[1.5em] lg:text-[2em] font-semibold"
+            style={{ fontFamily: "'DM Serif Display', serif" }}
+          >
+            Virofund
+          </h1>
         </div>
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <div className="rounded-full overflow-hidden h-[40px] w-[40px]">
             <Image
               src="/jpg/no-image.jpg"
@@ -44,7 +52,7 @@ export function Navbar() {
             />
           </div>
           <Bell height={30} width={30} />
-        </div>
+        </div> */}
       </div>
 
       {isOpen && <MobileSidebar setIsOpen={setIsOpen} />}

@@ -1,51 +1,44 @@
 "use client";
-import { Button, Column, DataTable, Loader } from "@/components/atoms";
+import { Button, DataTable, Loader } from "@/components/atoms";
 import { Messages } from "@/components/molecules";
-import { useMatches } from "@/store/useMatchesStore";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ReactNode, Suspense, useEffect } from "react";
+import { RequestSection } from "@/components/pages/dashboard/requestCard";
+import type { Column } from "@/components/atoms";
+import { useMatches } from "@/store/useMatchesStore";
 import { endpoints } from "@/config/endpoints";
 import { useQuery } from "@tanstack/react-query";
 import { instance } from "@/lib/axios";
-import { RequestSection } from "@/components/pages/dashboard/requestCard";
-import { getUserChats } from "@/lib/chats";
-import { useUserStore } from "@/store/userStore";
 
-// types/table.ts
 export interface TableRow {
   userId: string;
   name: string;
   location: string;
   industry: string;
   skills: string;
-  score: React.ReactNode;
+  score: ReactNode;
 }
+
 export default function Dashboard() {
-  const { matches, setMatches } = useMatches();
-  const { user } = useUserStore();
   const router = useRouter();
+  const { matches, setMatches } = useMatches();
 
   const columns: Column<TableRow>[] = [
-    { key: "name", header: "Name" },
-    { key: "location", header: "Location" },
-    { key: "industry", header: "Industry" },
-    { key: "skills", header: "Skill stack" },
-    { key: "score", header: "Match Score" },
+    { header: "Name", accessor: "name" },
+    { header: "Location", accessor: "location" },
+    { header: "Industry", accessor: "industry" },
+    { header: "Skill stack", accessor: "skills" },
+    { header: "Match Score", accessor: "score" },
   ];
 
-  const users = [
-    { id: "user1", name: "Derin" },
-    { id: "user2", name: "Ti Developer" },
-    { id: "user3", name: "Melody" },
-  ];
-
-  const { data: matchedUsers } = useQuery({
+  const { data: matchedUsers, isLoading } = useQuery({
     queryKey: ["matched-users"],
     queryFn: async () => {
       const res = await instance.get(endpoints().Matches.get_matches);
       return res.data;
     },
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -54,55 +47,29 @@ export default function Dashboard() {
     }
   }, [matchedUsers, setMatches]);
 
-  const refinedMatches = matches?.map((match) => {
-    const percentage = (match.overallScore * 100).toFixed(0); // round to nearest integer
-
-    const matchScore =
-      match.overallScore > 0.5 && match.overallScore < 0.75 ? (
-        <span className="text-red-600">{percentage}%</span>
-      ) : (
-        // percentage
-        <span className="text-primary">{percentage}%</span>
-      );
-    // percentage;
-
+  const refinedMatches: TableRow[] = (matches ?? []).map((match) => {
+    const percentage = (match.overallScore * 100).toFixed(0);
     return {
       userId: match.matchedFounderId,
       name: match.matchedFounderDetails.name,
       location: match.matchedFounderDetails.location,
       industry: match.matchedFounderDetails.industry,
       skills: match.matchedFounderDetails.skills.join(", "),
-      score: matchScore,
+      score:
+        match.overallScore > 0.5 && match.overallScore < 0.75 ? (
+          <span className="text-red-500 font-medium">{percentage}%</span>
+        ) : (
+          <span className="text-primary font-medium">{percentage}%</span>
+        ),
     };
   });
-  const handleRowClick = (row: {
-    userId: string;
-    name: string;
-    location: string;
-    industry: string;
-    skills: string;
-    score: ReactNode;
-  }) => {
-    // assuming each row has a userId field
-    router.push(`/profile/${row.userId}`);
-  };
-
-  useEffect(() => {
-    const fetchUserChats = async () => {
-      if (!user) return;
-      const data = await getUserChats(user?.id);
-      console.log(data);
-    };
-    fetchUserChats();
-  }, []);
 
   return (
-    <section className="xl:grid xl:grid-cols-[1fr_400px] xl:gap-6 h-[90vh]  max-h-[600px]   md:max-w-full mx-auto">
-      {/* Left column - make it scrollable */}
+    <section className="xl:grid xl:grid-cols-[1fr_400px] xl:gap-6 h-full max-h-[600px] md:max-w-full mx-auto">
+      {/* Left column */}
       <section className="flex flex-col gap-6 h-full overflow-y-auto scrollbar">
-        {/* Table section - constrain height and make scrollable */}
-        {refinedMatches.length > 0 ? (
-          <section className="bg-white py-2 rounded-2xl w-full flex flex-col   ">
+        {isLoading || refinedMatches.length > 0 ? (
+          <section className="bg-white py-2 rounded-2xl w-full flex flex-col">
             <div className="flex justify-between items-center px-4 py-2 flex-shrink-0">
               <p className="font-semibold text-[1.2em]">Suggestions</p>
               <Button
@@ -114,31 +81,43 @@ export default function Dashboard() {
               </Button>
             </div>
 
-            {/* Table container - this is the key fix */}
-            <div className="overflow-x-auto overflow-y-auto flex-1 min-h-0">
+            <div className="overflow-x-auto overflow-y-auto flex-1 min-h-0 px-2">
               <DataTable
-                className="w-full"
                 columns={columns}
                 data={refinedMatches}
-                rowFn={handleRowClick}
+                isLoading={isLoading}
+                rowsPerPage={5}
+                onRowClick={(row) => router.push(`/profile/${row.userId}`)}
+                actions={(row) => (
+                  <Button
+                    variant="outline"
+                    className="text-xs h-7 px-3"
+                    onClick={() => router.push(`/profile/${row.userId}`)}
+                  >
+                    View
+                  </Button>
+                )}
               />
             </div>
           </section>
         ) : (
-          <div className="flex justify-center items-center">
-            <div className="flex flex-col gap-4">
-              <Image
-                src="/svg/no-data.svg"
-                width={200}
-                height={200}
-                alt="no data"
-              />
-              <p className="text-center">No Match Generated</p>
+          <div className="flex justify-center items-center bg-white rounded-2xl p-10">
+            <div className="flex flex-col items-center gap-3 text-center">
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <span className="text-2xl">🤝</span>
+              </div>
+              <h3 className="font-semibold text-[#1C1A16]">No matches yet</h3>
+              <p className="text-sm text-gray-400 max-w-[220px]">
+                Once we have found a perfect match for you, they will be
+                displayed here for you to connect with them
+              </p>
+              <Button className="mt-2" onClick={() => router.push("/profile")}>
+                View Profile
+              </Button>
             </div>
           </div>
         )}
 
-        {/* Co-founder Requests section */}
         <RequestSection />
       </section>
 
