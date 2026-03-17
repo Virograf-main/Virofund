@@ -30,7 +30,8 @@ function ResetPage() {
           Reset your password
         </h1>
         <p className="text-sm text-gray-400 mb-6">
-          Enter your email and we'll send you a code to reset your password.
+          Enter your email and we&apos;ll send you a code to reset your
+          password.
         </p>
 
         {/* Form */}

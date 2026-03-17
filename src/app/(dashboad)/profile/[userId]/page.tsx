@@ -63,7 +63,7 @@ function UserProfilePage() {
         <p className="text-5xl">👤</p>
         <h1 className="text-xl font-semibold text-[#1C1A16]">User not found</h1>
         <p className="text-sm text-[#A09A8E]">
-          This profile doesn't exist or may have been removed.
+          This profile doesn&apos;t exist or may have been removed.
         </p>
         <button
           onClick={() => router.back()}
