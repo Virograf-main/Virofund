@@ -105,12 +105,19 @@ export function listenToUserChats(
     orderBy("lastUpdated", "desc")
   );
 
-  return onSnapshot(q, (snapshot) => {
-    const chats = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Chat[];
-
-    callback(chats);
-  });
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const chats = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Chat[];
+      callback(chats);
+    },
+    (error) => {
+      // Callback never fires on error — loading stays forever without this
+      console.error("listenToUserChats error:", error);
+      callback([]); // unblock the UI
+    }
+  );
 }

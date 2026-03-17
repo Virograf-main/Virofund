@@ -1,10 +1,10 @@
 "use client";
-import { Button, Column, DataTable } from "@/components/atoms";
+import { Button, Column, DataTable, Loader } from "@/components/atoms";
 import { Messages } from "@/components/molecules";
 import { useMatches } from "@/store/useMatchesStore";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, Suspense, useEffect } from "react";
 import { endpoints } from "@/config/endpoints";
 import { useQuery } from "@tanstack/react-query";
 import { instance } from "@/lib/axios";
@@ -144,7 +144,9 @@ export default function Dashboard() {
 
       {/* Right column - Messages */}
       <div className="hidden xl:block">
-        <Messages />
+        <Suspense fallback={<Loader />}>
+          <Messages />
+        </Suspense>
       </div>
     </section>
   );
