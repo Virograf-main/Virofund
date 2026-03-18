@@ -8,18 +8,18 @@ import { useRouter } from "next/navigation";
 export default function SuggestionPage() {
   const { matches } = useMatches();
   const router = useRouter();
-
   if (matches.length === 0) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
-        <div className="flex flex-col gap-4">
-          <Image
-            src="/svg/no-data.svg"
-            width={200}
-            height={200}
-            alt="no data"
-          />
-          <p className="text-center">No Match Generated</p>
+        <div className="flex flex-col items-center gap-3 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <span className="text-2xl">🔍</span>
+          </div>
+          <h3 className="font-semibold text-[#1C1A16]">No matches yet</h3>
+          <p className="text-sm text-gray-400 max-w-[220px]">
+            We&apos;re still finding the right co-founders for you. Check back
+            soon!
+          </p>
         </div>
       </div>
     );
