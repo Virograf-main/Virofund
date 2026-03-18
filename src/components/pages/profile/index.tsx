@@ -1,218 +1,245 @@
 "use client";
-import { Card } from "@/components/atoms";
-import KeyValue from "@/components/atoms/keyvalue-pair";
-import Pills from "@/components/atoms/pills";
-import BasicInfo from "@/components/molecules/profile/basic-info";
-import Subcard from "@/components/molecules/profile/subcard";
+
 import React from "react";
 
-type ProfileProps = {
-  fullname: string;
-  role: string;
-  location?: {
-    state?: string;
-    country?: string;
-  };
-  socials?: string;
-  image?: string;
-};
+// ─── Types matching the API response ─────────────────────────────────────────
 
-type Details = {
-  keyRoles: string[];
-  workStyles?: string[];
-  skills?: string[];
-};
+export interface FounderProfile {
+  id: string;
+  userId: string;
+  userName: string;
+  founderStatus: string;
+  bio: string;
+  email: string;
+  skills: string[];
+  workStyle: string;
+  industry: string;
+  currentOccupation: string;
+  yearsExperience: number;
+  commitmentLevel: string;
+  financialContribution: string;
+  personalityTraits: string[];
+  location: string;
+  preferredSkills: string[];
+  preferredFounderType: string;
+  preferredIndustry: string;
+  preferredCommitmentLevel: string;
+  preferredFinancial: string;
+  preferredPersonalityTraits: string[];
+  preferredLocation: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
-type Experience = {
-  title: string;
-  date: string;
-};
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
-type Needs = {
-  coFounder?: string[];
-  CurrentSkills?: string[];
-  Industry?: string[];
-};
-
-type Projects = {
-  name: string;
-  description: string;
-  status: string;
-  link?: string;
-};
-
-const Profile = ({
-  basicInfo,
-  bio,
-  details,
-  experience,
-  needs,
-  projects,
-}: {
-  basicInfo: ProfileProps;
-  bio?: string;
-  details: Details;
-  experience?: Experience[];
-  needs?: Needs;
-  projects?: Projects;
-}) => {
-  const Details = [
-    {
-      title: "Key Roles",
-      subdetails: details.keyRoles,
-    },
-    {
-      title: "Work Styles",
-      subdetails: details.workStyles,
-    },
-    {
-      title: "Skills & Strengths",
-      subdetails: details.skills,
-    },
-  ];
-
-  const Needs = [
-    {
-      title: "Type of co-founder",
-      details: needs?.coFounder,
-    },
-    {
-      title: "Current stage",
-      details: needs?.CurrentSkills,
-    },
-    {
-      title: "Industry or sector",
-      details: needs?.Industry,
-    },
-  ];
-
-  const Projects = [
-    {
-      key: "Project name",
-      value: projects?.name,
-    },
-    {
-      key: "Project description",
-      value: projects?.description,
-    },
-    {
-      key: "Project status",
-      value: projects?.status,
-    },
-    {
-      key: "Website link",
-      value: projects?.link,
-    },
-  ];
+function Tag({ label }: { label: string }) {
   return (
-    <div className="">
-      <Card className="space-y-4">
-        <BasicInfo
-          props={{
-            name: basicInfo.fullname,
-            role: basicInfo.role,
-            location: {
-              state: basicInfo.location?.state,
-              country: basicInfo.location?.country,
-            },
-            socials: basicInfo.socials,
-          }}
-        />
-
-        <div className="p-4 space-y-4">
-          <KeyValue
-            label={{
-              value: "Bio",
-              className: "font-bold md:text-[24px] text-[18px]",
-            }}
-          >
-            {bio}
-          </KeyValue>
-
-          <div className="md:flex gap-3 w-full py-2 space-y-3">
-            {Details.map((detail, idx) => (
-              <div key={idx} className="">
-                <Subcard
-                  text={`${detail.title}`}
-                  className="text-[16px] font-semibold "
-                >
-                  <div
-                    key={idx}
-                    className="flex flex-wrap gap-2 w-full max-w-full pt-[10px]"
-                  >
-                    {detail.subdetails?.map((subdetail, idx) => (
-                      <Pills key={idx} text={`${subdetail}`} />
-                    ))}
-                  </div>
-                </Subcard>
-              </div>
-            ))}
-          </div>
-
-          <Subcard text="Experience" className="text-[16px] font-semibold ">
-            <div className="md:flex justify-between pt-[10px] space-y-3">
-              {experience?.map((ex, idx) => (
-                <div key={idx}>
-                  <KeyValue
-                    label={{
-                      value: ex.title,
-                      className: "font-[500] text-[16px]",
-                    }}
-                  >
-                    <p className="text-[14px] text-muted-foreground">
-                      {ex.date}
-                    </p>
-                  </KeyValue>
-                </div>
-              ))}
-            </div>
-          </Subcard>
-
-          <Subcard
-            text="What John is looking for"
-            className="text-[16px] font-semibold "
-          >
-            <div className="md:flex justify-between gap-2 space-y-3">
-              {Needs.map((need, idx) => (
-                <div
-                  key={idx}
-                  className="flex flex-wrap items-center gap-2 pt-[10px]"
-                >
-                  <p className="text-[13px] font-[500]">{need.title}:</p>
-                  <div>
-                    <div className="flex flex-wrap gap-2 w-full max-w-full">
-                      {need.details?.map((detail, idx) => (
-                        <Pills key={idx} text={detail} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Subcard>
-
-          <hr />
-
-          <KeyValue
-            label={{
-              value: "Startup or project",
-              className: "font-semibold text-[18px] ",
-            }}
-            className="md:p-4"
-          >
-            <div className="pt-[10px] space-y-2">
-              {Projects.map((project, idx) => (
-                <div key={idx} className="text-[14px]">
-                  {" "}
-                  {project.key}: {project.value}{" "}
-                </div>
-              ))}
-            </div>
-          </KeyValue>
-        </div>
-      </Card>
+    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#94f0c5]/15 text-[#1a6b4a] border border-[#94f0c5]/40 tracking-wide">
+      {label}
+    </span>
+  );
+}
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#A09A8E]">
+        {title}
+      </p>
+      {children}
     </div>
   );
-};
+}
 
-export default Profile;
+function Divider() {
+  return <hr className="border-[#EDE9E1]" />;
+}
+
+function StatPill({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="flex flex-col gap-0.5 bg-[#F9F7F3] rounded-xl px-4 py-3 border border-[#EDE9E1]">
+      <span className="text-[10px] uppercase tracking-widest text-[#A09A8E] font-semibold">
+        {label}
+      </span>
+      <span className="text-sm font-semibold text-[#1C1A16]">{value}</span>
+    </div>
+  );
+}
+
+// ─── Avatar ───────────────────────────────────────────────────────────────────
+
+function Avatar({ name }: { name: string }) {
+  const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
+  return (
+    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#C9B99A] to-[#8C7B65] flex items-center justify-center flex-shrink-0">
+      <span className="text-white text-xl font-bold tracking-tight">
+        {initials}
+      </span>
+    </div>
+  );
+}
+
+// ─── Main Profile Component ───────────────────────────────────────────────────
+
+export default function Profile({ profile }: { profile: FounderProfile }) {
+  return (
+    <div
+      style={{ fontFamily: "'DM Sans', sans-serif" }}
+      className="min-h-screen  p-4 md:p-8"
+    >
+      <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap"
+        rel="stylesheet"
+      />
+
+      <div className="max-w-3xl mx-auto space-y-4">
+        {/* ── Header card ── */}
+        <div className="bg-white rounded-2xl border border-[#EDE9E1] p-6 flex gap-4 items-start shadow-sm">
+          <Avatar name={profile.userName} />
+
+          <div className="flex-1 min-w-0">
+            <h1
+              style={{ fontFamily: "'DM Serif Display', serif" }}
+              className="text-2xl text-[#1C1A16] leading-tight"
+            >
+              {profile.userName}
+            </h1>
+            <p className="text-sm text-[#6B6560] mt-0.5">
+              {profile.currentOccupation} · {profile.industry}
+            </p>
+            <div className="flex flex-wrap gap-2 mt-3">
+              <span className="text-xs text-[#A09A8E] flex items-center gap-1">
+                📍 {profile.location}
+              </span>
+              <span className="text-xs text-[#A09A8E] flex items-center gap-1">
+                ✉️ {profile.email}
+              </span>
+            </div>
+          </div>
+
+          <div className="hidden md:block">
+            <Tag label={profile.founderStatus} />
+          </div>
+        </div>
+
+        {/* ── Stats row ── */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <StatPill
+            label="Experience"
+            value={`${profile.yearsExperience} yrs`}
+          />
+          <StatPill label="Commitment" value={profile.commitmentLevel} />
+          <StatPill label="Work style" value={profile.workStyle} />
+          <StatPill label="Financial" value={profile.financialContribution} />
+        </div>
+
+        {/* ── Bio ── */}
+        <div className="bg-white rounded-2xl border border-[#EDE9E1] p-6 shadow-sm">
+          <Section title="About">
+            <p className="text-[15px] text-[#3D3A33] leading-relaxed">
+              {profile.bio}
+            </p>
+          </Section>
+        </div>
+
+        {/* ── Skills & Traits ── */}
+        <div className="bg-white rounded-2xl border border-[#EDE9E1] p-6 shadow-sm space-y-5">
+          <Section title="Skills & Strengths">
+            <div className="flex flex-wrap gap-2">
+              {profile.skills.map((s) => (
+                <Tag key={s} label={s} />
+              ))}
+            </div>
+          </Section>
+
+          <Divider />
+
+          <Section title="Personality Traits">
+            <div className="flex flex-wrap gap-2">
+              {profile.personalityTraits.map((t) => (
+                <Tag key={t} label={t} />
+              ))}
+            </div>
+          </Section>
+        </div>
+
+        {/* ── What they're looking for ── */}
+        <div className="bg-white rounded-2xl border border-[#EDE9E1] p-6 shadow-sm space-y-5">
+          <p
+            style={{ fontFamily: "'DM Serif Display', serif" }}
+            className="text-lg text-[#1C1A16]"
+          >
+            What {profile.userName.split(" ")[0]} is looking for
+          </p>
+
+          <Section title="Co-founder type">
+            <div className="flex flex-wrap gap-2">
+              <Tag label={profile.preferredFounderType} />
+            </div>
+          </Section>
+
+          <Divider />
+
+          <Section title="Preferred skills">
+            <div className="flex flex-wrap gap-2">
+              {profile.preferredSkills.map((s) => (
+                <Tag key={s} label={s} />
+              ))}
+            </div>
+          </Section>
+
+          <Divider />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <Section title="Industry">
+              <Tag label={profile.preferredIndustry} />
+            </Section>
+            <Section title="Commitment">
+              <Tag label={profile.preferredCommitmentLevel} />
+            </Section>
+            <Section title="Location">
+              <Tag label={profile.preferredLocation} />
+            </Section>
+          </div>
+
+          <Divider />
+
+          <Section title="Personality traits they value">
+            <div className="flex flex-wrap gap-2">
+              {profile.preferredPersonalityTraits.map((t) => (
+                <Tag key={t} label={t} />
+              ))}
+            </div>
+          </Section>
+
+          <Divider />
+
+          <Section title="Financial contribution">
+            <Tag label={profile.preferredFinancial} />
+          </Section>
+        </div>
+
+        {/* ── Footer ── */}
+        <p className="text-center text-xs text-[#C4BFB6] pb-4">
+          Member since{" "}
+          {new Date(profile.createdAt).toLocaleDateString("en-US", {
+            month: "long",
+            year: "numeric",
+          })}
+        </p>
+      </div>
+    </div>
+  );
+}

@@ -1,83 +1,83 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useMatches } from "@/store/useMatchesStore";
-import { useParams } from "next/navigation";
-import Profile from "@/components/pages/profile";
-import { useTableStore } from "@/store/useTableStore";
+import { useParams, useRouter } from "next/navigation";
+import Profile, { FounderProfile } from "@/components/pages/profile";
 import { getSpecificProfile } from "@/lib/profile";
-import { Founder, UserProfile } from "@/types/userprofile";
-import { useRouter } from "next/navigation";
+import { UserProfile } from "@/types/userprofile";
 import toast from "react-hot-toast";
 
 function UserProfilePage() {
   const params = useParams();
   const router = useRouter();
-  const [user, setUser] = useState<UserProfile>();
+  const [profile, setProfile] = useState<FounderProfile | null>(null);
+  const [notFound, setNotFound] = useState(false);
   const userId = params.userId as string;
+
   useEffect(() => {
     async function fetchUser() {
-      const data = await getSpecificProfile(userId, router);
+      const data: UserProfile | undefined = await getSpecificProfile(
+        userId,
+        router,
+      );
       if (!data) {
-        toast.error("something went wrong");
+        setNotFound(true);
+        toast.error("User not found");
         return;
       }
-      setUser(data);
+
+      const mapped: FounderProfile = {
+        id: data.id,
+        userId: data.id,
+        userName: data.profile.userName ?? `${data.firstName} ${data.lastName}`,
+        founderStatus: data.profile.founderStatus,
+        bio: data.profile.bio,
+        email: data.email,
+        skills: data.profile.skills,
+        workStyle: data.profile.workStyle,
+        industry: data.profile.industry,
+        currentOccupation: data.profile.currentOccupation,
+        yearsExperience: data.profile.yearsExperience,
+        commitmentLevel: data.profile.commitmentLevel,
+        financialContribution: data.profile.financialContribution,
+        personalityTraits: data.profile.personalityTraits,
+        location: data.profile.location,
+        preferredSkills: data.profile.preferredSkills,
+        preferredFounderType: data.profile.preferredFounderType,
+        preferredIndustry: data.profile.preferredIndustry,
+        preferredCommitmentLevel: data.profile.preferredCommitmentLevel,
+        preferredFinancial: data.profile.preferredFinancial,
+        preferredPersonalityTraits: data.profile.preferredPersonalityTraits,
+        preferredLocation: data.profile.preferredLocation,
+        createdAt: data.profile.createdAt,
+        updatedAt: data.profile.updatedAt,
+      };
+
+      setProfile(mapped);
     }
     fetchUser();
-  }, []);
-  return (
-    <div>
-      <Profile
-        basicInfo={{
-          fullname: user?.profile?.userName
-            ? user?.profile?.userName
-            : user?.firstName + " " + user?.lastName,
-          role: "UI/UX Designer",
-          location: {
-            state: user?.profile.location,
-            // country: "Nigeria",
-          },
-          socials: user?.profile.linkedInUrl,
-          image: "/images/clinton.jpg",
-        }}
-        bio={user?.profile.bio}
-        details={{
-          keyRoles: ["Full time", "Senior level"],
-          workStyles: user?.profile.workStyle
-            ? [user?.profile.workStyle]
-            : ["unspecified"],
-          skills: user?.profile.skills,
-        }}
-        experience={[
-          { title: "UI Team Lead at Tech Solutions", date: "Jul 2022 - 2024" },
-          {
-            title: "Product Designer at FlipConnect",
-            date: "Jan 2021 - Jun 2022",
-          },
-          {
-            title: "Design Intern at DigitalCraft",
-            date: "Aug 2020 - Dec 2020",
-          },
-        ]}
-        needs={{
-          coFounder: user?.profile.preferredFounderType
-            ? [user?.profile.preferredFounderType]
-            : [""],
-          CurrentSkills: user?.profile.preferredSkills,
-          Industry: user?.profile.preferredIndustry
-            ? [user?.profile.preferredIndustry]
-            : [],
-        }}
-        projects={{
-          name: "FlipConnect",
-          description:
-            "A social fintech platform connecting users and payments",
-          status: "In Progress",
-          link: "https://flipconnect.io",
-        }}
-      />
-    </div>
-  );
+  }, [userId]);
+
+  if (notFound) {
+    return (
+      <div className="h-[80vh] flex flex-col items-center justify-center gap-3">
+        <p className="text-5xl">👤</p>
+        <h1 className="text-xl font-semibold text-[#1C1A16]">User not found</h1>
+        <p className="text-sm text-[#A09A8E]">
+          This profile doesn&apos;t exist or may have been removed.
+        </p>
+        <button
+          onClick={() => router.back()}
+          className="mt-2 text-sm text-[#1a6b4a] underline underline-offset-2"
+        >
+          Go back
+        </button>
+      </div>
+    );
+  }
+
+  if (!profile) return null; // loading
+
+  return <Profile profile={profile} />;
 }
 
 export default UserProfilePage;

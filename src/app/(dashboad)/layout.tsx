@@ -12,17 +12,20 @@ export default function RootLayout({
   return (
     <TokenChecker>
       <UserProfileWrapper>
-        
         <Providers>
-        <section>
-          <div className="flex h-screen overflow-y-auto">
-            <DesktopSidebar />
-            <div className="flex flex-col flex-1 px-3 md:px-6 bg-[#E5E7EB]">
-              <Navbar />
-              <main className="overflow-y-auto scrollbar h-full py-2">{children}</main>
+          <section>
+            <div className="flex h-screen overflow-y-auto">
+              <DesktopSidebar />
+              <div className="flex flex-col flex-1 min-w-0 px-3 md:px-6 bg-[#E5E7EB]">
+                {" "}
+                {/* 👈 add min-w-0 */}
+                <Navbar />
+                <main className="overflow-y-auto scrollbar h-full py-2">
+                  {children}
+                </main>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
         </Providers>
       </UserProfileWrapper>
     </TokenChecker>
