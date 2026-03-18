@@ -17,7 +17,8 @@ export default function SuggestionPage() {
           </div>
           <h3 className="font-semibold text-[#1C1A16]">No matches yet</h3>
           <p className="text-sm text-gray-400 max-w-[220px]">
-            We're still finding the right co-founders for you. Check back soon!
+            We&apos;re still finding the right co-founders for you. Check back
+            soon!
           </p>
         </div>
       </div>
