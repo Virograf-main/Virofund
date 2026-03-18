@@ -27,12 +27,11 @@ import { useUserStore } from "@/store/userStore";
 import { Chat, TextMessage } from "@/types/chats";
 import { formatChatDate } from "@/lib/helpers";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 
 export const Messages = () => {
   const [chats, setChats] = useState<Chat[]>([]);
-  const [activeChat, setActiveChat] = useState<string | undefined>();
   const [chatMessages, setChatMessages] = useState<TextMessage[]>([]);
   const [otherPerson, setOtherPerson] = useState<{ name: string; id: string }>({
     name: "",
@@ -42,11 +41,38 @@ export const Messages = () => {
   const [messagesLoading, setMessagesLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [searchChat, setSearchChat] = useState("");
   const { user } = useUserStore();
 
+  const activeChat = searchParams.get("chatId") ?? undefined;
+
+  const setActiveChat = (chatId: string | undefined) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (chatId) {
+      params.set("chatId", chatId);
+    } else {
+      params.delete("chatId");
+    }
+    router.replace(`?${params.toString()}`);
+  };
+
+  // Restore otherPerson from chats list when page is refreshed
   useEffect(() => {
-    if (!user?.id) return;
+    if (!activeChat || chats.length === 0) return;
+    const chat = chats.find((c) => c.id === activeChat);
+    if (!chat) return;
+    const person = chat.membersDetails.find((m) => m.id !== user?.id);
+    if (person) {
+      setOtherPerson({ name: person.name, id: person.id });
+    }
+  }, [activeChat, chats, user?.id]);
+
+  useEffect(() => {
+    if (!user?.id) {
+      setLoading(false);
+      return;
+    }
 
     const unsub = listenToUserChats(user.id, (updatedChats) => {
       setChats(updatedChats);
@@ -79,13 +105,12 @@ export const Messages = () => {
     senderId: string,
     text: string,
     chatId: string,
-    senderName: string
+    senderName: string,
   ) => {
     if (!text || text.trim().length === 0) return;
 
-    // Create a temporary message object
     const tempMessage: TextMessage = {
-      id: `temp-${Date.now()}`, // temporary ID
+      id: `temp-${Date.now()}`,
       chatId,
       senderId,
       senderName,
@@ -94,7 +119,6 @@ export const Messages = () => {
       isTemp: true,
     };
 
-    // Add it to the state immediately
     setChatMessages((prev) => [...prev, tempMessage]);
 
     try {
@@ -103,20 +127,17 @@ export const Messages = () => {
       toast.error("Failed to send message");
       console.log(error);
       setChatMessages((prev) =>
-        prev.filter((msg) => msg.id !== tempMessage.id)
+        prev.filter((msg) => msg.id !== tempMessage.id),
       );
     }
   };
 
-  if (chats) {
-    console.log(chats);
-  }
   // CHAT SCREEN ------------------------------------------------
   if (activeChat) {
     return (
-      <Card className="h-[90vh] flex flex-col">
+      <Card className="h-[85vh] flex flex-col">
         <div className="p-4 border-b flex items-center gap-4">
-          <button onClick={() => setActiveChat("")}>&larr;</button>
+          <button onClick={() => setActiveChat(undefined)}>&larr;</button>
           <p
             className="font-semibold"
             onClick={() => router.replace(`/profile/${otherPerson.id}`)}
@@ -134,9 +155,9 @@ export const Messages = () => {
               chatMessages.map((msg, idx) => (
                 <div key={msg.id || idx} className="flex flex-col">
                   <div
-                    className={`p-2 max-w-[400px] inline-block rounded-2xl  shadow ${
+                    className={`p-2 max-w-[400px] inline-block rounded-2xl shadow ${
                       msg.senderId === user?.id
-                        ? "self-end bg-primary rounded-br-sm text-white "
+                        ? "self-end bg-primary rounded-br-sm text-white"
                         : "bg-secondary text-black rounded-bl-sm self-start"
                     }`}
                   >
@@ -144,7 +165,7 @@ export const Messages = () => {
                   </div>
                   <p
                     className={`text-[0.8em] ${
-                      msg.senderId === user?.id ? "self-end " : "self-start"
+                      msg.senderId === user?.id ? "self-end" : "self-start"
                     }`}
                   >
                     {msg.createdAt
@@ -159,7 +180,7 @@ export const Messages = () => {
           </div>
         )}
 
-        <div className="p-4 border-t flex  gap-2 border">
+        <div className="p-4 border-t flex gap-2 border">
           <Input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
@@ -178,7 +199,7 @@ export const Messages = () => {
                 user?.id,
                 msg,
                 activeChat,
-                user?.firstName + " " + user?.lastName
+                user?.firstName + " " + user?.lastName,
               );
             }}
           >
@@ -191,30 +212,24 @@ export const Messages = () => {
 
   const filteredChats = chats.filter((chat) => {
     const person = chat.membersDetails.find((m) => m.id !== user?.id);
-
     if (!person) return false;
-
     const name = person.name.toLowerCase();
     const lastMessage = chat.lastMessage?.toLowerCase() ?? "";
-
     const query = searchChat.toLowerCase();
-
     return name.includes(query) || lastMessage.includes(query);
   });
 
   // CONVERSATION LIST ----------------------------------------
   return (
-    <Card className="h-[90vh]">
+    <Card className="h-full">
       {chats.length === 0 ? (
-        <div className="h-full w-full flex flex-col items-center justify-center">
-          <Image
-            src="/svg/no-data.svg"
-            width={200}
-            height={200}
-            alt="no data"
-          />
-          <p className="text-center">
-            Your matched co-founders will appear here
+        <div className="h-full w-full flex flex-col items-center justify-center gap-3 p-10 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <span className="text-2xl">💬</span>
+          </div>
+          <h3 className="font-semibold text-[#1C1A16]">No conversations yet</h3>
+          <p className="text-sm text-gray-400 max-w-[220px]">
+            Once you connect with a co-founder, your chats will appear here.
           </p>
         </div>
       ) : (
@@ -238,7 +253,7 @@ export const Messages = () => {
             {filteredChats.length > 0 ? (
               filteredChats.map((chat) => {
                 const personName = chat.membersDetails.filter(
-                  (member) => member.id !== user?.id
+                  (member) => member.id !== user?.id,
                 );
                 return (
                   <div

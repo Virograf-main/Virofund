@@ -40,6 +40,7 @@ export const handleSendOtp = async (
   lastName: string,
   email: string,
   // setPrevuser: (bool: boolean) => void,
+  isRegistering: boolean,
   openOtpModal?: () => void,
 ) => {
   e.preventDefault();
@@ -56,7 +57,7 @@ export const handleSendOtp = async (
       "pendingUser",
       JSON.stringify({ firstName, lastName, password, email }),
     );
-    const data = await authenticateUser({ email, isRegistering: true }, url);
+    const data = await authenticateUser({ email, isRegistering: isRegistering }, url);
 
     if (!data) return; // API failed, stop
     if (data.message !== "OTP sent") {
@@ -234,6 +235,129 @@ export async function refreshToken() {
     console.log("error getting access token: ", err);
   }
 }
+
+export const handleForgotPasswordOtp = async (
+  e: React.FormEvent<HTMLFormElement>,
+  setIsLoading: (bool: boolean) => void,
+  email: string,
+  openOtpModal?: () => void,
+) => {
+  e.preventDefault();
+
+  if (!email) return toast.error("Enter email");
+
+  setIsLoading(true);
+
+  try {
+    const url = `${base_url}/auth/otp/send`;
+    localStorage.setItem("resetEmail", email); // 👈 add this
+
+    const data = await authenticateUser({ email, isRegistering: false }, url);
+
+    if (!data) return;
+    if (data.message !== "OTP sent") {
+      toast.error(data.message || "Failed to send OTP");
+      return;
+    }
+
+    toast.success("OTP sent to email. Please check your inbox.");
+    openOtpModal?.();
+  } catch (err: unknown) {
+    toast.error((err as Error).message || "Something went wrong");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+export const handleResetPassword = async (
+  otp: string,
+  newPassword: string,
+  onSuccess?: () => void,
+): Promise<void> => {
+  if (!otp) { toast.error("Enter OTP"); return; }
+  if (!newPassword) { toast.error("Enter new password"); return; }
+
+  try {
+    const email = localStorage.getItem("resetEmail");
+    if (!email) { toast.error("Session expired, please try again"); return; }
+
+    // Step 1: Verify OTP (GET with body)
+    const verifyRes = await fetch(`${base_url}/auth/otp/verify`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp }),
+    });
+
+    const verifyData = await verifyRes.json();
+
+    if (!verifyRes.ok) {
+      toast.error(verifyData.message || "Invalid OTP");
+      return;
+    }
+
+    // Step 2: Update password (PATCH)
+    const updateRes = await fetch(`${base_url}/auth/password/update`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password: newPassword }),
+    });
+
+    const updateData = await updateRes.json();
+
+    if (!updateRes.ok) {
+      toast.error(updateData.message || "Failed to update password");
+      return;
+    }
+
+    toast.success("Password reset successfully");
+    localStorage.removeItem("resetEmail");
+    onSuccess?.();
+  } catch (err: unknown) {
+    toast.error((err as Error).message || "Failed to reset password");
+  }
+};
+
+export const resendForgotPasswordOtp = async () => {
+  try {
+    const email = localStorage.getItem("resetEmail");
+    if (!email) {
+      toast.error("Session expired, please try again");
+      return;
+    }
+
+    const url = `${base_url}/auth/otp/send`;
+    const data = await authenticateUser({ email, isRegistering: false }, url);
+
+    if (!data) return;
+
+    toast.success("OTP resent successfully");
+  } catch (err: unknown) {
+    toast.error((err as Error).message || "Failed to resend OTP");
+  }
+};
+
+export const handleLogout = async (router: AppRouterInstance) => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+
+    await fetch(`${base_url}/auth/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  } catch (err) {
+    console.error("Logout error:", err);
+  } finally {
+    // always clear and redirect regardless of API success
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("pendingUser");
+    localStorage.removeItem("resetEmail");
+    router.push("/");
+  }
+};
 
 // export async function refreshToken() {
 //   const refreshToken = localStorage.getItem("refreshToken");
