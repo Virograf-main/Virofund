@@ -63,8 +63,8 @@ export const getUserFromFirebase = async (
       createdAt: Timestamp;
     };
 
-    localStorage.setItem("userId", userDoc.id);
-    localStorage.setItem("email", email);
+    sessionStorage.setItem("userId", userDoc.id);
+    sessionStorage.setItem("email", email);
 
     return {
       id: userDoc.id,

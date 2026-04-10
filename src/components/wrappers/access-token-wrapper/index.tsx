@@ -45,7 +45,7 @@ export function TokenChecker({
     const checkToken = async () => {
       if (typeof window === "undefined") return;
 
-      const token = localStorage.getItem("accessToken");
+      const token = sessionStorage.getItem("accessToken");
 
       if (!token) {
         router.replace("/");
@@ -60,7 +60,7 @@ export function TokenChecker({
             await onTokenExpired();
 
             // re-check after refresh
-            const newToken = localStorage.getItem("accessToken");
+            const newToken = sessionStorage.getItem("accessToken");
             if (!isAccessTokenValid(newToken)) {
               router.replace("/");
             }

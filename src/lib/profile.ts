@@ -13,9 +13,8 @@ export async function createProfile(
 ) {
   try {
     if (typeof window === "undefined") return;
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 
@@ -57,9 +56,8 @@ export async function createProfile(
 export const getProfile = async () => {
   try {
     if (typeof window === "undefined") return;
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 
@@ -71,7 +69,6 @@ export const getProfile = async () => {
       },
     });
     const data: UserProfile = await response.json();
-    console.log(data);
     useUserStore.getState().setUser(data);
 
     if (!response.ok) {
@@ -94,9 +91,8 @@ export const getMatchingProfile = async (): Promise<
 > => {
   try {
     if (typeof window === "undefined") return;
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 
@@ -131,9 +127,8 @@ export const getSpecificProfile = async (
 ) => {
   try {
     if (typeof window === "undefined") return;
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 

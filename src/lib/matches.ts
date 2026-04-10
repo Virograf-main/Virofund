@@ -8,9 +8,8 @@ import { createChat } from "@/lib/chats";
 export const generateMatch = async (router: AppRouterInstance) => {
   try {
     if (typeof window === "undefined") return;
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 
@@ -39,9 +38,8 @@ export const generateMatch = async (router: AppRouterInstance) => {
 export const getMatches = async () => {
   try {
     if (typeof window === "undefined") return;
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 
@@ -75,7 +73,7 @@ export const getMatches = async () => {
 export const sendRequest = async (userId: string) => {
   try {
     if (typeof window === "undefined") return;
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (!token) {
       toast.error("Unauthorized, please log in again");
       return;
@@ -113,7 +111,7 @@ export const sendRequest = async (userId: string) => {
 export const getIncomingRequests = async () => {
   try {
     if (typeof window === "undefined") return;
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (!token) {
       toast.error("Unauthorized, please log in again");
       return;
@@ -142,7 +140,7 @@ export const getIncomingRequests = async () => {
 };
 
 export const approveRequest = async (requestId: string) => {
-  const token = localStorage.getItem("accessToken");
+  const token = sessionStorage.getItem("accessToken");
 
   try {
     const res = await fetch(
@@ -180,7 +178,7 @@ export const approveRequest = async (requestId: string) => {
 };
 
 export const rejectRequest = async (requestId: string) => {
-  const token = localStorage.getItem("accessToken");
+  const token = sessionStorage.getItem("accessToken");
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/matches/requests/${requestId}/status`,

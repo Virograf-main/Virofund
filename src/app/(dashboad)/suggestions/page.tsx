@@ -1,21 +1,32 @@
 "use client";
+import { Loader } from "@/components/atoms";
 import { SuggestionCard } from "@/components/molecules";
+import { useGenerateMatch } from "@/features/suggestions/hooks";
 import { sendRequest } from "@/lib/matches";
-import { useMatches } from "@/store/useMatchesStore";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function SuggestionPage() {
-  const { matches } = useMatches();
+  const { data: matches = [], isLoading } = useGenerateMatch();
+  const [connectingId, setConnectingId] = useState<string | null>(null);
   const router = useRouter();
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
   if (matches.length === 0) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+          <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center">
             <span className="text-2xl">🔍</span>
           </div>
-          <h3 className="font-semibold text-[#1C1A16]">No matches yet</h3>
+          <h3 className="font-semibold text-gray-900">No matches yet</h3>
           <p className="text-sm text-gray-400 max-w-[220px]">
             We&apos;re still finding the right co-founders for you. Check back
             soon!
@@ -24,23 +35,44 @@ export default function SuggestionPage() {
       </div>
     );
   }
+
+  console.log(matches);
+
+  const sortedMatches = [...matches].sort(
+    (a, b) => b.overallScore - a.overallScore,
+  );
   return (
-    <div className="">
-      {matches.map((match, key) => {
-        return (
+    <div className="p-6">
+      <h1 className="text-lg font-semibold text-gray-900 mb-1">
+        Suggested Co-founders
+      </h1>
+      <p className="text-sm text-gray-400 mb-6">
+        {matches.length} match{matches.length !== 1 ? "es" : ""} found
+      </p>
+
+      <div className="flex flex-wrap gap-4">
+        {sortedMatches.map((match) => (
           <SuggestionCard
-            key={key}
+            key={match.id}
             name={match.matchedFounderDetails.name}
-            title={match.matchedFounderDetails.industry}
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam voluptas laudantium debitis, nostrum sed tempora quas accusamus amet nulla expedita optio voluptatem. Eius animi quas tempora, accusamus nulla eveniet debitis."
-            tags={match.matchedFounderDetails.skills}
-            onConnect={() => sendRequest(match.matchedFounderId)}
+            industry={match.matchedFounderDetails.industry}
+            founderStatus={match.matchedFounderDetails.founderStatus}
+            skills={match.matchedFounderDetails.skills}
+            yearsExperience={match.matchedFounderDetails.yearsExperience}
+            location={match.matchedFounderDetails.location}
+            overallScore={match.overallScore}
+            onConnect={async () => {
+              setConnectingId(match.matchedFounderId);
+              await sendRequest(match.matchedFounderId);
+              setConnectingId(null);
+            }}
+            isConnecting={connectingId === match.matchedFounderId}
             onViewProfile={() =>
-              router.replace(`/profile/${match.matchedFounderId}`)
+              router.push(`/profile/${match.matchedFounderId}`)
             }
           />
-        );
-      })}
+        ))}
+      </div>
     </div>
   );
 }
