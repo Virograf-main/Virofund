@@ -1,7 +1,4 @@
 "use client";
-
-import loading from "@/app/loading";
-import { Loader } from "@/components/atoms";
 import RequestCard from "@/components/molecules/request-card";
 import {
   approveRequest,
@@ -82,40 +79,28 @@ export const RequestSection = () => {
   }
 
   return (
-    <section className="bg-[#F3F4F6] p-2 rounded-2xl shrink-0">
-      <p className="font-semibold text-[1.2em] py-2">Co-founder Requests</p>
-      {/* <div className="flex flex-col gap-4">Your request cards</div> */}
+    <section className="bg-white p-4 rounded-2xl shrink-0">
+      <p className="font-semibold text-[1.2em] py-2 mb-2">
+        Co-founder Requests
+      </p>
       <div className="space-y-4">
-        {requests.map((request: ConnectionRequest) => {
-          const fullName =
-            `${request.sender.firstName} ${request.sender.lastName}`.trim();
-
-          return (
-            <RequestCard
-              key={request.id}
-              props={{
-                image: "",
-                userId: request.sender.id,
-                alt: "",
-                name: `${request.sender.firstName} ${request.sender.lastName}`,
-                email: request.sender.email,
-                available: "",
-                timeAvailable: "",
-                details: "",
-                keyValue: {
-                  department: "",
-                  role: "",
-                  backgroundColour: "#e5e7eb",
-                  dotColour: "#6b7280",
-                },
-                isLoadingApprove: loadingApproveId === request.id,
-                isLoadingReject: loadingRejectId === request.id,
-                handleApprove: () => handleApprove(request.id),
-                handleReject: () => handleReject(request.id),
-              }}
-            />
-          );
-        })}
+        {requests.map((request: ConnectionRequest) => (
+          <RequestCard
+            key={request.id}
+            props={{
+              name: `${request.sender.firstName} ${request.sender.lastName}`,
+              email: request.sender.email,
+              userId: request.sender.id,
+              compatibilityScore: request.compatibilityScore,
+              status: request.status,
+              createdAt: request.createdAt,
+              isLoadingApprove: loadingApproveId === request.id,
+              isLoadingReject: loadingRejectId === request.id,
+              handleApprove: () => handleApprove(request.id),
+              handleReject: () => handleReject(request.id),
+            }}
+          />
+        ))}
       </div>
     </section>
   );
