@@ -89,37 +89,30 @@ const RequestPage = () => {
     );
   }
   return (
-    <section className="bg-[#F3F4F6] p-6 rounded-2xl">
+    <section className="p-6 rounded-2xl">
       <p className="font-bold text-xl mb-6">Co-founder Requests</p>
 
-      <div className="space-y-4">
-        {requests.map((request: ConnectionRequest) => {
-          return (
+      <div className="space-y-4 flex flex-wrap">
+        {requests
+          // .filter((r) => r.status === "pending")
+          .map((request: ConnectionRequest) => (
             <RequestCard
               key={request.id}
+              className="max-w-[450px]"
               props={{
-                image: "",
-                alt: "",
                 name: `${request.sender.firstName} ${request.sender.lastName}`,
                 email: request.sender.email,
-                available: "",
-                timeAvailable: "",
-                details: "",
-                keyValue: {
-                  department: "",
-                  role: "",
-                  backgroundColour: "#e5e7eb",
-                  dotColour: "#6b7280",
-                },
+                userId: request.sender.id,
+                compatibilityScore: request.compatibilityScore,
+                status: request.status,
+                createdAt: request.createdAt,
                 isLoadingApprove: loadingApproveId === request.id,
                 isLoadingReject: loadingRejectId === request.id,
                 handleApprove: () => handleApprove(request.id),
                 handleReject: () => handleReject(request.id),
-                userId: `${request.sender.id}`,
               }}
             />
-          );
-        })}
+          ))}
       </div>
     </section>
   );
