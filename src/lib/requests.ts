@@ -6,7 +6,7 @@ export const getIncomingRequests = async () => {
   try {
     if (typeof window === "undefined") return;
 
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (!token) {
       toast.error("Unauthorized, please log in again");
       return [];
@@ -39,7 +39,7 @@ export const approveRequest = async (requestId: string) => {
   try {
     if (typeof window === "undefined") return;
 
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (!token) {
       toast.error("Unauthorized, please log in again");
       return;
@@ -75,7 +75,7 @@ export const rejectRequest = async (requestId: string) => {
   try {
     if (typeof window === "undefined") return;
 
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (!token) {
       toast.error("Unauthorized, please log in again");
       return;

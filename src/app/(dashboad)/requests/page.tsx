@@ -25,7 +25,8 @@ const RequestPage = () => {
         const data = await getIncomingRequests();
         setRequests(data || []);
       } catch (err) {
-        toast.error("Failed to load requests");
+        toast.error("Failed to get incoming requests");
+        console.log("Failed to load requests: ", err);
       } finally {
         setLoading(false);
       }

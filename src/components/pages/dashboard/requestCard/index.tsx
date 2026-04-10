@@ -22,9 +22,13 @@ export const RequestSection = () => {
     const fetchIncomingRequests = async () => {
       try {
         const data = await getIncomingRequests();
-        setRequests(data || []);
+        setRequests(
+          data.filter(
+            (request: ConnectionRequest) => request.status === "pending",
+          ) || [],
+        );
       } catch (err) {
-        toast.error("Failed to load requests");
+        console.log("Failed to load requests: ", err);
       }
     };
     fetchIncomingRequests();
@@ -76,6 +80,7 @@ export const RequestSection = () => {
       </section>
     );
   }
+
   return (
     <section className="bg-[#F3F4F6] p-2 rounded-2xl shrink-0">
       <p className="font-semibold text-[1.2em] py-2">Co-founder Requests</p>

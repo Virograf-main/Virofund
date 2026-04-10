@@ -1,15 +1,14 @@
 "use client";
 import { Button, DataTable, Loader } from "@/components/atoms";
 import { Messages } from "@/components/molecules";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ReactNode, Suspense, useEffect } from "react";
+import { ReactNode, Suspense, useEffect, useState } from "react";
 import { RequestSection } from "@/components/pages/dashboard/requestCard";
 import type { Column } from "@/components/atoms";
-import { useMatches } from "@/store/useMatchesStore";
 import { endpoints } from "@/config/endpoints";
 import { useQuery } from "@tanstack/react-query";
 import { instance } from "@/lib/axios";
+import { FounderMatch } from "@/types/matches";
 
 export interface TableRow {
   userId: string;
@@ -22,7 +21,10 @@ export interface TableRow {
 
 export default function Dashboard() {
   const router = useRouter();
-  const { matches, setMatches } = useMatches();
+  // const { matches, setMatches } = useState<FounderMatch[]>([]);
+  const [allMatchedUsers, setMatchedUsers] = useState<FounderMatch[]>([]);
+  // const [loading, setLoading] = useState(false);
+  // const [foundMatches, setFoundMatches] = useState<FounderMatch[]>([]);
 
   const columns: Column<TableRow>[] = [
     { header: "Name", accessor: "name" },
@@ -35,7 +37,7 @@ export default function Dashboard() {
   const { data: matchedUsers, isLoading } = useQuery({
     queryKey: ["matched-users"],
     queryFn: async () => {
-      const res = await instance.get(endpoints().Matches.get_matches);
+      const res = await instance.post(endpoints().Matches.post_matches);
       return res.data;
     },
     refetchOnWindowFocus: false,
@@ -43,11 +45,14 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (matchedUsers) {
-      setMatches(matchedUsers);
+      setMatchedUsers(matchedUsers);
     }
-  }, [matchedUsers, setMatches]);
+  }, [matchedUsers, setMatchedUsers]);
+  const sortedMatches = [...allMatchedUsers].sort(
+    (a, b) => b.overallScore - a.overallScore,
+  );
 
-  const refinedMatches: TableRow[] = (matches ?? []).map((match) => {
+  const refinedMatches: TableRow[] = (sortedMatches ?? []).map((match) => {
     const percentage = (match.overallScore * 100).toFixed(0);
     return {
       userId: match.matchedFounderId,
