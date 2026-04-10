@@ -16,8 +16,8 @@ export const handleApiError = (
       break;
     case 401:
       toast.error(response.message || "Unauthorized. Please log in again.");
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("accessToken");
+      sessionStorage.removeItem("refreshToken");
       if (router) router.push("/");
       break;
     case 403:

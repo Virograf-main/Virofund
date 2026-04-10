@@ -53,7 +53,7 @@ export const handleSendOtp = async (
 
   try {
     const url = `${base_url}/auth/otp/send`;
-    localStorage.setItem(
+    sessionStorage.setItem(
       "pendingUser",
       JSON.stringify({ firstName, lastName, password, email }),
     );
@@ -77,7 +77,7 @@ export const handleSendOtp = async (
 
 export const resendOtp = async () => {
   try {
-    const pendingUserStr = localStorage.getItem("pendingUser");
+    const pendingUserStr = sessionStorage.getItem("pendingUser");
     if (!pendingUserStr) {
       toast.error("No pending registration found");
       return;
@@ -108,7 +108,7 @@ export const handleSignUp = async (
   try {
     const url = `${base_url}/auth/register`;
 
-    const pendingUserStr = localStorage.getItem("pendingUser");
+    const pendingUserStr = sessionStorage.getItem("pendingUser");
     if (!pendingUserStr) {
       toast.error("No pending registration found");
       return;
@@ -120,12 +120,12 @@ export const handleSignUp = async (
 
     if (!data) return;
 
-    localStorage.setItem("accessToken", data.access_token);
-    localStorage.setItem("refreshToken", data.refresh_token);
+    sessionStorage.setItem("accessToken", data.access_token);
+    sessionStorage.setItem("refreshToken", data.refresh_token);
 
     toast.success("Account created successfully");
     setIsPrevUser(true); // switch to login after successful signup
-    localStorage.removeItem("pendingUser");
+    sessionStorage.removeItem("pendingUser");
   } catch (err: unknown) {
     console.error(err);
     toast.error((err as Error).message || "Failed to verify OTP");
@@ -153,8 +153,8 @@ export const handleLogin = async (
     if (!data) return;
 
     // Save token
-    localStorage.setItem("accessToken", data.access_token);
-    localStorage.setItem("refreshToken", data.refresh_token);
+    sessionStorage.setItem("accessToken", data.access_token);
+    sessionStorage.setItem("refreshToken", data.refresh_token);
 
     toast.success("Logged in successfully");
 
@@ -209,7 +209,7 @@ export function isAccessTokenValid(token: string | null): boolean {
  */
 
 export async function refreshToken() {
-  const refreshToken = localStorage.getItem("refreshToken");
+  const refreshToken = sessionStorage.getItem("refreshToken");
   if (!refreshToken) return;
 
   try {
@@ -229,8 +229,8 @@ export async function refreshToken() {
       return;
     }
     const data = await response.json();
-    localStorage.setItem("accessToken", data.access_token);
-    localStorage.setItem("refreshToken", data.refresh_token);
+    sessionStorage.setItem("accessToken", data.access_token);
+    sessionStorage.setItem("refreshToken", data.refresh_token);
   } catch (err) {
     console.log("error getting access token: ", err);
   }
@@ -250,7 +250,7 @@ export const handleForgotPasswordOtp = async (
 
   try {
     const url = `${base_url}/auth/otp/send`;
-    localStorage.setItem("resetEmail", email); // 👈 add this
+    sessionStorage.setItem("resetEmail", email); // 👈 add this
 
     const data = await authenticateUser({ email, isRegistering: false }, url);
 
@@ -278,7 +278,7 @@ export const handleResetPassword = async (
   if (!newPassword) { toast.error("Enter new password"); return; }
 
   try {
-    const email = localStorage.getItem("resetEmail");
+    const email = sessionStorage.getItem("resetEmail");
     if (!email) { toast.error("Session expired, please try again"); return; }
 
     // Step 1: Verify OTP (GET with body)
@@ -310,7 +310,7 @@ export const handleResetPassword = async (
     }
 
     toast.success("Password reset successfully");
-    localStorage.removeItem("resetEmail");
+    sessionStorage.removeItem("resetEmail");
     onSuccess?.();
   } catch (err: unknown) {
     toast.error((err as Error).message || "Failed to reset password");
@@ -319,7 +319,7 @@ export const handleResetPassword = async (
 
 export const resendForgotPasswordOtp = async () => {
   try {
-    const email = localStorage.getItem("resetEmail");
+    const email = sessionStorage.getItem("resetEmail");
     if (!email) {
       toast.error("Session expired, please try again");
       return;
@@ -338,7 +338,7 @@ export const resendForgotPasswordOtp = async () => {
 
 export const handleLogout = async (router: AppRouterInstance) => {
   try {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = sessionStorage.getItem("accessToken");
 
     await fetch(`${base_url}/auth/logout`, {
       method: "POST",
@@ -351,16 +351,16 @@ export const handleLogout = async (router: AppRouterInstance) => {
     console.error("Logout error:", err);
   } finally {
     // always clear and redirect regardless of API success
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("pendingUser");
-    localStorage.removeItem("resetEmail");
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("pendingUser");
+    sessionStorage.removeItem("resetEmail");
     router.push("/");
   }
 };
 
 // export async function refreshToken() {
-//   const refreshToken = localStorage.getItem("refreshToken");
+//   const refreshToken = sessionStorage.getItem("refreshToken");
 //   if (!refreshToken) throw new Error("No refresh token");
 
 //   const response = await fetch(`${base_url}/auth/refresh`, {
@@ -377,6 +377,6 @@ export const handleLogout = async (router: AppRouterInstance) => {
 
 //   const data = await response.json();
 
-//   localStorage.setItem("accessToken", data.access_token);
-//   localStorage.setItem("refreshToken", data.refresh_token);
+//   sessionStorage.setItem("accessToken", data.access_token);
+//   sessionStorage.setItem("refreshToken", data.refresh_token);
 // }

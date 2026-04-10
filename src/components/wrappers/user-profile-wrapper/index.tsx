@@ -20,19 +20,15 @@ export function UserProfileWrapper({
   const { setLoading: setTableLoading, loading: tableLoading } =
     useTableStore();
   const router = useRouter();
-
-  const { setUser } = useUserStore();
-  const { setMatches } = useMatches();
   useEffect(() => {
     const fetchUser = async () => {
+      const token = sessionStorage.getItem("accessToken");
+      if (!token) {
+        router.replace("/");
+      }
       if (typeof window !== "undefined") {
         await getProfile().finally(() => setLoading(false));
         if (!tableLoading) return;
-        const matches: FounderMatch[] = await generateMatch(router).finally(
-          () => setTableLoading(false)
-        );
-        setMatches(matches);
-        const data = await getIncomingRequests();
       }
     };
     fetchUser();
