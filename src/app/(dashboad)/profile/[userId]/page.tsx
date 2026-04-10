@@ -28,7 +28,7 @@ function UserProfilePage() {
       const mapped: FounderProfile = {
         id: data.id,
         userId: data.id,
-        userName: data.profile.userName ?? `${data.firstName} ${data.lastName}`,
+        userName: `${data.firstName} ${data.lastName}`,
         founderStatus: data.profile.founderStatus,
         bio: data.profile.bio,
         email: data.email,
