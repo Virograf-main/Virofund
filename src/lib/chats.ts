@@ -41,7 +41,11 @@ export async function sendMessage(
   senderId: string,
   text: string,
   chatId: string,
-  senderName: string
+  senderName: string,
+  fileUrl?: string, 
+  fileName?: string,
+  fileType?: string,
+  audioUrl?: string
 ) {
   await addDoc(collection(db, "chats", chatId, "messages"), {
     senderId,
