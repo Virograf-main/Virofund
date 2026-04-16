@@ -42,6 +42,7 @@ export const Messages = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const setActiveChat = (chatId: string | undefined) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -58,6 +59,12 @@ export const Messages = () => {
     const person = chat.membersDetails.find((m) => m.id !== user?.id);
     if (person) setOtherPerson({ name: person.name, id: person.id });
   }, [activeChat, chats, user?.id]);
+
+  useEffect(() => {
+  if (messagesEndRef.current) {
+    messagesEndRef.current.scrollIntoView({ behavior: "auto" });
+  }
+}, [chatMessages, activeChat]);
 
   // Listen to user chats
   useEffect(() => {
@@ -285,6 +292,7 @@ export const Messages = () => {
                 No messages yet. Say hello!
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
         )}
 
