@@ -12,6 +12,10 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { Chat, TextMessage } from "@/types/chats";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { MessageData } from "./firebase/messages";
+import { storage } from "./firebase/storage";
+
 
 export async function createChat(
   matchId: string,
@@ -154,4 +158,19 @@ export function listenToUserChats(
       callback([]); // unblock the UI
     }
   );
+}
+
+export async function uploadFileToFirebase(file: File, chatId: string) {
+  const storageRef = ref(storage, `chats/${chatId}/files/${file.name}`);
+  await uploadBytes(storageRef, file);
+  const url = await getDownloadURL(storageRef);
+  return url;
+}
+
+export async function uploadAudioToFirebase(blob: Blob, chatId: string) {
+  const fileName = `voice-${Date.now()}.webm`;
+  const storageRef = ref(storage, `chats/${chatId}/audio/${fileName}`);
+  await uploadBytes(storageRef, blob);
+  const url = await getDownloadURL(storageRef);
+  return url;
 }

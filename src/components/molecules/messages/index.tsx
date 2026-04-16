@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { subscribeToMessages, MessageData, getLastMessage } from "@/lib/firebase/messages";
 import { serverTimestamp } from "firebase/firestore";
 import { Timestamp } from "firebase/firestore";
-import { getUserChats, listenToMessages, listenToUserChats, sendMessage } from "@/lib/chats";
+import { getUserChats, listenToMessages, listenToUserChats, sendMessage, uploadAudioToFirebase, uploadFileToFirebase } from "@/lib/chats";
 import { useUserStore } from "@/store/userStore";
 import { Chat, TextMessage } from "@/types/chats";
 import { formatChatDate } from "@/lib/helpers";
@@ -144,15 +144,14 @@ export const Messages = () => {
     setChatMessages((prev) => [...prev, tempFileMessage]);
 
     try {
-      // TODO: Upload file to your backend / Firebase Storage
-      // Example: 
-      // const uploadedUrl = await uploadFileToStorage(file, activeChat);
-      
-      // Then send message with real URL
+      const uploadedUrl = await uploadFileToFirebase(file, activeChat);
+      const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+      const uploadedAudioUrl = await uploadAudioToFirebase(audioBlob, activeChat);
       await sendMessage(user.id, `📎 ${file.name}`, activeChat, user.firstName + " " + user.lastName, 
-        "uploaded-url-here", // replace with real URL after upload
+       uploadedUrl,
         file.name,
          file.type, 
+         uploadedAudioUrl
       );
     } catch (error) {
       toast.error("Failed to upload file");
