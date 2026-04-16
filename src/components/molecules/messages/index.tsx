@@ -145,15 +145,18 @@ export const Messages = () => {
 
     try {
       // TODO: Upload file to your backend / Firebase Storage
-      // Example: const uploadedUrl = await uploadFileToStorage(file, activeChat);
+      // Example: 
+      // const uploadedUrl = await uploadFileToStorage(file, activeChat);
+      
       // Then send message with real URL
       await sendMessage(user.id, `📎 ${file.name}`, activeChat, user.firstName + " " + user.lastName, 
         "uploaded-url-here", // replace with real URL after upload
         file.name,
-         file.type,
+         file.type, 
       );
     } catch (error) {
       toast.error("Failed to upload file");
+      console.log(error, 'the error')
       setChatMessages((prev) => prev.filter((msg) => msg.id !== tempFileMessage.id));
     }
   };

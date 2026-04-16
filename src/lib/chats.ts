@@ -37,6 +37,28 @@ export async function createChat(
   );
 }
 
+// export async function sendMessage(
+//   senderId: string,
+//   text: string,
+//   chatId: string,
+//   senderName: string,
+//   fileUrl?: string, 
+//   fileName?: string,
+//   fileType?: string,
+//   audioUrl?: string
+// ) {
+//   await addDoc(collection(db, "chats", chatId, "messages"), {
+//     senderId,
+//     text,
+//     createdAt: serverTimestamp(),
+//     chatId,
+//     senderName,
+//     fileUrl,
+//     fileName,
+//     fileType,
+//     audioUrl
+//   });
+
 export async function sendMessage(
   senderId: string,
   text: string,
@@ -47,13 +69,21 @@ export async function sendMessage(
   fileType?: string,
   audioUrl?: string
 ) {
-  await addDoc(collection(db, "chats", chatId, "messages"), {
+  const messageData: any = {
     senderId,
     text,
     createdAt: serverTimestamp(),
     chatId,
     senderName,
-  });
+  };
+  if (fileUrl !== undefined) messageData.fileUrl = fileUrl;
+  if (fileName !== undefined) messageData.fileName = fileName;
+  if (fileType !== undefined) messageData.fileType = fileType;
+  if (audioUrl !== undefined) messageData.audioUrl = audioUrl;
+
+  await addDoc(collection(db, "chats", chatId, "messages"), messageData);
+
+
 
   // Update lastMessage
   await setDoc(
