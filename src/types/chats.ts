@@ -18,4 +18,8 @@ export interface TextMessage {
   text: string;
   createdAt: Timestamp;
   isTemp?: boolean;
+  fileUrl?: string;
+  fileName?: string;
+  fileType?: string,
+  audioUrl?: string
 }

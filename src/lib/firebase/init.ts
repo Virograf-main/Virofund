@@ -10,7 +10,7 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_MY_FIREBASE_APP_ID,
 };
 
-const app = getApps().some(a => a.name === "myMessagingApp")
+export const app = getApps().some(a => a.name === "myMessagingApp")
   ? getApp("myMessagingApp")
   : initializeApp(firebaseConfig, "myMessagingApp");
 
