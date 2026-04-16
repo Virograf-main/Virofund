@@ -260,8 +260,8 @@ export const Messages = () => {
                     {msg.audioUrl ? (
                       <audio controls src={msg.audioUrl} className="max-w-[300px]" />
                     ) : msg.fileUrl ? (
-                      <a href={msg.fileUrl} target="_blank" className="text-blue-400 underline">
-                        📎 {msg.fileName || "Attachment"}
+                      <a href={msg.fileUrl} target="_blank" className="text-zinc-700 underline">
+                         {msg.fileName || "Attachment"}
                       </a>
                     ) : (
                       <p>{msg.text}</p>
@@ -295,10 +295,10 @@ export const Messages = () => {
           {/* Attachment Menu */}
           <AnimatePresence>
             {showAttachmentMenu && (
-              <div className="absolute bottom-20 left-6 bg-zinc-900 border border-zinc-700 rounded-xl p-2 shadow-xl z-50">
+              <div className="absolute bottom-20 left-6 bg-white border border-primary rounded-xl p-2 shadow-xl z-50">
                 <div className="flex flex-col gap-1 w-52">
-                  <label className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 rounded-lg cursor-pointer">
-                    <Paperclip className="h-5 w-5 text-blue-400" />
+                  <label className="flex items-center gap-3 px-4 py-3 hover:bg-primary/30 rounded-lg cursor-pointer">
+                    <Paperclip className="h-5 w-5 text-primary" />
                     <span className="text-sm">Document / File</span>
                     <input
                       type="file"
@@ -312,9 +312,9 @@ export const Messages = () => {
                       setShowAttachmentMenu(false);
                       startVoiceRecording();
                     }}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 rounded-lg text-left w-full"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-primary/30 rounded-lg text-left w-full"
                   >
-                    <Mic className="h-5 w-5 text-red-400" />
+                    <Mic className="h-5 w-5 text-primary" />
                     <span className="text-sm">Voice Note</span>
                   </button>
                 </div>
@@ -325,14 +325,14 @@ export const Messages = () => {
           {/* Voice Recording Overlay */}
           <AnimatePresence>
             {isRecording && (
-              <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-2 rounded-full flex items-center gap-3 shadow-2xl z-50">
+              <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-primary text-white px-6 py-2 rounded-full flex items-center gap-3 shadow-2xl z-50">
                 <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
                 <span>Recording {recordingTime}s</span>
                 <Button
                   size="sm"
                   variant="secondary"
                   onClick={stopVoiceRecording}
-                  className="ml-4 bg-white text-red-600 hover:bg-white/90"
+                  className="ml-4 bg-white text-primary hover:bg-white/90"
                 >
                   Send
                 </Button>
@@ -345,7 +345,7 @@ export const Messages = () => {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Type a message"
-            className="flex-1 w-full bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-500"
+            className="flex-1 w-full bg-primary/30 border-primary/10 text-zinc-700 placeholder:text-zinc-500 p-2"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
