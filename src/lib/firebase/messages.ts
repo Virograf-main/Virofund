@@ -13,6 +13,18 @@ export type MessageData = {
   pinned?: boolean;
 };
 
+export type NewMessageData = {
+  senderId?: string;
+  text?: string;
+  createdAt?: FieldValue | Timestamp | null;
+  chatId: string;
+  senderName?: string
+  fileUrl?: string
+  fileName?: string
+  fileType?: string
+  audioUrl?: string
+};
+
 // Subscribe to messages in a conversation
 export const subscribeToMessages = (
   conversationId: string,
