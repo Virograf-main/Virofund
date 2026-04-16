@@ -13,7 +13,7 @@ import {
 import { db } from "./firebase";
 import { Chat, TextMessage } from "@/types/chats";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { MessageData } from "./firebase/messages";
+import { MessageData, NewMessageData } from "./firebase/messages";
 import { storage } from "./firebase/storage";
 
 
@@ -73,7 +73,7 @@ export async function sendMessage(
   fileType?: string,
   audioUrl?: string
 ) {
-  const messageData: any = {
+  const messageData: NewMessageData = {
     senderId,
     text,
     createdAt: serverTimestamp(),

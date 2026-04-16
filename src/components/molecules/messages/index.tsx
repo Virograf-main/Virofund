@@ -248,7 +248,7 @@ export const Messages = () => {
   // CHAT SCREEN
   if (activeChat) {
     return (
-      <Card className="h-[85vh] flex flex-col">
+      <Card className="h-[85vh] flex flex-col relative">
         <div className="p-4 border-b flex items-center gap-4">
           <button onClick={() => setActiveChat(undefined)}>&larr;</button>
           <p className="font-semibold" onClick={() => router.replace(`/profile/${otherPerson.id}`)}>
