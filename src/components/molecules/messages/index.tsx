@@ -12,7 +12,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { subscribeToMessages, MessageData, getLastMessage } from "@/lib/firebase/messages";
 import { serverTimestamp } from "firebase/firestore";
 import { Timestamp } from "firebase/firestore";
-import { getUserChats, listenToMessages, listenToUserChats, sendMessage, uploadAudioToFirebase, uploadFileToFirebase } from "@/lib/chats";
+import { getUserChats, listenToMessages, listenToUserChats, sendMessage } from "@/lib/chats";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 import { useUserStore } from "@/store/userStore";
 import { Chat, TextMessage } from "@/types/chats";
 import { formatChatDate } from "@/lib/helpers";
@@ -120,21 +121,20 @@ export const Messages = () => {
     }
   };
 
-  // File Upload Handler
+  // File Upload Handler (Cloudinary)
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !activeChat || !user?.id) return;
 
     setShowAttachmentMenu(false);
 
-    // You can show a "uploading..." message here if desired
     const tempFileMessage: TextMessage = {
       id: `temp-file-${Date.now()}`,
       chatId: activeChat,
       senderId: user.id,
       senderName: user.firstName + " " + user.lastName,
       text: `📎 ${file.name}`,
-      fileUrl: URL.createObjectURL(file), // temporary local preview
+      fileUrl: URL.createObjectURL(file),
       fileName: file.name,
       fileType: file.type,
       createdAt: Timestamp.now(),
@@ -144,18 +144,19 @@ export const Messages = () => {
     setChatMessages((prev) => [...prev, tempFileMessage]);
 
     try {
-      const uploadedUrl = await uploadFileToFirebase(file, activeChat);
-      const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
-      const uploadedAudioUrl = await uploadAudioToFirebase(audioBlob, activeChat);
-      await sendMessage(user.id, `📎 ${file.name}`, activeChat, user.firstName + " " + user.lastName, 
-       uploadedUrl,
+      const result = await uploadToCloudinary(file, "chat/files");
+      const uploadedUrl = result.secure_url;
+      await sendMessage(
+        user.id,
+        `📎 ${file.name}`,
+        activeChat,
+        user.firstName + " " + user.lastName,
+        uploadedUrl,
         file.name,
-         file.type, 
-         uploadedAudioUrl
+        file.type
       );
     } catch (error) {
       toast.error("Failed to upload file");
-      console.log(error, 'the error')
       setChatMessages((prev) => prev.filter((msg) => msg.id !== tempFileMessage.id));
     }
   };
@@ -192,10 +193,17 @@ export const Messages = () => {
           setChatMessages((prev) => [...prev, tempVoiceMessage]);
 
           try {
-            // TODO: Upload audioBlob to storage and get URL
-            // const uploadedAudioUrl = await uploadVoiceNote(audioBlob, activeChat);
-            await sendMessage(user.id, "🎤 Voice Message", activeChat, user.firstName + " " + user.lastName, "", "", "",
-             "uploaded-audio-url-here", // replace with real URL
+            const result = await uploadToCloudinary(audioBlob, "chat/audio");
+            const uploadedAudioUrl = result.secure_url;
+            await sendMessage(
+              user.id,
+              "🎤 Voice Message",
+              activeChat,
+              user.firstName + " " + user.lastName,
+              "", // fileUrl
+              "", // fileName
+              "", // fileType
+              uploadedAudioUrl
             );
           } catch (error) {
             toast.error("Failed to send voice note");
