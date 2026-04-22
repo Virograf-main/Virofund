@@ -7,6 +7,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { handleLogout } from "@/lib/auth";
 import { useUserStore } from "@/store/userStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 const sidebarItems = [
   { label: "Dashboard", route: "/dashboard", icon: <Home size={18} /> },
@@ -27,6 +28,16 @@ export function DesktopSidebar() {
   const pathName = usePathname();
   const router = useRouter();
   const { user } = useUserStore();
+  const queryClient = useQueryClient();
+
+  const handleLogoutButtonClick = async () => {
+    try {
+      queryClient.clear();
+      await handleLogout(router);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const isActive = (route: string) =>
     pathName === route || pathName.startsWith(`${route}/`);
@@ -122,7 +133,7 @@ export function DesktopSidebar() {
         ))}
 
         <button
-          onClick={() => handleLogout(router)}
+          onClick={() => handleLogoutButtonClick()}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-all mt-1"
         >
           <LogOut size={18} />
