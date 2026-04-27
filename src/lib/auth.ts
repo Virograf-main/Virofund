@@ -176,7 +176,9 @@ export const handleLogin = async (
     return data;
   } catch (err: unknown) {
     console.error(err);
-    toast.error((err as Error).message || "Login failed");
+    // toast.error((err as Error).message || "Login failed");
+    toast.error("Login failed");
+
   } finally {
     setIsLoggingIn(false);
   }

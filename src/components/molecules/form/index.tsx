@@ -123,7 +123,7 @@ export function Form({ setIsCreatingAccount, isCreatingAccount }: FormProps) {
           >
             {isPrevUser ? "Welcome Back!" : "Create Account!"}
           </motion.h2>
-          <motion.p
+          {/* <motion.p
             key={isPrevUser ? "sub-back" : "sub-new"}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -132,7 +132,7 @@ export function Form({ setIsCreatingAccount, isCreatingAccount }: FormProps) {
             className="text-[14px]"
           >
             Select a method to {isPrevUser ? "login" : "Sign up"}
-          </motion.p>
+          </motion.p> */}
         </article>
         {/* Conditional fields */}
         <AnimatePresence initial={false}>
@@ -249,7 +249,7 @@ export function Form({ setIsCreatingAccount, isCreatingAccount }: FormProps) {
               <p>Sign up</p>
             )}
           </Button>
-          <Demarcation text="or continue with" />
+          {/* <Demarcation text="or continue with" />
           <Button variant="outline" type="button" className="w-full">
             <Image
               src="/svg/google-svgrepo-com.svg"
@@ -258,7 +258,7 @@ export function Form({ setIsCreatingAccount, isCreatingAccount }: FormProps) {
               height={20}
             />
             <p>Google</p>
-          </Button>
+          </Button> */}
           {/* Toggle sign in/up */}
           <p className="text-center text-[14px]">
             {isPrevUser
