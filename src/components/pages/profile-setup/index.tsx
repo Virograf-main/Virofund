@@ -65,7 +65,7 @@ export function ProfileSetup() {
 
   const handleNext = () => {
     const newErrors: { [key: string]: string } = {};
-    if (!data.userName?.trim()) newErrors.userName = "Preferred username is required";
+    // if (!data.userName?.trim()) newErrors.userName = "Preferred username is required";
     if (!data.bio?.trim()) newErrors.bio = "Bio is required";
     if (!data.commitmentLevel) newErrors.commitmentLevel = "Commitment level is required";
     if (data.personalityTraits?.length === 0) newErrors.personalityTraits = "At least one personality trait is required";
@@ -145,7 +145,7 @@ export function ProfileSetup() {
             label="Preferred username"
             type="text"
             placeholder="John Doe"
-            value={data.userName}
+            value={data.userName ? data.userName : ''}
             onChange={(e) => updateField("userName", e.target.value)}
           />
           <Textarea
