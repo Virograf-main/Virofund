@@ -13,6 +13,7 @@ import {
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { createProfile } from "@/lib/profile";
 import { useRouter } from "next/navigation";
+import { ChevronLeft } from "lucide-react";
 
 const industries = INDUSTRIES.map((value) => ({
   value,
@@ -171,6 +172,9 @@ export function MatchmakingData() {
     </button>
   </div>
 )}
+<div>
+  <ChevronLeft onClick={router.back}/>
+</div>
 
       <Section title="Co-founder Preferences cont'd">
         <Div>

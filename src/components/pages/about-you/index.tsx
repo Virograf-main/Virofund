@@ -123,36 +123,36 @@ export function AboutYou() {
 
   return (
     <div>
-   
+
       {showAlert && (
-  <div className="fixed top-6 left-1/2 transform -translate-x-1/2 max-w-md w-full z-50 
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 max-w-md w-full z-50 
                   flex items-center gap-4 p-4 rounded-xl border border-red-200 
                   bg-white/95 backdrop-blur-sm shadow-2xl shadow-red-200/50 
                   animate-in fade-in zoom-in duration-300">
-    
-    {/* Round Svg alert icon*/}
-    <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-      <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    </div>
-    {/* Message */}
-    <div className="flex-1">
-      <h3 className="text-sm font-bold text-red-900">Attention Required</h3>
-      <p className="text-xs text-red-700 leading-relaxed">{alertMessage}</p>
-    </div>
 
-    {/* Close X Button */}
-    <button
-      onClick={() => setShowAlert(false)}
-      className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors"
-    >
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
-  </div>
-)}
+          {/* Round Svg alert icon*/}
+          <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+            <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          {/* Message */}
+          <div className="flex-1">
+            <h3 className="text-sm font-bold text-red-900">Attention Required</h3>
+            <p className="text-xs text-red-700 leading-relaxed">{alertMessage}</p>
+          </div>
+
+          {/* Close X Button */}
+          <button
+            onClick={() => setShowAlert(false)}
+            className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
       <Section title="Tell us about yourself">
         <Div>
           <SelectElement
@@ -245,7 +245,13 @@ export function AboutYou() {
             placeholder="https://linkedin.com/..."
             type="text"
             value={data.linkedInUrl}
-            onChange={(e) => updateField("linkedInUrl", e.target.value)}
+            onChange={(e) => {
+              let value = e.target.value;
+              if (value && !/^https?:\/\//i.test(value)) {
+                value = "https://" + value;
+              }
+              updateField("linkedInUrl", e.target.value)
+            }}
             error={!!errors.linkedInUrl}
           />
         </Div>

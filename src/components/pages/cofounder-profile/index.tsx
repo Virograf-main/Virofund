@@ -10,6 +10,7 @@ import { PERSONALITY_TRAITS } from "@/lib/constants";
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronLeft } from "lucide-react";
 
 const personalityTraits = PERSONALITY_TRAITS.map((trait) => ({
   label: trait,
@@ -128,7 +129,9 @@ export function CofounderProfile() {
     </button>
   </div>
 )}
-
+<div>
+  <ChevronLeft onClick={router.back}/>
+</div>
       <Section title="Co-founder Preferences">
         <Div>
           <SelectElement

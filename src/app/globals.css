@@ -166,7 +166,8 @@ select:-webkit-autofill:focus {
 
 .side-img {
   width: 100%;
-  background-image: url("../../public/jpg/co-founder.png");
+  /* background-image: url("../../public/jpg/co-founder.png"); */
+  background-image: url("../../public/jpg/apple-cofounders.png");
   max-width: 700px;
   background-size: cover;
   background-position: center;
