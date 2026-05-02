@@ -45,6 +45,8 @@ export function Form({ setIsCreatingAccount, isCreatingAccount }: FormProps) {
   const [lastName, setLastName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const passwordsMatch = password && confirmPassword && password === confirmPassword;
   const router = useRouter();
   const Modal = useModal();
 
@@ -74,6 +76,10 @@ export function Form({ setIsCreatingAccount, isCreatingAccount }: FormProps) {
       label: "One special character ",
       test: (pw: string) => /[@$!%*?&]/.test(pw),
     },
+    {
+      label: "Passwords match",
+      test: (pw: string, cpw: string) => pw && cpw && pw === cpw,
+    },
   ];
 
   return (
@@ -82,32 +88,32 @@ export function Form({ setIsCreatingAccount, isCreatingAccount }: FormProps) {
         onSubmit={
           isPrevUser
             ? (e) =>
-                handleLogin(e, setIsCreatingAccount, email, password, router)
+              handleLogin(e, setIsCreatingAccount, email, password, router)
             : (e) => {
-                e.preventDefault();
-                if (!agreedToTerms) {
-                  return toast.error(
-                    "You must agree to the Terms and Conditions",
-                  );
-                }
-                const allPassed = rules.every((rule) => rule.test(password));
-                if (!allPassed) {
-                  return toast.error(
-                    "Password must be at least 8 characters, include an uppercase letter, a number, and a special character",
-                  );
-                }
-                handleSendOtp(
-                  e,
-                  setIsCreatingAccount,
-                  true,
-                  password,
-                  firstName,
-                  lastName,
-                  email,
-                  true,
-                  () => Modal.openModal("otp"),
+              e.preventDefault();
+              if (!agreedToTerms) {
+                return toast.error(
+                  "You must agree to the Terms and Conditions",
                 );
               }
+              const allPassed = rules.every((rule) => rule.test(password, confirmPassword));
+              if (!allPassed) {
+                return toast.error(
+                  "Password must be at least 8 characters, include an uppercase letter, a number, and a special character",
+                );
+              }
+              handleSendOtp(
+                e,
+                setIsCreatingAccount,
+                true,
+                password,
+                firstName,
+                lastName,
+                email,
+                true,
+                () => Modal.openModal("otp"),
+              );
+            }
         }
         className="glass no-glass p-6 rounded-t-3xl"
       >
@@ -123,7 +129,7 @@ export function Form({ setIsCreatingAccount, isCreatingAccount }: FormProps) {
           >
             {isPrevUser ? "Welcome Back!" : "Create Account!"}
           </motion.h2>
-          <motion.p
+          {/* <motion.p
             key={isPrevUser ? "sub-back" : "sub-new"}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -132,7 +138,7 @@ export function Form({ setIsCreatingAccount, isCreatingAccount }: FormProps) {
             className="text-[14px]"
           >
             Select a method to {isPrevUser ? "login" : "Sign up"}
-          </motion.p>
+          </motion.p> */}
         </article>
         {/* Conditional fields */}
         <AnimatePresence initial={false}>
@@ -182,18 +188,27 @@ export function Form({ setIsCreatingAccount, isCreatingAccount }: FormProps) {
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
+            {!isPrevUser && (
+              <div>
+                <Input
+                  label="Confirm Password"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                />
+              </div>
+            )}
           </div>
           {/* Show rules only in Sign Up */}
           {!isPrevUser && password.length > 0 && (
             <ul className="mt-2 space-y-1 text-sm">
               {rules.map((rule, idx) => {
-                const passed = rule.test(password);
+                const passed = rule.test(password, confirmPassword);
                 return (
                   <li
                     key={idx}
-                    className={`flex items-center gap-2 ${
-                      passed ? "text-green-600" : "text-red-500"
-                    }`}
+                    className={`flex items-center gap-2 ${passed ? "text-green-600" : "text-red-500"
+                      }`}
                   >
                     {passed ? (
                       <CheckCircle2 size={16} />
@@ -249,7 +264,7 @@ export function Form({ setIsCreatingAccount, isCreatingAccount }: FormProps) {
               <p>Sign up</p>
             )}
           </Button>
-          <Demarcation text="or continue with" />
+          {/* <Demarcation text="or continue with" />
           <Button variant="outline" type="button" className="w-full">
             <Image
               src="/svg/google-svgrepo-com.svg"
@@ -258,7 +273,7 @@ export function Form({ setIsCreatingAccount, isCreatingAccount }: FormProps) {
               height={20}
             />
             <p>Google</p>
-          </Button>
+          </Button> */}
           {/* Toggle sign in/up */}
           <p className="text-center text-[14px]">
             {isPrevUser

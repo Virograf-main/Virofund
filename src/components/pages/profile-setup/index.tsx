@@ -16,6 +16,7 @@ import {
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronLeft } from "lucide-react";
 
 const commitmentLevels = COMMITMENT_LEVELS.map((value) => ({
   value,
@@ -64,13 +65,14 @@ export function ProfileSetup() {
 
   const handleNext = () => {
     const newErrors: { [key: string]: string } = {};
-    if (!data.userName?.trim()) newErrors.userName = "Preferred username is required";
+    // if (!data.userName?.trim()) newErrors.userName = "Preferred username is required";
     if (!data.bio?.trim()) newErrors.bio = "Bio is required";
     if (!data.commitmentLevel) newErrors.commitmentLevel = "Commitment level is required";
     if (data.personalityTraits?.length === 0) newErrors.personalityTraits = "At least one personality trait is required";
     if (!data.financialContribution) newErrors.financialContribution = "Financial contribution is required";
     if (!data.riskManagementStyle) newErrors.riskManagementStyle = "Risk management style is required";
     if (!data.currentOccupation?.trim()) newErrors.currentOccupation = "Current occupation is required";
+    if (!data.userName?.trim()) newErrors.currentOccupation = "Current username is required";
 
     // Add more if needed, e.g., for userName if it becomes required
 
@@ -95,7 +97,7 @@ export function ProfileSetup() {
     // If valid, clear errors/alert and navigate
     setErrors({});
     setShowAlert(false);
-    router.push("/cofounder-preference");
+    router.push("/cofounder-profile");
   };
 
   return (
@@ -130,6 +132,9 @@ export function ProfileSetup() {
     </button>
   </div>
 )}
+<div>
+  <ChevronLeft onClick={router.back}/>
+</div>
       <Section title="Let's setup your profile">
         <Div>
           <ProfilePicture
@@ -137,10 +142,10 @@ export function ProfileSetup() {
             className="m-auto md:m-0"
           />
           <Input
-            label="Preferred username (optional)"
+            label="Preferred username"
             type="text"
             placeholder="John Doe"
-            value={data.userName}
+            value={data.userName ? data.userName : ''}
             onChange={(e) => updateField("userName", e.target.value)}
           />
           <Textarea
