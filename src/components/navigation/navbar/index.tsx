@@ -12,7 +12,7 @@ export function Navbar() {
     <nav className="py-2">
       <div className="flex items-center justify-between">
         <h1 className="text-[1.5em] lg:text-[2em] font-semibold hidden xl:block">
-          Welcome back, {user?.profile.userName || "No Name"}!
+          Welcome back, {user?.firstName || user?.profile.userName || "Founder"}!
         </h1>
         <div className="flex gap-2 items-center xl:hidden">
           <MenuIcon onClick={() => setIsOpen(true)} />

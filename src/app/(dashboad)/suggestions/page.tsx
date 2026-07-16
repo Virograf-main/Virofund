@@ -36,7 +36,7 @@ export default function SuggestionPage() {
             tags={match.matchedFounderDetails.skills}
             onConnect={() => sendRequest(match.matchedFounderId)}
             onViewProfile={() =>
-              router.replace(`/profile/${match.matchedFounderId}`)
+              router.replace(`/profile/${match.matchedProfileId}`)
             }
           />
         );

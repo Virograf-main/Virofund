@@ -11,6 +11,7 @@ export interface FounderMatch {
   id: string;
   founderId: string;
   matchedFounderId: string;
+  matchedProfileId: string;
   overallScore: number;
   industryScore: number;
   skillsScore: number;

@@ -14,7 +14,7 @@ import { useUserStore } from "@/store/userStore";
 
 // types/table.ts
 export interface TableRow {
-  userId: string;
+  profileId: string;
   name: string;
   location: string;
   industry: string;
@@ -67,7 +67,7 @@ export default function Dashboard() {
     // percentage;
 
     return {
-      userId: match.matchedFounderId,
+      profileId: match.matchedProfileId,
       name: match.matchedFounderDetails.name,
       location: match.matchedFounderDetails.location,
       industry: match.matchedFounderDetails.industry,
@@ -76,15 +76,14 @@ export default function Dashboard() {
     };
   });
   const handleRowClick = (row: {
-    userId: string;
+    profileId: string;
     name: string;
     location: string;
     industry: string;
     skills: string;
     score: ReactNode;
   }) => {
-    // assuming each row has a userId field
-    router.push(`/profile/${row.userId}`);
+    router.push(`/profile/${row.profileId}`);
   };
 
   useEffect(() => {

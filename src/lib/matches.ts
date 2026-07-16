@@ -5,37 +5,6 @@ import { handleApiError } from "@/lib/middleware";
 import { ConnectionRequest } from "@/types/matches";
 import { createChat } from "@/lib/chats";
 
-export const generateMatch = async (router: AppRouterInstance) => {
-  try {
-    if (typeof window === "undefined") return;
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      toast.error("No access token found in localStorage");
-      return;
-    }
-
-    const response = await fetch(`${base_url}/matches/generate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      handleApiError(error);
-      return [];
-    }
-    const data = await response.json();
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.error("Error creating profile:", error);
-    toast.error("Failed to create profile");
-    return;
-  }
-};
 export const getMatches = async () => {
   try {
     if (typeof window === "undefined") return;
@@ -61,17 +30,43 @@ export const getMatches = async () => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error creating profile:", error);
-    toast.error("Failed to create profile");
+    console.error("Error fetching matches:", error);
+    toast.error("Failed to fetch matches");
     return;
   }
 };
 
-/**
- * Sends a match request to a specific user
- * @param userId - the user ID
- * @returns json of sender and receiver id
- */
+export const browseProfiles = async () => {
+  try {
+    if (typeof window === "undefined") return;
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      toast.error("No access token found in localStorage");
+      return;
+    }
+
+    const response = await fetch(`${base_url}/matches/browse`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      handleApiError(error);
+      return [];
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching profiles:", error);
+    toast.error("Failed to fetch profiles");
+    return;
+  }
+};
+
 export const sendRequest = async (userId: string) => {
   try {
     if (typeof window === "undefined") return;
@@ -95,20 +90,14 @@ export const sendRequest = async (userId: string) => {
       return;
     }
     const data = await response.json();
-    console.log(data);
     toast.success("Request sent successfully");
     return data;
   } catch (error) {
-    console.error("Error creating profile:", error);
-    toast.error("Failed to create profile");
+    console.error("Error sending request:", error);
+    toast.error("Failed to send request");
     return;
   }
 };
-
-/**
- * Get all match requests sent to the user
- * @returns json of match requests
- */
 
 export const getIncomingRequests = async () => {
   try {
@@ -135,8 +124,39 @@ export const getIncomingRequests = async () => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error getting profile:", error);
-    toast.error("Failed to get profile");
+    console.error("Error fetching incoming requests:", error);
+    toast.error("Failed to fetch incoming requests");
+    return;
+  }
+};
+
+export const getSentRequests = async () => {
+  try {
+    if (typeof window === "undefined") return;
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      toast.error("Unauthorized, please log in again");
+      return;
+    }
+
+    const response = await fetch(`${base_url}/matches/sent`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      handleApiError(error);
+      return [];
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching sent requests:", error);
+    toast.error("Failed to fetch sent requests");
     return;
   }
 };
@@ -146,7 +166,7 @@ export const approveRequest = async (requestId: string) => {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/matches/requests/${requestId}/status`,
+      `${base_url}/matches/requests/${requestId}/status`,
       {
         method: "PATCH",
         headers: {
@@ -183,7 +203,7 @@ export const rejectRequest = async (requestId: string) => {
   const token = localStorage.getItem("accessToken");
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/matches/requests/${requestId}/status`,
+      `${base_url}/matches/requests/${requestId}/status`,
       {
         method: "PATCH",
         headers: {

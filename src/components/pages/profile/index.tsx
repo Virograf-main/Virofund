@@ -21,7 +21,9 @@ type Details = {
   keyRoles: string[];
   workStyles?: string[];
   skills?: string[];
+  personalityTraits?: string[];
 };
+
 
 type Experience = {
   title: string;
@@ -69,7 +71,16 @@ const Profile = ({
       title: "Skills & Strengths",
       subdetails: details.skills,
     },
+    {
+      title: "Personality Traits",
+      subdetails: details.personalityTraits,
+    },
   ];
+
+  // Filter out sections with no data to avoid empty subcards
+  const visibleDetails = Details.filter(
+    (d) => d.subdetails && d.subdetails.length > 0
+  );
 
   const Needs = [
     {
@@ -129,9 +140,9 @@ const Profile = ({
             {bio}
           </KeyValue>
 
-          <div className="md:flex gap-3 w-full py-2 space-y-3">
-            {Details.map((detail, idx) => (
-              <div key={idx} className="">
+          <div className="flex flex-wrap gap-3 w-full py-2">
+            {visibleDetails.map((detail, idx) => (
+              <div key={idx} className="flex-1 min-w-[200px]">
                 <Subcard
                   text={`${detail.title}`}
                   className="text-[16px] font-semibold "

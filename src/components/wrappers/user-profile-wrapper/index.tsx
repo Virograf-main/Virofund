@@ -1,6 +1,6 @@
 "use client";
 import { TokenChecker } from "@/components/wrappers/access-token-wrapper";
-import { generateMatch, getIncomingRequests, getMatches } from "@/lib/matches";
+import { getIncomingRequests, getMatches } from "@/lib/matches";
 import { getMatchingProfile, getProfile } from "@/lib/profile";
 import { useUserStore } from "@/store/userStore";
 import { UserProfile } from "@/types/userprofile";
@@ -28,7 +28,7 @@ export function UserProfileWrapper({
       if (typeof window !== "undefined") {
         await getProfile().finally(() => setLoading(false));
         if (!tableLoading) return;
-        const matches: FounderMatch[] = await generateMatch(router).finally(
+        const matches: FounderMatch[] = await getMatches().finally(
           () => setTableLoading(false)
         );
         setMatches(matches);

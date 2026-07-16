@@ -72,6 +72,14 @@ export interface Profile {
 export interface Founder {
   id: string;
   userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  userName: string;
+  bio: string;
+  dateOfBirth?: string;
+  gender?: string;
+  linkedInUrl?: string;
   founderStatus: string;
   skills: string[];
   industry: string;
@@ -81,6 +89,10 @@ export interface Founder {
   financialContribution: string;
   personalityTraits: string[];
   location: string;
+  workStyle: string;
+  hasStartup?: boolean;
+  riskManagementStyle?: string;
+  pastExperience?: string;
 
   preferredSkills: string[];
   preferredFounderType: string;
@@ -90,6 +102,6 @@ export interface Founder {
   preferredPersonalityTraits: string[];
   preferredLocation: string;
 
-  createdAt: string; // ISO timestamp
-  updatedAt: string; // ISO timestamp
+  createdAt: string;
+  updatedAt: string;
 }

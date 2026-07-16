@@ -1,4 +1,3 @@
-// import { authenticateUser } from "./auth";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import toast from "react-hot-toast";
 import { base_url } from "@/lib/constants";
@@ -39,7 +38,6 @@ export const handleSendOtp = async (
   firstName: string,
   lastName: string,
   email: string,
-  // setPrevuser: (bool: boolean) => void,
   openOtpModal?: () => void,
 ) => {
   e.preventDefault();
@@ -58,14 +56,9 @@ export const handleSendOtp = async (
     );
     const data = await authenticateUser({ email, isRegistering: true }, url);
 
-    if (!data) return; // API failed, stop
-    if (data.message !== "OTP sent") {
-      toast.error(data.message || "Failed to send OTP");
-      return;
-    }
+    if (!data) return;
     toast.success("OTP sent to email. Please check your inbox.");
     openOtpModal?.();
-    // setPrevuser(true); // switch back to login after signup
   } catch (err: unknown) {
     console.error(err);
     toast.error((err as Error).message || "Something went wrong");
@@ -119,11 +112,11 @@ export const handleSignUp = async (
 
     if (!data) return;
 
-    localStorage.setItem("accessToken", data.access_token);
-    localStorage.setItem("refreshToken", data.refresh_token);
+    localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("refreshToken", data.refreshToken);
 
     toast.success("Account created successfully");
-    setIsPrevUser(true); // switch to login after successful signup
+    setIsPrevUser(true);
     localStorage.removeItem("pendingUser");
   } catch (err: unknown) {
     console.error(err);
@@ -136,7 +129,7 @@ export const handleLogin = async (
   setIsLoggingIn: (bool: boolean) => void,
   email: string,
   password: string,
-  router: AppRouterInstance, // 👈 pass in next/router or useRouter from your component
+  router: AppRouterInstance,
 ) => {
   e.preventDefault();
 
@@ -151,13 +144,11 @@ export const handleLogin = async (
 
     if (!data) return;
 
-    // Save token
-    localStorage.setItem("accessToken", data.access_token);
-    localStorage.setItem("refreshToken", data.refresh_token);
+    localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("refreshToken", data.refreshToken);
 
     toast.success("Logged in successfully");
 
-    // ✅ Route depending on onboarded state
     const profile = await getMatchingProfile();
     console.log(profile);
 
@@ -181,31 +172,18 @@ export const handleLogin = async (
   }
 };
 
-/**
- * Checks if a JWT access token is still valid
- * @param token - the JWT string
- * @returns true if valid, false if expired or invalid
- */
 export function isAccessTokenValid(token: string | null): boolean {
   if (!token) return false;
 
   try {
-    // JWTs are base64-encoded: header.payload.signature
     const payload = JSON.parse(atob(token.split(".")[1]));
-
-    const now = Math.floor(Date.now() / 1000); // current time in seconds
+    const now = Math.floor(Date.now() / 1000);
     return payload.exp && payload.exp > now;
   } catch (e) {
     console.error("Failed to parse token:", e);
     return false;
   }
 }
-
-/**
- * Refreshes the access token once it is expired
- * @param token - the JWT refresh token
- * @returns new access token and refresh token if the refresh token is correct
- */
 
 export async function refreshToken() {
   const refreshToken = localStorage.getItem("refreshToken");
@@ -228,8 +206,8 @@ export async function refreshToken() {
       return;
     }
     const data = await response.json();
-    localStorage.setItem("accessToken", data.access_token);
-    localStorage.setItem("refreshToken", data.refresh_token);
+    localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("refreshToken", data.refreshToken);
   } catch (err) {
     console.log("error getting access token: ", err);
   }
