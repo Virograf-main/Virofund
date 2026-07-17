@@ -75,7 +75,7 @@ export function SuggestionCard({
                 key={tag}
                 label={tag}
                 variant="outline"
-                className="rounded-full px-3 py-1 text-xs border-gray-400 text-gray-700"
+                className="rounded-full px-3 py-1 text-xs border-border text-muted-foreground"
               />
             ))}
           </div>
@@ -86,13 +86,13 @@ export function SuggestionCard({
           <Button
             variant="outline"
             onClick={onViewProfile}
-            className="flex-1 border-gray-300 text-gray-900 text-sm py-2 rounded-full hover:bg-gray-100"
+            className="flex-1 text-sm py-2 rounded-full"
           >
             View Profile
           </Button>
           <Button
             onClick={onConnect}
-            className="flex-1 bg-black text-white text-sm py-2 rounded-full hover:bg-gray-800"
+            className="flex-1 text-sm py-2 rounded-full"
           >
             Connect
           </Button>

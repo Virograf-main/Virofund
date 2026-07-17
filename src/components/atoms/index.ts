@@ -17,3 +17,4 @@ export * from "./runningprojects";
 export * from "./table";
 export * from "./tag";
 export * from "./loader";
+export * from "./theme-toggle";

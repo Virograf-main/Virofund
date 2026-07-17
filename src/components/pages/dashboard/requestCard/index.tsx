@@ -62,7 +62,7 @@ export const RequestSection = () => {
 
   if (requests.length === 0) {
     return (
-      <section className="bg-[#F3F4F6] p-8 rounded-2xl text-center">
+      <section className="bg-muted p-8 rounded-2xl text-center">
         <Image
           src="/svg/no-data.svg"
           width={180}
@@ -75,7 +75,7 @@ export const RequestSection = () => {
     );
   }
   return (
-    <section className="bg-[#F3F4F6] p-2 rounded-2xl shrink-0">
+    <section className="bg-muted p-2 rounded-2xl shrink-0">
       <p className="font-semibold text-[1.2em] py-2">Co-founder Requests</p>
       {/* <div className="flex flex-col gap-4">Your request cards</div> */}
       <div className="space-y-4">

@@ -136,8 +136,8 @@ export const Messages = () => {
                   <div
                     className={`p-2 max-w-[400px] inline-block rounded-2xl  shadow ${
                       msg.senderId === user?.id
-                        ? "self-end bg-primary rounded-br-sm text-white "
-                        : "bg-secondary text-black rounded-bl-sm self-start"
+                        ? "self-end bg-primary rounded-br-sm text-primary-foreground "
+                        : "bg-secondary text-secondary-foreground rounded-bl-sm self-start"
                     }`}
                   >
                     <p>{msg.text}</p>
@@ -252,7 +252,7 @@ export const Messages = () => {
                     }}
                     className="border flex items-start gap-2 p-2 cursor-default"
                   >
-                    <div className="w-[50px] h-[50px] rounded-full bg-gray-400"></div>
+                    <div className="w-[50px] h-[50px] rounded-full bg-muted"></div>
                     <div className="flex flex-col gap-4">
                       <div>
                         <h1 className="font-semibold">{personName[0].name}</h1>

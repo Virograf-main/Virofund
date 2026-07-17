@@ -14,6 +14,7 @@ import {
   FINANCIAL_CONTRIBUTIONS,
 } from "@/lib/constants";
 import { useOnboardingStore } from "@/store/onboardingStore";
+import { createProfile } from "@/lib/profile";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -48,6 +49,7 @@ const riskManagementStyles = riskManagement.map((value) => ({
 export function ProfileSetup() {
   const router = useRouter();
   const { data, updateField } = useOnboardingStore();
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -62,7 +64,7 @@ export function ProfileSetup() {
     }
   }, [showAlert]);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const newErrors: { [key: string]: string } = {};
     if (!data.userName?.trim()) newErrors.userName = "Preferred username is required";
     if (!data.bio?.trim()) newErrors.bio = "Bio is required";
@@ -71,8 +73,6 @@ export function ProfileSetup() {
     if (!data.financialContribution) newErrors.financialContribution = "Financial contribution is required";
     if (!data.riskManagementStyle) newErrors.riskManagementStyle = "Risk management style is required";
     if (!data.currentOccupation?.trim()) newErrors.currentOccupation = "Current occupation is required";
-
-    // Add more if needed, e.g., for userName if it becomes required
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -92,10 +92,18 @@ export function ProfileSetup() {
       return;
     }
 
-    // If valid, clear errors/alert and navigate
+    // If valid, clear errors/alert and create profile
     setErrors({});
     setShowAlert(false);
-    router.push("/cofounder-preference");
+    setLoading(true);
+    try {
+      await createProfile(data, router, setLoading);
+    } catch (error) {
+      console.error("Profile creation failed:", error);
+      setAlertMessage("Something went wrong while creating your profile. Please try again.");
+      setShowAlert(true);
+      setLoading(false);
+    }
   };
 
   return (
@@ -103,26 +111,26 @@ export function ProfileSetup() {
       {/* Alert Banner - Fixed, centered, shorter width, auto-dismiss */}
       {showAlert && (
   <div className="fixed top-6 left-1/2 transform -translate-x-1/2 max-w-md w-full z-50 
-                  flex items-center gap-4 p-4 rounded-xl border border-red-200 
-                  bg-white/95 backdrop-blur-sm shadow-2xl shadow-red-200/50 
+                  flex items-center gap-4 p-4 rounded-xl border border-destructive/20 
+                  bg-card/95 backdrop-blur-sm shadow-2xl shadow-destructive/10 
                   animate-in fade-in zoom-in duration-300">
     
     {/* Round Svg alert icon*/}
-    <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-      <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div className="flex-shrink-0 w-10 h-10 bg-destructive/10 rounded-full flex items-center justify-center">
+      <svg className="w-5 h-5 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     </div>
     {/* Message */}
     <div className="flex-1">
-      <h3 className="text-sm font-bold text-red-900">Attention Required</h3>
-      <p className="text-xs text-red-700 leading-relaxed">{alertMessage}</p>
+      <h3 className="text-sm font-bold text-destructive">Attention Required</h3>
+      <p className="text-xs text-destructive/80 leading-relaxed">{alertMessage}</p>
     </div>
 
     {/* Close X Button */}
     <button
       onClick={() => setShowAlert(false)}
-      className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+      className="p-1.5 rounded-lg text-destructive/60 hover:bg-destructive/10 hover:text-destructive transition-colors"
     >
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -200,9 +208,18 @@ export function ProfileSetup() {
             onChange={(e) => updateField("currentOccupation", e.target.value)}
             error={!!errors.currentOccupation}
           />
+          <Textarea
+            label="What past successes or failures (if any) have you had in startups or business?"
+            placeholder="Add a brief description here"
+            rows={6}
+            value={data.pastExperience}
+            onChange={(e) => updateField("pastExperience", e.target.value)}
+          />
         </Div>
       </Section>
-      <Button onClick={handleNext}>Next</Button>
+      <Button onClick={handleNext} disabled={loading}>
+        {loading ? "Creating profile..." : "Finish"}
+      </Button>
     </div>
   );
 }

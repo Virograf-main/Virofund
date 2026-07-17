@@ -2,7 +2,25 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
+
+// Runs before hydration so the correct theme class is present on <html>
+// before first paint (no flash of the wrong theme). Falls back to system
+// preference when the user hasn't made a manual choice yet.
+const themeInitScript = `
+(function () {
+  try {
+    var stored = localStorage.getItem("virofund-theme");
+    var theme = stored === "light" || stored === "dark"
+      ? stored
+      : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    }
+  } catch (e) {}
+})();
+`;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,12 +48,39 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={` ${jakartaSans.variable} `}>
+    <html lang="en" className={` ${jakartaSans.variable} `} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${jakartaSans.variable} antialiased`}
       >
-        <Toaster position="top-center" reverseOrder={false} />
-        {children}
+        <ThemeProvider>
+          <Toaster
+            position="top-center"
+            reverseOrder={false}
+            toastOptions={{
+              style: {
+                background: "var(--color-card)",
+                color: "var(--color-card-foreground)",
+                border: "1px solid var(--color-border)",
+              },
+              success: {
+                iconTheme: {
+                  primary: "var(--color-primary)",
+                  secondary: "var(--color-primary-foreground)",
+                },
+              },
+              error: {
+                iconTheme: {
+                  primary: "var(--color-destructive)",
+                  secondary: "var(--color-primary-foreground)",
+                },
+              },
+            }}
+          />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

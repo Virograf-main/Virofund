@@ -16,10 +16,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           "rounded-lg px-6 py-3 font-semibold transition cursor-pointer h-9",
           variant !== "link" && " ",
-          variant === "default" && "bg-[#128C72] hover:bg-[#107a63]",
-          variant === "ghost" && "bg-transparent border border-[#D1D5DB]",
-          variant === "secondary" && "bg-[#94F0C5] hover:bg-[#79c2a0] ",
-          // variant === "loading" && "text-black",
+          variant === "default" && "bg-primary text-primary-foreground hover:bg-primary/90",
+          variant === "ghost" && "bg-transparent border border-border",
+          variant === "secondary" && "bg-secondary text-secondary-foreground hover:bg-secondary/80",
           className,
         )}
         {...props}

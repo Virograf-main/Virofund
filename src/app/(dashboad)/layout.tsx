@@ -1,6 +1,6 @@
 import { DesktopSidebar } from "@/components/navigation";
 import { Navbar } from "@/components/navigation";
-import { TokenChecker } from "@/components/wrappers";
+import ClientTokenWrapper from "@/components/wrappers/client-token-wrapper";
 import { UserProfileWrapper } from "@/components/wrappers/user-profile-wrapper";
 import { Providers } from "../providers";
 
@@ -10,21 +10,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <TokenChecker>
+    <ClientTokenWrapper>
       <UserProfileWrapper>
         
         <Providers>
         <section>
-          <div className="flex h-screen overflow-y-auto">
+          <div className="flex h-screen">
             <DesktopSidebar />
-            <div className="flex flex-col flex-1 px-3 md:px-6 bg-[#E5E7EB]">
-              <Navbar />
-              <main className="overflow-y-auto scrollbar h-full py-2">{children}</main>
+            <div className="flex flex-col flex-1 min-w-0">
+              <div className="flex-1 flex flex-col overflow-hidden bg-muted/30">
+                <Navbar />
+                <main className="flex-1 overflow-y-auto scrollbar px-4 md:px-6 py-4">{children}</main>
+              </div>
             </div>
           </div>
         </section>
         </Providers>
       </UserProfileWrapper>
-    </TokenChecker>
+    </ClientTokenWrapper>
   );
 }

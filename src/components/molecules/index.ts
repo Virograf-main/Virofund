@@ -4,3 +4,4 @@ export * from "./div";
 export * from "./disclaimer";
 export * from "./messages";
 export * from "./suggestion-card";
+export * from "./match-card";

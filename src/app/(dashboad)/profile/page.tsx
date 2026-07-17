@@ -1,10 +1,12 @@
 "use client";
 
 import Profile from "@/components/pages/profile";
+import { Button } from "@/components/atoms";
 import { getMatchingProfile } from "@/lib/profile";
 import { Founder } from "@/types/userprofile";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, SlidersHorizontal, Settings } from "lucide-react";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Founder | null>(null);
@@ -50,8 +52,30 @@ export default function ProfilePage() {
   }
 
   return (
-    <div>
+    <div className="space-y-6">
+      {/* Action Buttons */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">My Profile</h1>
+        </div>
+        <div className="flex gap-3">
+          <Link href="/profile/preferences">
+            <Button variant="outline" className="flex items-center gap-2">
+              <SlidersHorizontal className="w-4 h-4" />
+              Co-founder Preferences
+            </Button>
+          </Link>
+          <Link href="/profile/edit">
+            <Button className="flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              Edit Profile
+            </Button>
+          </Link>
+        </div>
+      </div>
+
       <Profile
+        variant="own"
         basicInfo={{
           fullname: `${profile.firstName} ${profile.lastName}`,
           role: profile.currentOccupation || "No occupation listed",

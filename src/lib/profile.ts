@@ -15,9 +15,20 @@ export async function createProfile(
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
+
+    // Remove preference fields — they're set separately via updatePreferences
+    const {
+      preferredSkills: _ps,
+      preferredFounderType: _pft,
+      preferredIndustry: _pi,
+      preferredCommitmentLevel: _pcl,
+      preferredFinancial: _pf,
+      preferredPersonalityTraits: _ppt,
+      preferredLocation: _pl,
+      ...profileData
+    } = data;
 
     const response = await fetch(`${base_url}/profiles`, {
       method: "POST",
@@ -25,7 +36,7 @@ export async function createProfile(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(profileData),
     });
 
     if (!response.ok) {
@@ -37,6 +48,8 @@ export async function createProfile(
 
     const result = await response.json();
     toast.success("Profile created successfully");
+    // Flag to show one-time preferences prompt on next dashboard visit
+    localStorage.setItem("showPreferencesPrompt", "true");
     const onboardingStore = useOnboardingStore.getState();
     router.push("/dashboard");
     onboardingStore.reset();
@@ -57,7 +70,6 @@ export async function updateProfile(
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 
@@ -103,7 +115,6 @@ export async function updatePreferences(
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 
@@ -137,7 +148,6 @@ export const getProfile = async (): Promise<UserProfile | undefined> => {
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 
@@ -219,7 +229,6 @@ export const getMatchingProfile = async (): Promise<
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 
@@ -250,7 +259,6 @@ export const checkProfileExists = async (): Promise<boolean | undefined> => {
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 
@@ -282,7 +290,6 @@ export const deleteProfile = async () => {
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 
@@ -316,7 +323,6 @@ export const getSpecificProfile = async (
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 

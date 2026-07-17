@@ -4,24 +4,24 @@ import {
   Boxes,
   Flag,
   Home,
-  MessagesSquare,
   Settings,
   Sparkles,
+  Sun,
   UserRound,
 } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { ThemeToggle } from "@/components/atoms/theme-toggle";
 
 export function DesktopSidebar() {
   const pathName = usePathname();
-  console.log(pathName);
   const sidebarItems = [
     {
       label: "Dashboard",
       route: "/dashboard",
-      icon: "",
+      icon: <Home />,
     },
     {
       label: "Suggestions",
@@ -57,47 +57,77 @@ export function DesktopSidebar() {
       icon: <Settings />,
     },
   ];
+
   const isActive = (route: string) =>
     pathName === route || pathName.startsWith(`${route}/`);
+
   return (
-    <aside className="w-64 py-6 flex-col justify-between hidden xl:flex">
-      <div className="flex flex-col gap-8">
-        <div className="flex items-center gap-2 justify-center">
-          <Image src="/svg/logo.svg" width={20} height={20} alt="logo" />
-          <p className="text-[1.5em]">virofund</p>
+    <aside className="w-64 h-screen flex-col justify-between hidden xl:flex border-r border-border bg-background sticky top-0">
+      <div className="flex flex-col gap-8 pt-6">
+        {/* Logo */}
+        <div className="flex items-center gap-2.5 px-6">
+          <Image src="/svg/logo.svg" width={28} height={28} alt="logo" />
+          <p className="text-xl font-bold text-foreground">virofund</p>
         </div>
-        <div className="flex flex-col px-2 gap-2">
+
+        {/* Navigation */}
+        <div className="flex flex-col px-3 gap-1">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 pb-2">
+            Main Menu
+          </p>
           {sidebarItems.map((item, key) => {
             return (
               <Link
                 href={item.route}
                 key={key}
-                className={`w-full flex items-center p-2 gap-4 rounded-lg hover:bg-secondary transition-all duration-300 cursor-default ${
-                  isActive(item.route) && "bg-secondary"
+                className={`w-full flex items-center p-3 gap-3 rounded-lg transition-all duration-200 ${
+                  isActive(item.route)
+                    ? "bg-secondary text-secondary-foreground font-semibold"
+                    : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                 }`}
               >
-                {item.icon || <Home />}
-                <p>{item.label}</p>
+                <span className="w-5 h-5 flex items-center justify-center">
+                  {item.icon}
+                </span>
+                <span className="text-sm">{item.label}</span>
               </Link>
             );
           })}
         </div>
       </div>
 
-      <div className="flex flex-col px-2 gap-2">
+      <div className="flex flex-col px-3 gap-1 pb-6">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 pb-1">
+          Other
+        </p>
         {sidebarBottomItems.map((item, key) => {
           return (
-            <div
+            <Link
+              href={item.route}
               key={key}
-              className={`w-full flex items-center p-2 gap-4 rounded-lg hover:bg-secondary transition-all duration-300 cursor-default font-medium ${
-                isActive(item.route) && "bg-secondary"
+              className={`w-full flex items-center p-3 gap-3 rounded-lg transition-all duration-200 ${
+                isActive(item.route)
+                  ? "bg-secondary text-secondary-foreground font-semibold"
+                  : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
               }`}
             >
-              {item.icon}
-              <p>{item.label}</p>
-            </div>
+              <span className="w-5 h-5 flex items-center justify-center">
+                {item.icon}
+              </span>
+              <span className="text-sm">{item.label}</span>
+            </Link>
           );
         })}
+
+        <div className="w-full flex items-center justify-between p-3 mt-1 rounded-lg text-muted-foreground">
+          <span className="flex items-center gap-3 text-sm">
+            <span className="w-5 h-5 flex items-center justify-center">
+              <Sun className="w-4 h-4" />
+            </span>
+            Appearance
+          </span>
+          <ThemeToggle />
+        </div>
       </div>
     </aside>
   );

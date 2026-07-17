@@ -28,27 +28,27 @@ export default function SentRequestsPage() {
     switch (status) {
       case "pending":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-xs font-medium">
             <Clock className="w-3 h-3" />
             Pending
           </span>
         );
       case "accepted":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">
             <Send className="w-3 h-3" />
             Accepted
           </span>
         );
       case "rejected":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-destructive/10 text-destructive rounded-full text-xs font-medium">
             Rejected
           </span>
         );
       default:
         return (
-          <span className="px-2.5 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">
+          <span className="px-2.5 py-1 bg-muted text-muted-foreground rounded-full text-xs font-medium">
             {status}
           </span>
         );
@@ -65,7 +65,7 @@ export default function SentRequestsPage() {
 
   if (requests.length === 0) {
     return (
-      <section className="bg-[#F3F4F6] p-8 rounded-2xl text-center">
+      <section className="bg-muted p-8 rounded-2xl text-center">
         <Image
           src="/svg/no-data.svg"
           width={180}
@@ -103,7 +103,7 @@ export default function SentRequestsPage() {
         {requests.map((request) => (
           <div
             key={request.id}
-            className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all p-5"
+            className="bg-card rounded-2xl border border-border shadow-sm hover:shadow-md transition-all p-5"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">

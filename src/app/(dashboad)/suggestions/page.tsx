@@ -19,7 +19,7 @@ export default function SuggestionPage() {
             height={200}
             alt="no data"
           />
-          <p className="text-center">No Match Generated</p>
+          <p className="text-center">No Suggestions Available</p>
         </div>
       </div>
     );

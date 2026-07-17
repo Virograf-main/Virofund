@@ -170,7 +170,7 @@ export function Form() {
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-3 top-9 text-gray-500"
+              className="absolute right-3 top-9 text-muted-foreground"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -207,7 +207,7 @@ export function Form() {
               ) : (
                 <p>
                   I agree to the{" "}
-                  <Link className="text-[#007aff]" href={""}>
+                  <Link className="text-link hover:underline" href={""}>
                     Terms and Conditions
                   </Link>
                 </p>
@@ -240,7 +240,7 @@ export function Form() {
               ? "Don't have an account? "
               : "Already have an account? "}
             <span
-              className="text-link cursor-pointer text-[#007aff]"
+              className="text-link cursor-pointer hover:underline"
               onClick={handleClick}
             >
               {isPrevUser ? "Sign up" : "Sign in"}

@@ -46,9 +46,6 @@ const defaultForm: FormData = {
   founderStatus: "", skills: [], industry: "", currentOccupation: "",
   yearsExperience: 0, commitmentLevel: "", financialContribution: "",
   personalityTraits: [], location: "",
-  preferredSkills: [], preferredFounderType: "", preferredIndustry: "",
-  preferredCommitmentLevel: "", preferredFinancial: "",
-  preferredPersonalityTraits: [], preferredLocation: "",
 };
 
 export default function ProfileEditPage() {
@@ -86,13 +83,6 @@ export default function ProfileEditPage() {
         financialContribution: p.financialContribution || "",
         personalityTraits: p.personalityTraits || [],
         location: p.location || "",
-        preferredSkills: p.preferredSkills || [],
-        preferredFounderType: p.preferredFounderType || "",
-        preferredIndustry: p.preferredIndustry || "",
-        preferredCommitmentLevel: p.preferredCommitmentLevel || "",
-        preferredFinancial: p.preferredFinancial || "",
-        preferredPersonalityTraits: p.preferredPersonalityTraits || [],
-        preferredLocation: p.preferredLocation || "",
       });
       setLoading(false);
     } else {
@@ -126,18 +116,18 @@ export default function ProfileEditPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="bg-card border border-border rounded-2xl p-5">
         <div className="flex items-center gap-4">
           <Link
             href="/profile"
             className="p-2 rounded-lg hover:bg-secondary transition-all"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 text-foreground" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">Edit Profile</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-foreground">Edit Profile</h1>
             <p className="text-muted-foreground text-sm">
-              Update your founder profile and preferences
+              Update your founder profile
             </p>
           </div>
         </div>
@@ -145,9 +135,9 @@ export default function ProfileEditPage() {
 
       {/* Success banner */}
       {success && (
-        <div className="flex items-center gap-3 p-4 rounded-xl border border-green-200 bg-green-50">
-          <CheckCircle className="w-5 h-5 text-green-600" />
-          <p className="text-sm text-green-800 font-medium">
+        <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/30 bg-primary/10">
+          <CheckCircle className="w-5 h-5 text-primary" />
+          <p className="text-sm text-primary font-medium">
             Profile updated successfully! Redirecting...
           </p>
         </div>
@@ -302,62 +292,24 @@ export default function ProfileEditPage() {
           </Div>
         </Section>
 
-        {/* Section 4: Co-founder Preferences */}
-        <Section title="Co-founder Preferences">
-          <Div>
-            <SelectElement
-              label="Preferred Industry"
-              placeholder="Select industry"
-              items={industries}
-              value={form.preferredIndustry}
-              onChange={(value) => updateField("preferredIndustry", value)}
-            />
-            <MultiSelect
-              label="Preferred Skills in Co-founder"
-              placeholder="Select up to 3"
-              items={skillCategories}
-              max={3}
-              value={form.preferredSkills}
-              onChange={(value) => updateField("preferredSkills", value)}
-            />
-            <SelectElement
-              label="Preferred Location"
-              placeholder="Select location"
-              items={locations}
-              value={form.preferredLocation}
-              onChange={(value) => updateField("preferredLocation", value)}
-            />
-            <SelectElement
-              label="Preferred Commitment Level"
-              placeholder="Select commitment"
-              items={commitmentLevels}
-              value={form.preferredCommitmentLevel}
-              onChange={(value) => updateField("preferredCommitmentLevel", value)}
-            />
-            <SelectElement
-              label="Preferred Financial Expectation"
-              placeholder="Select one"
-              items={financialContributions}
-              value={form.preferredFinancial}
-              onChange={(value) => updateField("preferredFinancial", value)}
-            />
-            <SelectElement
-              label="Preferred Co-founder Type"
-              placeholder="Select founder type"
-              items={founderStatuses}
-              value={form.preferredFounderType}
-              onChange={(value) => updateField("preferredFounderType", value)}
-            />
-            <MultiSelect
-              label="Preferred Personality Traits"
-              placeholder="Select up to 3"
-              items={personalityTraits}
-              max={3}
-              value={form.preferredPersonalityTraits}
-              onChange={(value) => updateField("preferredPersonalityTraits", value)}
-            />
-          </Div>
-        </Section>
+
+      </div>
+
+      {/* Link to Preferences */}
+      <div className="p-4 bg-secondary/50 rounded-xl">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-medium">Co-founder Preferences</p>
+            <p className="text-sm text-muted-foreground">
+              Set what you&apos;re looking for in a co-founder
+            </p>
+          </div>
+          <Link href="/profile/preferences">
+            <Button variant="outline" size="sm">
+              Edit Preferences
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Action Buttons */}

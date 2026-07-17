@@ -2,24 +2,12 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { isAccessTokenValid } from "@/lib/auth";
 
 interface TokenCheckerProps {
   onTokenExpired?: () => Promise<void>; // your refresh function
   checkIntervalMs?: number; // how often to check, default 60s
   children: React.ReactNode;
-}
-
-// Utility function to check token validity
-function isAccessTokenValid(token: string | null): boolean {
-  if (!token) return false;
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const now = Math.floor(Date.now() / 1000);
-    return payload.exp && payload.exp > now;
-  } catch (e) {
-    console.error("Failed to parse token:", e);
-    return false;
-  }
 }
 
 export function TokenChecker({
@@ -33,7 +21,6 @@ export function TokenChecker({
     const checkToken: () => void = async () => {
       if (typeof window !== "undefined") {
         const token = localStorage.getItem("accessToken");
-        console.log(token);
         if (!token) {
           router.replace("/"); // redirect if no token
           return;
@@ -41,9 +28,7 @@ export function TokenChecker({
 
         if (!isAccessTokenValid(token)) {
           if (onTokenExpired) {
-            await onTokenExpired().then(() => {
-              console.log("token refreshed");
-            }); // call your refresh function
+            await onTokenExpired(); // call your refresh function
           } else {
             router.replace("/"); // fallback to login
           }

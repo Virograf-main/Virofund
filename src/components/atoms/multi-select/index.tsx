@@ -95,7 +95,7 @@ export function MultiSelect({
                     disabled={isDisabled}
                     className={cn(
                       isDisabled && "opacity-50 cursor-not-allowed",
-                      !isDisabled && "hover:bg-blue-100 focus:bg-blue-100"
+                      !isDisabled && "hover:bg-accent focus:bg-accent"
                     )}
                   >
                     <Check

@@ -1,5 +1,4 @@
 import toast from "react-hot-toast";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { base_url } from "./constants";
 import { handleApiError } from "@/lib/middleware";
 import { ConnectionRequest } from "@/types/matches";
@@ -10,7 +9,6 @@ export const getMatches = async () => {
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 
@@ -41,7 +39,6 @@ export const browseProfiles = async () => {
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      toast.error("No access token found in localStorage");
       return;
     }
 

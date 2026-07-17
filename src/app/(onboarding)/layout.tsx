@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <section>
-      <nav className="sticky top-0 z-50 flex items-center justify-center md:justify-between py-4 px-6 bg-white ">
+      <nav className="sticky top-0 z-50 flex items-center justify-center md:justify-between py-4 px-6 bg-background border-b border-border">
         <Logo />
       </nav>
       <Stepper />

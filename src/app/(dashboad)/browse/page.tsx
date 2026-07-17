@@ -11,9 +11,10 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface BrowseProfile {
-  id: number;
+  id: string;
+  userId: string;
   user: {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -56,7 +57,7 @@ export default function BrowsePage() {
     if (result) {
       setProfiles((prev) =>
         prev.map((p) =>
-          p.user.id.toString() === userId ? { ...p, canSendRequest: false } : p
+          p.user.id === userId ? { ...p, canSendRequest: false } : p
         )
       );
     }
@@ -109,7 +110,7 @@ export default function BrowsePage() {
         {profiles.map((profile) => (
           <div
             key={profile.id}
-            className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all p-5 space-y-4"
+            className="bg-card rounded-2xl border border-border shadow-sm hover:shadow-md transition-all p-5 space-y-4"
           >
             {/* Header */}
             <div className="flex items-start justify-between">
@@ -132,10 +133,10 @@ export default function BrowsePage() {
                 <div
                   className={`text-lg font-bold ${
                     profile.compatibilityScore >= 0.75
-                      ? "text-green-600"
+                      ? "text-primary"
                       : profile.compatibilityScore >= 0.5
-                      ? "text-yellow-600"
-                      : "text-red-600"
+                      ? "text-amber-600 dark:text-amber-400"
+                      : "text-destructive"
                   }`}
                 >
                   {(profile.compatibilityScore * 100).toFixed(0)}%
@@ -216,19 +217,17 @@ export default function BrowsePage() {
               <Button
                 variant="outline"
                 className="flex-1"
-                onClick={() =>
-                  router.push(`/profile/${profile.user.id}`)
-                }
+                onClick={() => router.push(`/profile/${profile.id}`)}
               >
                 <UserRoundSearch className="w-4 h-4 mr-2" />
                 View Profile
               </Button>
               <Button
                 className="flex-1"
-                disabled={!profile.canSendRequest || sendingTo === profile.user.id.toString()}
-                onClick={() => handleConnect(profile.user.id.toString())}
+                disabled={!profile.canSendRequest || sendingTo === profile.user.id}
+                onClick={() => handleConnect(profile.user.id)}
               >
-                {sendingTo === profile.user.id.toString() ? (
+                {sendingTo === profile.user.id ? (
                   <>Sending...</>
                 ) : profile.canSendRequest ? (
                   <>

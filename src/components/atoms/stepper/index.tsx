@@ -33,12 +33,12 @@ export function VerticalStepper({ steps }: VerticalStepperProps) {
               <div
                 className={cn(
                   "flex items-center justify-center w-8 h-8 rounded-full border-2 text-sm font-medium transition",
-                  isCompleted && "bg-secondary border-secondary text-white",
+                  isCompleted && "bg-secondary border-secondary text-secondary-foreground",
                   isActive &&
-                    "bg-primary border-primary text-white ring-2 ring-green-200",
+                    "bg-primary border-primary text-primary-foreground ring-2 ring-primary/20",
                   !isCompleted &&
                     !isActive &&
-                    "bg-gray-200 border-gray-300 text-gray-500"
+                    "bg-muted border-border text-muted-foreground"
                 )}
               >
                 {stepNumber}
@@ -49,7 +49,7 @@ export function VerticalStepper({ steps }: VerticalStepperProps) {
                 <div
                   className={cn(
                     "w-px flex-1 transition-colors",
-                    currentStep > stepNumber ? "bg-green-500" : "bg-gray-300"
+                    currentStep > stepNumber ? "bg-primary" : "bg-border"
                   )}
                 />
               )}
@@ -62,7 +62,7 @@ export function VerticalStepper({ steps }: VerticalStepperProps) {
                 "mt-1 text-sm transition",
                 isCompleted && "text-secondary cursor-default",
                 isActive && "text-primary font-medium",
-                !isCompleted && !isActive && "text-gray-500"
+                !isCompleted && !isActive && "text-muted-foreground"
               )}
             >
               {step.label}

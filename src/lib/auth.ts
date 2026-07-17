@@ -150,7 +150,6 @@ export const handleLogin = async (
     toast.success("Logged in successfully");
 
     const profile = await getMatchingProfile();
-    console.log(profile);
 
     if (!profile) {
       router.push("/welcome");
@@ -187,6 +186,7 @@ export function isAccessTokenValid(token: string | null): boolean {
 
 export async function refreshToken() {
   const refreshToken = localStorage.getItem("refreshToken");
+  const accessToken = localStorage.getItem("accessToken");
   if (!refreshToken) return;
 
   try {
@@ -196,6 +196,7 @@ export async function refreshToken() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({ refreshToken }),
     });
