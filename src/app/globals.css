@@ -207,6 +207,10 @@ select:-webkit-autofill:focus {
     /* max-width: 600px; */
     width: 100%;
   }
+
+  .dark .auth-section {
+    color: white;
+  }
   .auth-container {
     display: flex;
   }
