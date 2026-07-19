@@ -18,11 +18,13 @@ import {
 import { serverTimestamp } from "firebase/firestore";
 import { Timestamp } from "firebase/firestore";
 import {
+  createChat,
   getUserChats,
   listenToMessages,
   listenToUserChats,
   sendMessage,
 } from "@/lib/chats";
+import { getAcceptedRequests } from "@/lib/matches";
 import { useUserStore } from "@/store/userStore";
 import { Chat, TextMessage } from "@/types/chats";
 import { formatChatDate } from "@/lib/helpers";
@@ -54,6 +56,41 @@ export const Messages = () => {
     });
 
     return () => unsub();
+  }, [user?.id]);
+
+  // Self-heal: make sure every accepted connection has a chat doc in
+  // Firebase (chats are keyed by the connection request id). Covers cases
+  // like requests accepted before chat auto-creation existed, or a failed
+  // createChat call at accept-time.
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const ensureChatsForConnections = async () => {
+      const [accepted, existingChats] = await Promise.all([
+        getAcceptedRequests(),
+        getUserChats(user.id),
+      ]);
+
+      const existingChatIds = new Set(existingChats.map((chat) => chat.id));
+
+      const missing = (accepted || []).filter(
+        (request) => !existingChatIds.has(request.id)
+      );
+
+      await Promise.all(
+        missing.map((request) =>
+          createChat(
+            request.id,
+            request.sender.id,
+            request.receiver.id,
+            `${request.sender.firstName} ${request.sender.lastName}`,
+            `${request.receiver.firstName} ${request.receiver.lastName}`
+          )
+        )
+      );
+    };
+
+    ensureChatsForConnections();
   }, [user?.id]);
 
   useEffect(() => {

@@ -163,6 +163,38 @@ export const getSentRequests = async () => {
   }
 };
 
+export const getAcceptedRequests = async (): Promise<ConnectionRequest[]> => {
+  try {
+    if (typeof window === "undefined") return [];
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      toast.error("Unauthorized, please log in again");
+      return [];
+    }
+
+    const response = await fetch(`${base_url}/matches/accepted`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    checkRateLimit(response);
+    if (!response.ok) {
+      const error = await response.json();
+      handleApiError(error);
+      return [];
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching accepted requests:", error);
+    toast.error("Failed to fetch accepted requests");
+    return [];
+  }
+};
+
 export const approveRequest = async (requestId: string) => {
   const token = localStorage.getItem("accessToken");
 
@@ -232,9 +264,11 @@ export const rejectRequest = async (requestId: string) => {
   }
 };
 
-// There's no dedicated "connections" endpoint — a connection is just a
-// ConnectionRequest (incoming or sent) whose status is "accepted". These
-// two helpers derive connection state from /matches/incoming + /matches/sent.
+// A connection is just a ConnectionRequest (incoming or sent) whose status
+// is "accepted". getConnections below is backed by the dedicated
+// GET /matches/accepted endpoint; getConnectionStatusWithUser still needs
+// to distinguish pending states, so it derives status from
+// /matches/incoming + /matches/sent.
 
 /**
  * Figures out where the logged-in user stands with a specific other user
@@ -278,19 +312,9 @@ export const getConnectionStatusWithUser = async (
 
 /**
  * Returns every accepted connection (people the user is actually connected
- * with), combining both directions and deduping by request id.
+ * with), sent or received. Backed by GET /matches/accepted.
  */
 export const getConnections = async (): Promise<ConnectionRequest[]> => {
-  const [incoming, sent] = await Promise.all([
-    getIncomingRequests(),
-    getSentRequests(),
-  ]);
-
-  const accepted = [
-    ...(incoming || []).filter((r: ConnectionRequest) => r.status === "accepted"),
-    ...(sent || []).filter((r: ConnectionRequest) => r.status === "accepted"),
-  ];
-
-  const byId = new Map(accepted.map((r) => [r.id, r]));
-  return Array.from(byId.values());
+  const accepted = await getAcceptedRequests();
+  return accepted || [];
 };
