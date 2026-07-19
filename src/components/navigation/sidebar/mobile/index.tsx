@@ -7,6 +7,7 @@ import {
   Settings,
   Sparkles,
   UserRound,
+  Users,
   X,
 } from "lucide-react";
 import Image from "next/image";
@@ -61,6 +62,11 @@ export function MobileSidebar({
       icon: <Boxes />,
     },
     {
+      label: "Connections",
+      route: "/connections",
+      icon: <Users />,
+    },
+    {
       label: "Profile",
       route: "/profile",
       icon: <UserRound />,
@@ -85,8 +91,19 @@ export function MobileSidebar({
     },
   ];
 
-  const isActive = (route: string) =>
-    pathName === route || pathName.startsWith(`${route}/`);
+  // "/profile" covers viewing/editing YOUR profile (/profile, /profile/edit,
+  // /profile/preferences). /profile/[profileId] is a different page (viewing
+  // someone else's profile) and should NOT highlight this nav item.
+  const isActive = (route: string) => {
+    if (route === "/profile") {
+      return (
+        pathName === "/profile" ||
+        pathName.startsWith("/profile/edit") ||
+        pathName.startsWith("/profile/preferences")
+      );
+    }
+    return pathName === route || pathName.startsWith(`${route}/`);
+  };
 
   return (
     <>

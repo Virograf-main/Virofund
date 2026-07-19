@@ -3,6 +3,22 @@ export function formatDateToYMD(date?: Date) {
   return date.toISOString().split("T")[0];
 }
 
+/**
+ * Compares two field values for equality, treating arrays (e.g. multi-select
+ * fields like skills/personality traits) as equal when they contain the same
+ * items regardless of order. Used to figure out which fields a user has
+ * actually changed so only those get sent to the backend.
+ */
+export function valuesEqual(a: unknown, b: unknown): boolean {
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return false;
+    const sortedA = [...a].sort();
+    const sortedB = [...b].sort();
+    return sortedA.every((v, i) => v === sortedB[i]);
+  }
+  return a === b;
+}
+
 export function formatChatDate(date: Date): string {
   const now = new Date();
 

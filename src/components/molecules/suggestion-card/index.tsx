@@ -4,10 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/atoms";
 import { Tag } from "@/components/atoms";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { BookmarkPlusIcon } from "lucide-react";
+import { MatchSummaryDialog } from "@/components/molecules/match-summary-dialog";
 
 interface SuggestionCardProps {
   name: string;
+  profileId?: string;
   title?: string;
   description?: string;
   imageUrl?: string;
@@ -22,6 +23,7 @@ interface SuggestionCardProps {
 
 export function SuggestionCard({
   name,
+  profileId,
   title,
   description,
   imageUrl,
@@ -78,6 +80,12 @@ export function SuggestionCard({
                 className="rounded-full px-3 py-1 text-xs border-border text-muted-foreground"
               />
             ))}
+          </div>
+        )}
+
+        {profileId && (
+          <div className="mb-4">
+            <MatchSummaryDialog profileId={profileId} name={name} />
           </div>
         )}
 

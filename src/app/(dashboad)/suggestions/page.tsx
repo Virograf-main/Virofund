@@ -31,6 +31,7 @@ export default function SuggestionPage() {
           <SuggestionCard
             key={key}
             name={match.matchedFounderDetails.name}
+            profileId={match.matchedProfileId}
             title={match.matchedFounderDetails.industry}
             description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam voluptas laudantium debitis, nostrum sed tempora quas accusamus amet nulla expedita optio voluptatem. Eius animi quas tempora, accusamus nulla eveniet debitis."
             tags={match.matchedFounderDetails.skills}

@@ -39,4 +39,21 @@ export interface UserInfo {
   firstName: string;
   lastName: string;
   email: string;
+  matchedProfileId?: string;
+}
+
+// Where a given user stands relative to the logged-in user:
+// - "none": no request either way, show Connect
+// - "pending_sent": logged-in user sent a request, awaiting response
+// - "pending_incoming": the other user sent a request, awaiting our response
+// - "accepted": the two are connected
+export type ConnectionStatus =
+  | "none"
+  | "pending_sent"
+  | "pending_incoming"
+  | "accepted";
+
+export interface ConnectionStatusResult {
+  status: ConnectionStatus;
+  request?: ConnectionRequest;
 }

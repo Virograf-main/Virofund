@@ -2,7 +2,8 @@
 import { MobileSidebar } from "@/components/navigation/sidebar";
 import { useUserStore } from "@/store/userStore";
 import { ThemeToggle } from "@/components/atoms/theme-toggle";
-import { Bell, LogOut, MenuIcon } from "lucide-react";
+import { NotificationBell } from "@/components/molecules/notification-bell";
+import { LogOut, MenuIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
@@ -73,10 +74,7 @@ export function Navbar() {
 				</div>
 				<div className="flex items-center gap-1 sm:gap-3">
 					<ThemeToggle />
-					<button className="relative p-2 rounded-full hover:bg-secondary transition-colors">
-						<Bell className="w-5 h-5 text-muted-foreground" />
-						<span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-primary rounded-full" />
-					</button>
+					<NotificationBell />
 					<div className="relative" ref={dropdownRef}>
 						<button
 							onClick={() => setIsProfileOpen(!isProfileOpen)}

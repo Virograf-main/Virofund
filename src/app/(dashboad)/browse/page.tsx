@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/atoms";
 import { Loader } from "@/components/atoms";
-import { SuggestionCard } from "@/components/molecules";
+import { SuggestionCard, MatchSummaryDialog } from "@/components/molecules";
 import { browseProfiles, sendRequest } from "@/lib/matches";
 import { UserRoundSearch, LogIn } from "lucide-react";
 import Image from "next/image";
@@ -211,6 +211,9 @@ export default function BrowsePage() {
                 ))}
               </div>
             )}
+
+            {/* AI Match Summary */}
+            <MatchSummaryDialog profileId={profile.id} name={profile.user.firstName} />
 
             {/* Actions */}
             <div className="flex gap-3 pt-2">

@@ -3,10 +3,12 @@
 import * as React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tag } from "@/components/atoms/tag";
+import { MatchSummaryDialog } from "@/components/molecules/match-summary-dialog";
 import { cn } from "@/lib/utils";
 
 export interface MatchCardProps {
   name: string;
+  profileId?: string;
   imageUrl?: string;
   location?: string;
   industry?: string;
@@ -38,6 +40,7 @@ function scoreStyles(score: number) {
 
 export function MatchCard({
   name,
+  profileId,
   imageUrl,
   location,
   industry,
@@ -51,9 +54,16 @@ export function MatchCard({
   const remaining = tags.length - visibleTags.length;
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
       className={cn(
         "group relative flex w-full flex-col gap-3 rounded-xl border border-border bg-card p-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer",
         className
@@ -106,6 +116,12 @@ export function MatchCard({
           )}
         </div>
       )}
-    </button>
+
+      {profileId && (
+        <div className="pt-1">
+          <MatchSummaryDialog profileId={profileId} name={name} />
+        </div>
+      )}
+    </div>
   );
 }

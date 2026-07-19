@@ -6,13 +6,21 @@ import { getSpecificProfile } from "@/lib/profile";
 import { Founder } from "@/types/userprofile";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Check, Clock3, UserPlus } from "lucide-react";
+import { getConnectionStatusWithUser, sendRequest } from "@/lib/matches";
+import { ConnectionStatus } from "@/types/matches";
+import { useUserStore } from "@/store/userStore";
 
 function UserProfilePage() {
   const params = useParams();
   const router = useRouter();
+  const { user } = useUserStore();
   const [profile, setProfile] = useState<Founder | null>(null);
   const [loading, setLoading] = useState(true);
+  const [connectionStatus, setConnectionStatus] =
+    useState<ConnectionStatus>("none");
+  const [connectionLoading, setConnectionLoading] = useState(true);
+  const [sendingRequest, setSendingRequest] = useState(false);
   const profileId = params.profileId as string;
 
   useEffect(() => {
@@ -29,6 +37,30 @@ function UserProfilePage() {
     }
     fetchUser();
   }, [profileId]);
+
+  useEffect(() => {
+    async function fetchConnectionStatus() {
+      if (!profile?.userId || profile.userId === user?.id) {
+        setConnectionLoading(false);
+        return;
+      }
+      setConnectionLoading(true);
+      const result = await getConnectionStatusWithUser(profile.userId);
+      setConnectionStatus(result.status);
+      setConnectionLoading(false);
+    }
+    fetchConnectionStatus();
+  }, [profile?.userId, user?.id]);
+
+  const handleConnect = async () => {
+    if (!profile?.userId) return;
+    setSendingRequest(true);
+    const result = await sendRequest(profile.userId);
+    if (result) {
+      setConnectionStatus("pending_sent");
+    }
+    setSendingRequest(false);
+  };
 
   if (loading) {
     return (
@@ -54,12 +86,44 @@ function UserProfilePage() {
           <h1 className="text-2xl font-bold text-foreground">{profile.firstName} {profile.lastName}</h1>
           <p className="text-sm text-muted-foreground">Viewing user profile</p>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all duration-200 font-medium text-sm shadow-sm hover:shadow-md active:scale-[0.98]">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-          </svg>
-          Connect
-        </button>
+        {!connectionLoading && connectionStatus === "accepted" && (
+          <span className="flex items-center gap-2 px-5 py-2.5 bg-primary/10 text-primary rounded-lg font-medium text-sm">
+            <Check className="w-4 h-4" />
+            Connected
+          </span>
+        )}
+
+        {!connectionLoading && connectionStatus === "pending_sent" && (
+          <span className="flex items-center gap-2 px-5 py-2.5 bg-secondary text-secondary-foreground rounded-lg font-medium text-sm">
+            <Clock3 className="w-4 h-4" />
+            Request Sent
+          </span>
+        )}
+
+        {!connectionLoading && connectionStatus === "pending_incoming" && (
+          <button
+            onClick={() => router.push("/requests")}
+            className="flex items-center gap-2 px-5 py-2.5 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-all duration-200 font-medium text-sm"
+          >
+            <Clock3 className="w-4 h-4" />
+            Respond to Request
+          </button>
+        )}
+
+        {!connectionLoading && connectionStatus === "none" && (
+          <button
+            onClick={handleConnect}
+            disabled={sendingRequest}
+            className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all duration-200 font-medium text-sm shadow-sm hover:shadow-md active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {sendingRequest ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <UserPlus className="w-4 h-4" />
+            )}
+            Connect
+          </button>
+        )}
       </div>
 
       <Profile

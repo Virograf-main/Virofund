@@ -283,6 +283,7 @@ export default function Dashboard() {
 								<MatchCard
 									key={index}
 									name={match.matchedFounderDetails.name}
+									profileId={match.matchedProfileId}
 									location={match.matchedFounderDetails.location}
 									industry={match.matchedFounderDetails.industry}
 									tags={match.matchedFounderDetails.skills}

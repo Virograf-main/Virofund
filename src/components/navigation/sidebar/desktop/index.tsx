@@ -8,6 +8,7 @@ import {
   Sparkles,
   Sun,
   UserRound,
+  Users,
 } from "lucide-react";
 import Image from "next/image";
 import React from "react";
@@ -34,6 +35,11 @@ export function DesktopSidebar() {
       icon: <Boxes />,
     },
     {
+      label: "Connections",
+      route: "/connections",
+      icon: <Users />,
+    },
+    {
       label: "Profile",
       route: "/profile",
       icon: <UserRound />,
@@ -58,8 +64,19 @@ export function DesktopSidebar() {
     },
   ];
 
-  const isActive = (route: string) =>
-    pathName === route || pathName.startsWith(`${route}/`);
+  // "/profile" covers viewing/editing YOUR profile (/profile, /profile/edit,
+  // /profile/preferences). /profile/[profileId] is a different page (viewing
+  // someone else's profile) and should NOT highlight this nav item.
+  const isActive = (route: string) => {
+    if (route === "/profile") {
+      return (
+        pathName === "/profile" ||
+        pathName.startsWith("/profile/edit") ||
+        pathName.startsWith("/profile/preferences")
+      );
+    }
+    return pathName === route || pathName.startsWith(`${route}/`);
+  };
 
   return (
     <aside className="w-64 h-screen flex-col justify-between hidden xl:flex border-r border-border bg-background sticky top-0">

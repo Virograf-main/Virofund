@@ -2,7 +2,7 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import toast from "react-hot-toast";
 import { base_url } from "@/lib/constants";
 import { getMatchingProfile } from "@/lib/profile";
-import { handleApiError } from "@/lib/middleware";
+import { handleApiError, checkRateLimit } from "@/lib/middleware";
 
 export const authenticateUser = async (
   payload: Record<string, string | boolean>,
@@ -15,6 +15,7 @@ export const authenticateUser = async (
       body: JSON.stringify(payload),
     });
 
+    checkRateLimit(res);
     const data = await res.json();
 
     if (!res.ok) {
@@ -201,6 +202,7 @@ export async function refreshToken() {
       body: JSON.stringify({ refreshToken }),
     });
 
+    checkRateLimit(response);
     if (!response.ok) {
       const error = await response.json();
       handleApiError(error);

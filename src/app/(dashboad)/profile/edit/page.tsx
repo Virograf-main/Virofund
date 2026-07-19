@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, Input, MultiSelect, SelectElement, Textarea, DatePicker } from "@/components/atoms";
-import { Div, Section } from "@/components/molecules";
+import { Div, Section, EditableField } from "@/components/molecules";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { updateProfile } from "@/lib/profile";
@@ -11,7 +11,7 @@ import {
   LOCATIONS, INDUSTRIES, FOUNDER_STATUSES, SKILL_CATEGORIES,
   COMMITMENT_LEVELS, PERSONALITY_TRAITS, FINANCIAL_CONTRIBUTIONS,
 } from "@/lib/constants";
-import { formatDateToYMD } from "@/lib/helpers";
+import { formatDateToYMD, valuesEqual } from "@/lib/helpers";
 import { Loader2, ArrowLeft, Save, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
@@ -54,8 +54,15 @@ export default function ProfileEditPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<FormData>(defaultForm);
+  // The last-saved values — used to figure out which fields are dirty and
+  // what to revert to when a single field's edit is cancelled.
+  const [original, setOriginal] = useState<FormData>(defaultForm);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [success, setSuccess] = useState(false);
+
+  // Per-field save state, keyed by field name
+  const [savingFields, setSavingFields] = useState<Set<string>>(new Set());
+  const [justSavedFields, setJustSavedFields] = useState<Set<string>>(new Set());
 
   // Load existing profile data from user store
   useEffect(() => {
@@ -64,7 +71,7 @@ export default function ProfileEditPage() {
       if (p.dateOfBirth) {
         setDate(new Date(p.dateOfBirth));
       }
-      setForm({
+      const loaded: FormData = {
         bio: p.bio || "",
         pastExperience: p.pastExperience || "",
         userName: p.userName || "",
@@ -83,7 +90,9 @@ export default function ProfileEditPage() {
         financialContribution: p.financialContribution || "",
         personalityTraits: p.personalityTraits || [],
         location: p.location || "",
-      });
+      };
+      setForm(loaded);
+      setOriginal(loaded);
       setLoading(false);
     } else {
       setLoading(false);
@@ -94,11 +103,62 @@ export default function ProfileEditPage() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = async () => {
+  const isDirty = <K extends keyof FormData>(field: K) =>
+    !valuesEqual(form[field], original[field]);
+
+  const flashSaved = (field: keyof FormData) => {
+    setJustSavedFields((prev) => new Set(prev).add(field as string));
+    setTimeout(() => {
+      setJustSavedFields((prev) => {
+        const next = new Set(prev);
+        next.delete(field as string);
+        return next;
+      });
+    }, 2000);
+  };
+
+  // Saves just this one field, independent of everything else on the page.
+  const saveField = async <K extends keyof FormData>(field: K) => {
+    setSavingFields((prev) => new Set(prev).add(field as string));
+    const payload = { [field]: form[field] } as Partial<FormData>;
+    const result = await updateProfile(payload);
+    if (result) {
+      setOriginal((prev) => ({ ...prev, [field]: form[field] }));
+      flashSaved(field);
+    }
+    setSavingFields((prev) => {
+      const next = new Set(prev);
+      next.delete(field as string);
+      return next;
+    });
+  };
+
+  // Discards the in-progress edit for a single field, reverting it back to
+  // its last-saved value.
+  const cancelField = <K extends keyof FormData>(field: K) => {
+    setForm((prev) => ({ ...prev, [field]: original[field] }));
+    if (field === "dateOfBirth") {
+      setDate(original.dateOfBirth ? new Date(original.dateOfBirth) : undefined);
+    }
+  };
+
+  // Every field the user has touched but not yet saved individually.
+  const dirtyFields = (Object.keys(form) as (keyof FormData)[]).filter((key) =>
+    isDirty(key)
+  );
+
+  const handleSaveAll = async () => {
+    if (dirtyFields.length === 0) return;
     setSaving(true);
     setSuccess(false);
-    const result = await updateProfile(form, (b) => setSaving(b));
+    // Only send the fields that actually changed, not the whole form.
+    const diff = dirtyFields.reduce((acc, key) => {
+      acc[key] = form[key];
+      return acc;
+    }, {} as Partial<FormData>);
+    const result = await updateProfile(diff, (b) => setSaving(b));
     if (result) {
+      setOriginal((prev) => ({ ...prev, ...diff }));
       setSuccess(true);
       setTimeout(() => router.push("/profile"), 1500);
     }
@@ -127,7 +187,7 @@ export default function ProfileEditPage() {
           <div>
             <h1 className="text-xl md:text-2xl font-bold text-foreground">Edit Profile</h1>
             <p className="text-muted-foreground text-sm">
-              Update your founder profile
+              Update your founder profile — each field saves on its own, so you can change just one thing at a time
             </p>
           </div>
         </div>
@@ -148,147 +208,308 @@ export default function ProfileEditPage() {
         {/* Section 1: About You */}
         <Section title="About You">
           <Div>
-            <SelectElement
+            <EditableField
               label="Gender"
-              placeholder="Select Gender"
-              items={genderOptions}
-              value={form.gender}
-              onChange={(value) => updateField("gender", value)}
-            />
-            <DatePicker
+              dirty={isDirty("gender")}
+              saving={savingFields.has("gender")}
+              justSaved={justSavedFields.has("gender")}
+              onSave={() => saveField("gender")}
+              onCancel={() => cancelField("gender")}
+            >
+              <SelectElement
+                placeholder="Select Gender"
+                items={genderOptions}
+                value={form.gender}
+                onChange={(value) => updateField("gender", value)}
+              />
+            </EditableField>
+
+            <EditableField
               label="Date of Birth"
-              placeholder="Select date"
-              value={date}
-              onChange={(value) => {
-                setDate(value);
-                updateField("dateOfBirth", formatDateToYMD(value));
-              }}
-            />
-            <SelectElement
+              dirty={isDirty("dateOfBirth")}
+              saving={savingFields.has("dateOfBirth")}
+              justSaved={justSavedFields.has("dateOfBirth")}
+              onSave={() => saveField("dateOfBirth")}
+              onCancel={() => cancelField("dateOfBirth")}
+            >
+              <DatePicker
+                placeholder="Select date"
+                value={date}
+                onChange={(value) => {
+                  setDate(value);
+                  updateField("dateOfBirth", formatDateToYMD(value));
+                }}
+              />
+            </EditableField>
+
+            <EditableField
               label="Location"
-              placeholder="Select Location"
-              items={locations}
-              value={form.location}
-              onChange={(value) => updateField("location", value)}
-            />
-            <SelectElement
+              dirty={isDirty("location")}
+              saving={savingFields.has("location")}
+              justSaved={justSavedFields.has("location")}
+              onSave={() => saveField("location")}
+              onCancel={() => cancelField("location")}
+            >
+              <SelectElement
+                placeholder="Select Location"
+                items={locations}
+                value={form.location}
+                onChange={(value) => updateField("location", value)}
+              />
+            </EditableField>
+
+            <EditableField
               label="Industry"
-              placeholder="Select Industry"
-              items={industries}
-              value={form.industry}
-              onChange={(value) => updateField("industry", value)}
-            />
-            <SelectElement
+              dirty={isDirty("industry")}
+              saving={savingFields.has("industry")}
+              justSaved={justSavedFields.has("industry")}
+              onSave={() => saveField("industry")}
+              onCancel={() => cancelField("industry")}
+            >
+              <SelectElement
+                placeholder="Select Industry"
+                items={industries}
+                value={form.industry}
+                onChange={(value) => updateField("industry", value)}
+              />
+            </EditableField>
+
+            <EditableField
               label="Founder Status"
-              placeholder="Select founder status"
-              items={founderStatuses}
-              value={form.founderStatus}
-              onChange={(value) => updateField("founderStatus", value)}
-            />
-            <Input
+              dirty={isDirty("founderStatus")}
+              saving={savingFields.has("founderStatus")}
+              justSaved={justSavedFields.has("founderStatus")}
+              onSave={() => saveField("founderStatus")}
+              onCancel={() => cancelField("founderStatus")}
+            >
+              <SelectElement
+                placeholder="Select founder status"
+                items={founderStatuses}
+                value={form.founderStatus}
+                onChange={(value) => updateField("founderStatus", value)}
+              />
+            </EditableField>
+
+            <EditableField
               label="Years of Experience"
-              placeholder="5"
-              type="number"
-              value={form.yearsExperience?.toString() ?? ""}
-              onChange={(e) => updateField("yearsExperience", Number(e.target.value))}
-            />
-            <SelectElement
+              dirty={isDirty("yearsExperience")}
+              saving={savingFields.has("yearsExperience")}
+              justSaved={justSavedFields.has("yearsExperience")}
+              onSave={() => saveField("yearsExperience")}
+              onCancel={() => cancelField("yearsExperience")}
+            >
+              <Input
+                placeholder="5"
+                type="number"
+                value={form.yearsExperience?.toString() ?? ""}
+                onChange={(e) => updateField("yearsExperience", Number(e.target.value))}
+              />
+            </EditableField>
+
+            <EditableField
               label="Work Style"
-              placeholder="Select work style"
-              items={workStyles}
-              value={form.workStyle}
-              onChange={(value) => updateField("workStyle", value)}
-            />
-            <SelectElement
+              dirty={isDirty("workStyle")}
+              saving={savingFields.has("workStyle")}
+              justSaved={justSavedFields.has("workStyle")}
+              onSave={() => saveField("workStyle")}
+              onCancel={() => cancelField("workStyle")}
+            >
+              <SelectElement
+                placeholder="Select work style"
+                items={workStyles}
+                value={form.workStyle}
+                onChange={(value) => updateField("workStyle", value)}
+              />
+            </EditableField>
+
+            <EditableField
               label="Do you already have a startup?"
-              placeholder="Select one"
-              items={yesNoOptions}
-              value={String(form.hasStartup)}
-              onChange={(value) => updateField("hasStartup", value === "true")}
-            />
-            <Input
+              dirty={isDirty("hasStartup")}
+              saving={savingFields.has("hasStartup")}
+              justSaved={justSavedFields.has("hasStartup")}
+              onSave={() => saveField("hasStartup")}
+              onCancel={() => cancelField("hasStartup")}
+            >
+              <SelectElement
+                placeholder="Select one"
+                items={yesNoOptions}
+                value={String(form.hasStartup)}
+                onChange={(value) => updateField("hasStartup", value === "true")}
+              />
+            </EditableField>
+
+            <EditableField
               label="LinkedIn Profile URL"
-              placeholder="https://linkedin.com/in/..."
-              type="text"
-              value={form.linkedInUrl}
-              onChange={(e) => updateField("linkedInUrl", e.target.value)}
-            />
+              dirty={isDirty("linkedInUrl")}
+              saving={savingFields.has("linkedInUrl")}
+              justSaved={justSavedFields.has("linkedInUrl")}
+              onSave={() => saveField("linkedInUrl")}
+              onCancel={() => cancelField("linkedInUrl")}
+            >
+              <Input
+                placeholder="https://linkedin.com/in/..."
+                type="text"
+                value={form.linkedInUrl}
+                onChange={(e) => updateField("linkedInUrl", e.target.value)}
+              />
+            </EditableField>
           </Div>
         </Section>
 
         {/* Section 2: Profile Setup */}
         <Section title="Profile Details">
           <Div>
-            <Input
+            <EditableField
               label="Preferred Username"
-              placeholder="johndoe"
-              type="text"
-              value={form.userName}
-              onChange={(e) => updateField("userName", e.target.value)}
-            />
-            <Textarea
+              dirty={isDirty("userName")}
+              saving={savingFields.has("userName")}
+              justSaved={justSavedFields.has("userName")}
+              onSave={() => saveField("userName")}
+              onCancel={() => cancelField("userName")}
+            >
+              <Input
+                placeholder="johndoe"
+                type="text"
+                value={form.userName}
+                onChange={(e) => updateField("userName", e.target.value)}
+              />
+            </EditableField>
+
+            <EditableField
               label="Bio"
-              placeholder="Tell us about yourself..."
-              rows={5}
-              value={form.bio}
-              onChange={(e) => updateField("bio", e.target.value)}
-            />
-            <MultiSelect
+              dirty={isDirty("bio")}
+              saving={savingFields.has("bio")}
+              justSaved={justSavedFields.has("bio")}
+              onSave={() => saveField("bio")}
+              onCancel={() => cancelField("bio")}
+            >
+              <Textarea
+                placeholder="Tell us about yourself..."
+                rows={5}
+                value={form.bio}
+                onChange={(e) => updateField("bio", e.target.value)}
+              />
+            </EditableField>
+
+            <EditableField
               label="Skills"
-              placeholder="Select your skills"
-              items={skillCategories}
-              value={form.skills}
-              onChange={(value) => updateField("skills", value)}
-            />
-            <SelectElement
+              dirty={isDirty("skills")}
+              saving={savingFields.has("skills")}
+              justSaved={justSavedFields.has("skills")}
+              onSave={() => saveField("skills")}
+              onCancel={() => cancelField("skills")}
+            >
+              <MultiSelect
+                label=""
+                placeholder="Select your skills"
+                items={skillCategories}
+                value={form.skills}
+                onChange={(value) => updateField("skills", value)}
+              />
+            </EditableField>
+
+            <EditableField
               label="Commitment Level"
-              placeholder="Select commitment"
-              items={commitmentLevels}
-              value={form.commitmentLevel}
-              onChange={(value) => updateField("commitmentLevel", value)}
-            />
-            <MultiSelect
+              dirty={isDirty("commitmentLevel")}
+              saving={savingFields.has("commitmentLevel")}
+              justSaved={justSavedFields.has("commitmentLevel")}
+              onSave={() => saveField("commitmentLevel")}
+              onCancel={() => cancelField("commitmentLevel")}
+            >
+              <SelectElement
+                placeholder="Select commitment"
+                items={commitmentLevels}
+                value={form.commitmentLevel}
+                onChange={(value) => updateField("commitmentLevel", value)}
+              />
+            </EditableField>
+
+            <EditableField
               label="Personality Traits"
-              placeholder="Select up to 3"
-              items={personalityTraits}
-              max={3}
-              value={form.personalityTraits}
-              onChange={(value) => updateField("personalityTraits", value)}
-            />
-            <SelectElement
+              dirty={isDirty("personalityTraits")}
+              saving={savingFields.has("personalityTraits")}
+              justSaved={justSavedFields.has("personalityTraits")}
+              onSave={() => saveField("personalityTraits")}
+              onCancel={() => cancelField("personalityTraits")}
+            >
+              <MultiSelect
+                label=""
+                placeholder="Select up to 3"
+                items={personalityTraits}
+                max={3}
+                value={form.personalityTraits}
+                onChange={(value) => updateField("personalityTraits", value)}
+              />
+            </EditableField>
+
+            <EditableField
               label="Financial Contribution"
-              placeholder="Select one"
-              items={financialContributions}
-              value={form.financialContribution}
-              onChange={(value) => updateField("financialContribution", value)}
-            />
-            <SelectElement
+              dirty={isDirty("financialContribution")}
+              saving={savingFields.has("financialContribution")}
+              justSaved={justSavedFields.has("financialContribution")}
+              onSave={() => saveField("financialContribution")}
+              onCancel={() => cancelField("financialContribution")}
+            >
+              <SelectElement
+                placeholder="Select one"
+                items={financialContributions}
+                value={form.financialContribution}
+                onChange={(value) => updateField("financialContribution", value)}
+              />
+            </EditableField>
+
+            <EditableField
               label="Risk Management Style"
-              placeholder="Select one"
-              items={riskManagementStyles}
-              value={form.riskManagementStyle}
-              onChange={(value) => updateField("riskManagementStyle", value)}
-            />
-            <Input
+              dirty={isDirty("riskManagementStyle")}
+              saving={savingFields.has("riskManagementStyle")}
+              justSaved={justSavedFields.has("riskManagementStyle")}
+              onSave={() => saveField("riskManagementStyle")}
+              onCancel={() => cancelField("riskManagementStyle")}
+            >
+              <SelectElement
+                placeholder="Select one"
+                items={riskManagementStyles}
+                value={form.riskManagementStyle}
+                onChange={(value) => updateField("riskManagementStyle", value)}
+              />
+            </EditableField>
+
+            <EditableField
               label="Current Occupation"
-              placeholder="Software Engineer"
-              type="text"
-              value={form.currentOccupation}
-              onChange={(e) => updateField("currentOccupation", e.target.value)}
-            />
+              dirty={isDirty("currentOccupation")}
+              saving={savingFields.has("currentOccupation")}
+              justSaved={justSavedFields.has("currentOccupation")}
+              onSave={() => saveField("currentOccupation")}
+              onCancel={() => cancelField("currentOccupation")}
+            >
+              <Input
+                placeholder="Software Engineer"
+                type="text"
+                value={form.currentOccupation}
+                onChange={(e) => updateField("currentOccupation", e.target.value)}
+              />
+            </EditableField>
           </Div>
         </Section>
 
         {/* Section 3: Experience */}
         <Section title="Experience & Background">
           <Div>
-            <Textarea
+            <EditableField
               label="Past Startup Experience"
-              placeholder="Describe your past successes or failures..."
-              rows={5}
-              value={form.pastExperience}
-              onChange={(e) => updateField("pastExperience", e.target.value)}
-            />
+              dirty={isDirty("pastExperience")}
+              saving={savingFields.has("pastExperience")}
+              justSaved={justSavedFields.has("pastExperience")}
+              onSave={() => saveField("pastExperience")}
+              onCancel={() => cancelField("pastExperience")}
+            >
+              <Textarea
+                placeholder="Describe your past successes or failures..."
+                rows={5}
+                value={form.pastExperience}
+                onChange={(e) => updateField("pastExperience", e.target.value)}
+              />
+            </EditableField>
           </Div>
         </Section>
 
@@ -321,8 +542,8 @@ export default function ProfileEditPage() {
         </Link>
         <Button
           className="flex-1"
-          disabled={saving}
-          onClick={handleSave}
+          disabled={saving || dirtyFields.length === 0}
+          onClick={handleSaveAll}
         >
           {saving ? (
             <>
@@ -332,7 +553,9 @@ export default function ProfileEditPage() {
           ) : (
             <>
               <Save className="w-4 h-4 mr-2" />
-              Save Changes
+              {dirtyFields.length > 0
+                ? `Save ${dirtyFields.length} Changed Field${dirtyFields.length > 1 ? "s" : ""}`
+                : "No Changes to Save"}
             </>
           )}
         </Button>

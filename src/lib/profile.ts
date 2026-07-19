@@ -4,7 +4,7 @@ import { useOnboardingStore } from "@/store/onboardingStore";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useUserStore } from "@/store/userStore";
 import { base_url } from "./constants";
-import { handleApiError } from "@/lib/middleware";
+import { handleApiError, checkRateLimit } from "@/lib/middleware";
 
 export async function createProfile(
   data: OnboardingData,
@@ -39,6 +39,7 @@ export async function createProfile(
       body: JSON.stringify(profileData),
     });
 
+    checkRateLimit(response);
     if (!response.ok) {
       const error = await response.json();
       handleApiError(error);
@@ -82,6 +83,7 @@ export async function updateProfile(
       body: JSON.stringify(data),
     });
 
+    checkRateLimit(response);
     if (!response.ok) {
       const error = await response.json();
       handleApiError(error);
@@ -127,6 +129,7 @@ export async function updatePreferences(
       body: JSON.stringify(data),
     });
 
+    checkRateLimit(response);
     if (!response.ok) {
       const error = await response.json();
       handleApiError(error);
@@ -159,6 +162,7 @@ export const getProfile = async (): Promise<UserProfile | undefined> => {
       },
     });
 
+    checkRateLimit(response);
     if (!response.ok) {
       const error = await response.json();
       handleApiError(error);
@@ -240,6 +244,7 @@ export const getMatchingProfile = async (): Promise<
       },
     });
 
+    checkRateLimit(response);
     if (!response.ok) {
       const error = await response.json();
       handleApiError(error);
@@ -270,6 +275,7 @@ export const checkProfileExists = async (): Promise<boolean | undefined> => {
       },
     });
 
+    checkRateLimit(response);
     if (!response.ok) {
       const error = await response.json();
       handleApiError(error);
@@ -300,6 +306,7 @@ export const deleteProfile = async () => {
       },
     });
 
+    checkRateLimit(response);
     if (!response.ok) {
       const error = await response.json();
       handleApiError(error);
@@ -334,6 +341,7 @@ export const getSpecificProfile = async (
       },
     });
 
+    checkRateLimit(response);
     if (!response.ok) {
       const error = await response.json();
       handleApiError(error);
@@ -345,5 +353,45 @@ export const getSpecificProfile = async (
     console.error("Error getting profile:", error);
     toast.error("Failed to get profile");
     return;
+  }
+};
+
+/**
+ * Generates (or returns the cached) AI compatibility summary between the
+ * current user and the given profile. Cached server-side for 1 hour, so
+ * repeat calls for the same pair are cheap.
+ */
+export const generateMatchSummary = async (
+  profileId: string
+): Promise<string | null> => {
+  try {
+    if (typeof window === "undefined") return null;
+    const token = localStorage.getItem("accessToken");
+    if (!token) return null;
+
+    const response = await fetch(
+      `${base_url}/profiles/me/match-summary/${profileId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    checkRateLimit(response);
+    if (!response.ok) {
+      const error = await response.json();
+      handleApiError(error);
+      return null;
+    }
+
+    const data = await response.json();
+    return data.summary ?? null;
+  } catch (error) {
+    console.error("Error generating match summary:", error);
+    toast.error("Failed to generate match summary");
+    return null;
   }
 };
